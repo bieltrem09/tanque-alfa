@@ -1,0 +1,22 @@
+/* Tanques Alfa — tokens (PROPOSTA, aguardando aprovação)
+   Base extraída do logo: #373C9D (HSL 237° 48% 42%) + branco.
+   O logo não tem cor secundária → accent = amarelo #FFC400 (regra do brief). */
+:root {
+  --alfa-primary:      #061CE0; /* matiz do logo, saturação 95% — branco 9.33:1 */
+  --alfa-primary-deep: #040B6C; /* -50% luz, fundos do hero — branco 16.5:1 */
+  --alfa-primary-glow: #5C77FF; /* brilhos / luz de borda (decorativo, não p/ texto branco) */
+  --alfa-accent:       #FFC400; /* sobre primary 5.84:1 · sobre deep 10.4:1 */
+  --liquid:            #00A3FF; /* PENDENTE: ver alternativa --liquid-alt no preview */
+  --liquid-alt:        #22E6FF; /* ciano: separa melhor da matiz da marca */
+  --fuel:              #FF9A1F; /* âmbar das gotas de combustível */
+  --ink:               #0B0B0C;
+  --paper:             #F4F4F2;
+  --steel:             #C9CED6;
+
+  --on-primary: #FFFFFF;
+  --on-accent:  #0B0B0C;
+
+  --font-display: "Anton", "Bebas Neue", Impact, sans-serif;
+  --font-ui:      "Archivo", system-ui, sans-serif;
+  --font-body:    "Inter", system-ui, sans-serif;
+}

@@ -1,0 +1,161 @@
+@import "tailwindcss";
+
+:root {
+  --alfa-primary: #061ce0;
+  --alfa-primary-deep: #040b6c;
+  --alfa-primary-glow: #5c77ff;
+  --alfa-accent: #ffc400;
+  --liquid: #22e6ff;
+  --fuel: #ff9a1f;
+  --ink: #0b0b0c;
+  --paper: #f4f4f2;
+  --steel: #c9ced6;
+  --header-h: 104px;
+}
+
+@theme inline {
+  --color-primary: var(--alfa-primary);
+  --color-deep: var(--alfa-primary-deep);
+  --color-glow: var(--alfa-primary-glow);
+  --color-accent: var(--alfa-accent);
+  --color-liquid: var(--liquid);
+  --color-fuel: var(--fuel);
+  --color-ink: var(--ink);
+  --color-paper: var(--paper);
+  --color-steel: var(--steel);
+  --font-display: var(--font-anton), Impact, sans-serif;
+  --font-ui: var(--font-archivo), system-ui, sans-serif;
+  --font-body: var(--font-inter), system-ui, sans-serif;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-padding-top: 90px;
+}
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: hidden; }
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.5;
+  overflow-x: clip;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection { background: var(--alfa-accent); color: var(--ink); }
+
+:focus-visible {
+  outline: 3px solid var(--alfa-accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.display {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  line-height: 0.9;
+  letter-spacing: -0.01em;
+  font-weight: 400;
+}
+/* Linhas com acento em caixa alta precisam de respiro com line-height baixo */
+.display .accent-line { padding-top: 0.14em; display: block; }
+
+.label {
+  font-family: var(--font-ui);
+  font-weight: 800;
+  font-size: 12px;
+  line-height: 1;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-stretch: 115%;
+}
+.label-slash::before { content: "/ "; }
+
+.ui {
+  font-family: var(--font-ui);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* grão de ruído para fundos saturados */
+.grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.16;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.hero-bg {
+  background: radial-gradient(110% 90% at 64% 48%, var(--alfa-primary-glow) 0%, var(--alfa-primary) 36%, var(--alfa-primary-deep) 100%);
+}
+
+/* placeholder visível para dados a confirmar */
+.confirmar {
+  display: inline;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  border: 1.5px dashed currentColor;
+  border-radius: 6px;
+  padding: 0 0.3em;
+  opacity: 0.85;
+}
+
+.blueprint-grid {
+  background-image:
+    linear-gradient(to right, color-mix(in srgb, var(--steel) 22%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in srgb, var(--steel) 22%, transparent) 1px, transparent 1px);
+  background-size: 80px 80px;
+}
+
+/* SplitText: máscara por linha */
+.split-mask { overflow: clip; padding-bottom: 0.04em; }
+
+@keyframes road-move { to { transform: translateX(-120px); } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes marquee { to { transform: translateX(-50%); } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.2s !important;
+  }
+}
+
+/* água em movimento (2e) — só transform/opacity nas camadas animadas */
+.water {
+  background: radial-gradient(60% 60% at 50% 45%, #2fd4ff 0%, #0a8fe0 45%, #04308f 100%);
+}
+.water::before,
+.water::after {
+  content: "";
+  position: absolute;
+  inset: -20%;
+  background-image:
+    radial-gradient(closest-side, rgba(255,255,255,.22), transparent 70%),
+    radial-gradient(closest-side, rgba(255,255,255,.16), transparent 70%);
+  background-size: 180px 120px, 260px 200px;
+  background-position: 0 0, 90px 60px;
+  animation: caustic 9s linear infinite;
+  mix-blend-mode: soft-light;
+}
+.water::after { animation-duration: 14s; animation-direction: reverse; opacity: .7; background-size: 220px 160px, 140px 110px; }
+@keyframes caustic { to { transform: translate3d(180px, 120px, 0); } }
+
+/* Acentos em caixa alta (Ú, Ô, Ç) com line-height baixo: a máscara/clip precisa de respiro */
+.display div[style*="overflow: clip"],
+.display .overflow-clip,
+.clip-pad {
+  padding-top: 0.18em;
+  margin-top: -0.18em;
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
+}

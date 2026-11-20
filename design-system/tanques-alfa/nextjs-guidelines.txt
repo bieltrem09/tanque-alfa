@@ -1,0 +1,46 @@
+## UI Pro Max Stack Guidelines
+**Stack:** nextjs | **Query:** static export animation performance
+**Source:** stacks/nextjs.csv | **Found:** 3 results
+
+### Result 1
+- **Category:** Performance
+- **Guideline:** Use Partial Prerendering
+- **Description:** Combine static and dynamic in one route
+- **Do:** Static shell with Suspense holes
+- **Don't:** Full dynamic or static pages
+- **Code Good:** Static header + dynamic content
+- **Code Bad:** Entire page SSR
+- **Severity:** Low
+- **Docs URL:** https://nextjs.org/docs/app/building-your-application/rendering/partial-prerendering
+- **Applies To:** nextjs 16.2
+- **Status:** active
+- **Verified At:** 2026-08-13
+
+### Result 2
+- **Category:** Rendering
+- **Guideline:** Choose correct rendering strategy
+- **Description:** SSG for static SSR for dynamic ISR for semi-static
+- **Do:** generateStaticParams for known paths
+- **Don't:** SSR for static content
+- **Code Good:** export const revalidate = 3600
+- **Code Bad:** fetch without cache config
+- **Severity:** Medium
+- **Docs URL:** 
+- **Applies To:** nextjs 16.2
+- **Status:** active
+- **Verified At:** 2026-08-13
+
+### Result 3
+- **Category:** Metadata
+- **Guideline:** Use metadata API
+- **Description:** Export metadata object for static metadata
+- **Do:** export const metadata = {}
+- **Don't:** Manual head tags
+- **Code Good:** export const metadata = { title: 'Page' }
+- **Code Bad:** <head><title>Page</title></head>
+- **Severity:** Medium
+- **Docs URL:** 
+- **Applies To:** nextjs 16.2
+- **Status:** active
+- **Verified At:** 2026-08-13
+

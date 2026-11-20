@@ -1,0 +1,46 @@
+import Hero from "@/components/sections/Hero";
+import FactoryScene from "@/components/sections/FactoryScene";
+import ProductLine from "@/components/sections/ProductLine";
+import Numbers from "@/components/sections/Numbers";
+import Normas from "@/components/sections/Normas";
+import Clientes from "@/components/sections/Clientes";
+import Atendimento from "@/components/sections/Atendimento";
+import CtaContato from "@/components/sections/CtaContato";
+import Reveals from "@/components/ui/Reveals";
+import Link from "next/link";
+import { ChevronRight } from "lucide-react";
+import { tanques } from "@/content/tanques";
+
+export default function Home() {
+  const destaque = ["combustivel", "agua", "saneamento"].map((s) => tanques.find((t) => t.slug === s)!);
+  const outros = tanques.filter((t) => !destaque.includes(t));
+  return (
+    <>
+      <Reveals />
+      <Hero />
+      <FactoryScene />
+      <Clientes />
+      <div id="tanques">
+        {destaque.map((t, i) => <ProductLine key={t.slug} t={t} dark={i % 2 === 0} flip={i % 2 === 1} />)}
+        <section aria-label="Outras linhas" className="bg-ink py-16 text-white">
+          <div className="mx-auto flex max-w-[1400px] flex-col gap-6 px-4 md:flex-row md:items-center md:justify-between md:px-8">
+            <p className="display text-[clamp(32px,4vw,56px)]">Também fabricamos</p>
+            <ul className="flex flex-wrap gap-3">
+              {outros.map((t) => (
+                <li key={t.slug}>
+                  <Link href={`/tanques/${t.slug}/`} className="ui inline-flex min-h-12 items-center gap-1 rounded-full px-6 text-[12px] ring-1 ring-white/30 transition-colors hover:bg-white hover:text-ink">
+                    {t.nome} <ChevronRight className="h-4 w-4" aria-hidden />
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      </div>
+      <Numbers />
+      <Normas />
+      <Atendimento />
+      <CtaContato />
+    </>
+  );
+}
