@@ -1,201 +1,178 @@
-# Prompts do filme — caminhão-tanque Alfa em movimento
+# Prompts do filme — caminhão-tanque Alfa em movimento (versão 2)
 
-Roteiro em **5 cenas** para gerar um vídeo de cerca de 25 a 35 s, com o mesmo caminhão do site.
-O processo é sempre o mesmo: **(1) gerar as imagens-chave** (primeiro e último quadro de cada cena) e depois **(2) gerar o vídeo de cada cena** a partir dessas imagens, numa IA de vídeo com "start frame + end frame".
+Roteiro em **5 cenas** (cerca de 35 s) com o mesmo caminhão do site.
+Esta versão corrige o que deu errado no primeiro teste (`Caminh_o_tanque_Alfa_filme_roteiro…mp4`).
 
 Os prompts estão em inglês porque as IAs entendem melhor. As explicações estão em português.
 
 ---
 
-## 0. Antes de começar
+## 1. O que deu errado no primeiro vídeo e como esta versão corrige
 
-**Ferramentas**
-- Imagens: **Nano Banana (Gemini)**. Ele edita mantendo o mesmo caminhão. Anexe sempre a imagem de referência indicada.
-- Vídeo: **Kling 2.x** (modo *Start & End Frame*), **Veo 3** ou **Runway Gen-4**. Gere cada cena separadamente e junte no CapCut ou Premiere.
+| # | Problema que apareceu | Por quê | Correção nesta versão |
+|---|---|---|---|
+| 1 | Na cena 1 o caminhão está **espelhado** (cabine à esquerda) e no fim vira para a direita | O prompt dizia "andando para a direita", mas não travava **de que lado fica a cabine** | Toda cena lateral diz: *cabine no lado DIREITO do quadro, frente apontando para a direita* |
+| 2 | A troca de tanque usa um **raio/risco dourado em diagonal** com brilho | "Bright line of light" virou efeito mágico | Agora é uma **barra de luz vertical, reta, tipo scanner**, e o negativo proíbe *sparkles, lightning, glitter, lens flare* |
+| 3 | **Acessórios de um tanque sobram no outro** (carretel azul da água no combustível e no saneamento; mangueiras laranja do saneamento no agrícola) | A IA só trocou a pintura | Cada tanque tem uma **ficha fixa** dizendo o que TEM e o que NÃO tem |
+| 4 | Na passagem da cena 1 para a 2 a câmera **entra por baixo do chassi** e sai com outro caminhão lá na frente | O pedido era um movimento contínuo entre ângulos muito diferentes | A câmera **nunca chega a menos de 10 m** do caminhão e existe **só UM caminhão** no filme. Recomendado gerar cada cena separada |
+| 5 | Depois do agrícola, o caminhão **volta a ser de água** sem explicação | O roteiro não dizia qual tanque segue nas cenas 2 a 4 | A cena 1 termina **voltando para a água** (4ª troca) e as cenas 2, 3 e 4 usam sempre a ficha ÁGUA |
+| 6 | Visual de **render 3D**, luz chapada, pneus "flutuando" | Faltavam pistas de filmagem real | O bloco **LOOK** em todos os prompts pede câmera de cinema, luz natural, sombra de contato e textura de asfalto |
+| 7 | O filme todo tem **8 s**, então cada cena dura ~1,5 s | Foi gerado de uma vez só | Cenas geradas separadamente, de 5 a 8 s cada, ou o **prompt mestre com minutagem** (seção 4) |
 
-**Imagens de referência (já estão no GitHub, pasta `img/`)**
+---
 
-| Apelido | Arquivo | O que é |
-|---|---|---|
-| REF-ÁGUA | `img/cbefb5a7-aee0-498b-954d-1850958cba5f.webp` | caminhão branco/azul (água), lateral |
-| REF-COMB | `img/ce5089dd-d284-48a6-97d4-52c1e16bfde8.webp` | caminhão amarelo (combustível), lateral |
-| REF-SAN | `img/35917f0a-eb88-4c5e-a584-12c1786b5397.webp` | caminhão de saneamento, lateral |
-| REF-AGRO | `img/c03ad696-e855-4a27-8d68-96e8148c9b66.webp` | caminhão verde com canhão (agrícola), lateral |
-| REF-ESTRADA | `img/9cb4acd8a661195035a5be5e0b175ff8.jpg` | estrada em perspectiva |
-| REF-CURVA | `img/dbc4cce5-c10d-471f-b469-cdb9df3aa09f.webp` | estrada em S vista de cima |
-| REF-WIRE / REF-MAQUETE | `img/cf51c02b-c5bc-4eb4-8f61-116f8343b7c5.webp` / `img/eaa7b799-3334-4737-a0be-9b4a6494f12b.webp` | wireframe e maquete real sobre as plantas |
+## 2. Blocos fixos: cole em TODOS os prompts
 
-**O "mundo" do filme (igual ao site):** chão branco infinito e limpo, com **uma única estrada de asfalto escuro** de faixa branca tracejada. Sem cidade, sem árvores, sem outros carros. Isso deixa o caminhão como herói e casa com o fundo branco do site.
+Copie os blocos abaixo e cole no início de cada prompt de vídeo ou imagem. Isso é o que mantém o caminhão igual do começo ao fim.
 
-**Regras que valem para TODAS as imagens e vídeos**
-- Mesmo caminhão: cabine branca moderna (sem logo de montadora), 6x4, chassi preto, rodas cromadas.
-- Caminhão **sempre andando para a DIREITA** nas cenas laterais (cabine à direita), como no site.
-- **Sem texto e sem logo** gerados pela IA. O logo da Alfa entra na edição, se quiser.
-- Formato: **16:9, 1920×1080**, 24 ou 30 fps.
-
-**Negativo (cole no campo "negative prompt" quando existir)**
+### TRUCK (base, igual em todas as cenas)
 ```
-text, letters, watermark, logo, brand names, extra vehicles, people, trees, buildings, city, distorted wheels, melting, deformed truck, extra axles, wrong number of wheels, camera shake, low resolution, cartoon, 3d render look, plastic look
+TRUCK: one single modern white cab-over heavy truck with a boxy flat front, no brand badges; 6x4 layout — one front axle under the cab and two rear axles in tandem (exactly 3 axles, 6 visible wheels on the side); black ladder chassis; silver wheel hubs; red-and-white reflective strip on the rear bumper.
+```
+
+### Fichas dos tanques (use a da cena)
+```
+TANK ÁGUA: cylindrical tank, upper half glossy white, lower half cobalt blue, separated by a thin yellow pinstripe; two low round manhole domes on top; NO handrails on top; at the rear a small white equipment cabinet with a blue hose reel and a pump.
+```
+```
+TANK COMBUSTÍVEL: elliptical tank painted entirely glossy yellow with one cobalt-blue horizontal band; yellow walkway handrails on top; small orange hazard placard on the side; NO hose reel, NO rear cabinet, NO orange hoses.
+```
+```
+TANK SANEAMENTO: thick cylindrical vacuum tank, white upper half and dark green lower half, visible vertical reinforcing rings, large round hinged door at the rear end, two long orange suction hoses running along the lower side; NO handrails, NO hose reel.
+```
+```
+TANK AGRÍCOLA: tank painted entirely dark green with a thin yellow pinstripe; yellow walkway handrails on top; one red water cannon on top near the front; NO orange hoses, NO hose reel, NO rear cabinet.
+```
+
+### LOOK (realismo)
+```
+LOOK: photorealistic live-action commercial footage, NOT a 3D render, NOT CGI. Shot on ARRI Alexa 35, 50 mm lens, natural soft daylight from the upper left, real contact shadows under every tire, subtle reflections on the glossy paint, fine asphalt grain, a very light haze of dust behind the rear wheels. World: seamless pure white minimalist landscape, one single dark asphalt road with a white dashed center line, nothing else.
+```
+
+### NEGATIVO (no campo *negative prompt*, ou no fim do prompt como "Avoid: …")
+```
+second truck, duplicate truck, mirrored truck, cab on the left, text, letters, logos, watermark, sparkles, lightning bolt, glitter, magic particles, lens flare streaks, diagonal light streak, camera passing under the truck, camera inside the truck, melting, morphing wheels, extra axles, missing wheels, floating truck, toy look, plastic look, 3d render, cgi, cartoon, trees, buildings, people, other vehicles
 ```
 
 ---
 
-## CENA 1 — Caminhão andando de lado, trocando de tanque (≈8–10 s)
+## 3. Cenas (gere UMA de cada vez — recomendado)
 
-Câmera lateral acompanhando o caminhão (*tracking shot*) na mesma velocidade. O caminhão fica no centro, o asfalto corre e as rodas giram. O tanque se transforma de uma especialidade para a outra: **água → combustível → saneamento → agrícola**.
+Configuração: **16:9, 1080p, 24 fps**. Gere **2 a 4 variações** de cada cena e fique com a melhor.
+Para emendar, use como quadro inicial de cada cena o último quadro da cena anterior.
 
-### Por que dava confusão
-Quando o prompt diz só *"straight road"*, a IA entende uma estrada **indo para o horizonte** (vista de frente, com ponto de fuga), enquanto o caminhão está **de perfil**. Os dois ficam em direções diferentes.
-O certo é a estrada **atravessar a imagem da esquerda para a direita, paralela ao caminhão**, como uma faixa horizontal, igual ao site.
+### CENA 1 — Caminhão de lado trocando de tanque (4 clipes de ~5 s)
 
-### Caminho mais fácil: quadros prontos (recomendado)
-Já montei os 4 quadros com os seus caminhões reais em cima de uma estrada vista de lado, todos no mesmo enquadramento. Use direto como *start/end frame* no Kling ou no Veo:
+**Quadros prontos** (GitHub, `img/video/`): `K1-agua.jpg`, `K2-combustivel.jpg`, `K3-saneamento.jpg`, `K4-agricola.jpg`.
+Clipes: **K1→K2**, **K2→K3**, **K3→K4** e **K4→K1** (volta para a água).
 
-| Quadro | Arquivo (GitHub) |
-|---|---|
-| K1 água | `img/video/K1-agua.jpg` |
-| K2 combustível | `img/video/K2-combustivel.jpg` |
-| K3 saneamento | `img/video/K3-saneamento.jpg` |
-| K4 agrícola | `img/video/K4-agricola.jpg` |
-| Só a estrada (fundo) | `img/video/fundo-estrada-lateral.jpg` |
-
-Se quiser que os quadros fiquem mais fotográficos antes do vídeo, passe cada um no Nano Banana com o prompt de "realismo" abaixo.
-
-**Prompt de realismo (anexe o quadro K pronto)**
+Prompt (troque `[DE]` e `[PARA]` pelas fichas dos tanques):
 ```
-Use the reference image as the exact layout. Keep the truck exactly as it is: same position, size, side profile, colors and details. Keep the road exactly where it is: a horizontal asphalt strip crossing the whole image from the left edge to the right edge, parallel to the truck.
-Only make it more photographic: realistic asphalt texture with fine grain, slightly worn yellow edge lines, white dashed center line as horizontal dashes, a soft natural contact shadow under the tires, subtle reflections on the tank paint, soft white minimalist environment above the road.
-Do not rotate the road, do not add perspective, no vanishing point. No text, no logos.
+[TRUCK] FROM: [TANK DE]. TO: [TANK PARA]. [LOOK]
+
+Locked side tracking shot. The camera travels sideways at exactly the truck's speed, at 1.5 m height, perpendicular to the road. The truck stays fixed in the center of the frame in perfect side profile, CAB ON THE RIGHT SIDE OF THE FRAME, front pointing right, driving to the right.
+The road is a horizontal strip parallel to the truck crossing the whole frame; the asphalt and the white dashes stream from right to left under it; the wheels spin forward; light suspension bounce.
+At second 2, a straight VERTICAL bar of soft white light, perpendicular to the ground, slides horizontally along the tank from the rear to the front. Behind the bar the tank is already the new one, in front of it the old one, with a clean hard edge, like a scanner. After the bar passes, ALL accessories of the old tank are gone and ALL accessories of the new tank are present. The cab, chassis, wheels, road and camera never change.
+5 seconds. Avoid: [NEGATIVO]
 ```
 
-### Se preferir gerar do zero (prompts corrigidos)
+### CENA 2 — Zoom na estrada (≈5 s)
 
-**Passo A — primeiro o fundo (estrada de lado, sem caminhão)**
-```
-Photorealistic SIDE VIEW of an empty two-lane asphalt road, camera at 1.5 m height looking perpendicular to the road (90° to the direction of travel).
-The road is seen from its side: it appears as a horizontal strip that crosses the entire image from the left edge to the right edge, occupying the lower third of the frame.
-The far edge of the road (yellow line) is a straight horizontal line; the white dashed center line runs horizontally across the image as a row of short horizontal dashes; the near edge (yellow line) is another horizontal line closer to the bottom of the frame.
-NO vanishing point, the road does NOT go toward the horizon, NO perspective lines converging. Behind the road: a seamless pure white minimalist world, soft high-key light. 16:9, 1920x1080. No vehicles, no text.
-```
+**Quadro inicial:** último quadro do clipe K4→K1 (caminhão de água de lado).
+**Quadro final:** gere com o prompt de imagem abaixo.
 
-**Passo B — K1 água (anexe REF-ÁGUA + o fundo do passo A)**
+Imagem do quadro final (Nano Banana, anexe REF-ÁGUA):
 ```
-Image 1 is the truck, image 2 is the road. Place the truck from image 1 ON the road from image 2, keeping the road exactly as it is (horizontal, parallel to the truck, crossing the frame from left to right).
-The truck is in perfect side profile, facing and driving to the RIGHT, parallel to the road. All six tires rest on the asphalt of the far lane, just above the white dashed center line; the dashed line is visible in front of the wheels.
-Truck about 75% of the image width, centered. Soft contact shadow under the tires. Wheels with radial motion blur (spinning), slight horizontal motion blur on the asphalt only, truck sharp.
-Photorealistic tracking photography, 16:9. Do not change the truck. No text, no logos.
+[TRUCK] [TANK ÁGUA] [LOOK]
+Low camera at asphalt level, standing in the middle of a straight road, looking down the road toward the horizon. The tanker truck is about 40 m ahead, seen from behind, driving away along the road. The road with two white center lines converges to a soft white horizon. Photorealistic, 16:9. No text.
 ```
 
-**K2, K3, K4** — anexe a nova referência do tanque (REF-COMB, REF-SAN, REF-AGRO) + o **K1 pronto**:
+Vídeo:
 ```
-Image 1 is the new tank version of the truck, image 2 is the previous keyframe. Keep EVERYTHING from image 2 identical — the road (horizontal strip, parallel to the truck), the camera, the truck position, cab, chassis, wheels and motion blur — and only replace the tank body with the [yellow fuel tank / white-and-green sewer vacuum tank with orange hoses / dark green agricultural tank with red water cannon] from image 1.
-Do not move the camera, do not rotate the road. No text, no logos.
+[TRUCK] [TANK ÁGUA] [LOOK]
+The truck drives out of frame to the right while the camera smoothly turns 90° to look down the road and lowers to asphalt level, staying at least 15 m away from the truck at all times — it never goes under or through the truck. Then the camera rushes forward along the road behind the truck, low and fast, the white center lines streaming beneath it.
+Only one truck in the whole shot. 5 seconds. Avoid: [NEGATIVO]
+```
+> Se a curva de 90° continuar estranha, faça um **corte seco** entre a cena 1 e a 2. Funciona muito bem em filme publicitário.
+
+### CENA 3 — Curvas em zigue-zague (≈8 s)
+
+Quadro inicial: último quadro da cena 2. Quadro final: gere com a imagem abaixo.
+
+Imagem do quadro final:
+```
+[TRUCK] [TANK ÁGUA] [LOOK]
+High drone shot at a 3/4 angle (about 45° down, behind and to the left of the truck), the truck coming out of the last bend of a long S-shaped road on a pure white landscape, body slightly leaning from the curve, right-hand lane. 16:9. No text.
 ```
 
-### Vídeo (3 clipes: K1→K2, K2→K3, K3→K4)
+Vídeo:
 ```
-Locked side tracking shot: the camera moves sideways at exactly the same speed as the truck, so the truck stays fixed in the center of the frame, in perfect side profile, driving to the right.
-The road is a horizontal strip parallel to the truck: the asphalt texture and the white dashed center line stream from right to left under the truck; the wheels spin realistically in the driving direction.
-Midway, a bright line of light sweeps over the tank from the rear to the front and the tank changes into the tank of the end frame like a paint wipe — the cab, chassis, wheels and road stay exactly the same.
-Realistic suspension movement, subtle body vibration, no camera rotation, no perspective change, photorealistic, smooth, 5 seconds.
-```
-> Se a IA mudar o ângulo da estrada no meio do vídeo, acrescente no fim: *"the road must remain a horizontal strip parallel to the truck during the whole clip"*.
-
----
-
-## CENA 2 — Zoom na estrada e entrada nas curvas (≈4–5 s)
-
-A câmera desce para o nível do asfalto, à frente do caminhão, e **mergulha na estrada** em perspectiva. Num movimento contínuo ela sobe para o alto e revela a estrada fazendo curvas, com o caminhão entrando nela.
-
-### Imagens-chave
-**K5 — estrada em perspectiva (início)** · anexe REF-ESTRADA
-```
-Use the reference image of the road. Photorealistic low camera at asphalt level looking down a straight dark road with two white center lines that converge to the horizon.
-Replace the background with a pure white foggy horizon, high-key minimalist white world, no checkerboard pattern, no watermark.
-Slight forward motion blur on the road surface. 16:9, ultra sharp near the camera. No text.
+[TRUCK] [TANK ÁGUA] [LOOK]
+The camera rises from road level into a smooth drone follow shot, 3/4 high angle behind the truck, 20 m away. The single tanker truck drives through a sequence of S-curves, staying in the right-hand lane: it steers left, then right, then left — a gentle zig-zag that follows the road — with realistic weight transfer, slight body roll and the front wheels turning into each bend. The drone banks smoothly with the curves, keeping the truck centered.
+8 seconds. Avoid: [NEGATIVO]
 ```
 
-**K6 — vista aérea 3/4 das curvas (fim)** · anexe REF-CURVA e K1
+### CENA 4 — Câmera lateral final: caminhão e tanque juntos (≈6 s)
+
+Quadro final: `img/video/K1-agua.jpg` (ou o mesmo enquadramento com o caminhão parado).
+
 ```
-Aerial drone photograph at 3/4 angle (about 45° down, not straight top-down) of a single dark asphalt road making smooth S-curves across a pure white minimalist landscape, white dashed center line.
-The same white tanker truck from the second image (white cab, white tank with cobalt-blue band) is entering the first curve in the right-hand lane, seen from behind and above.
-High-key white environment, soft shadows, photorealistic, 16:9. No text, no logos.
+[TRUCK] [TANK ÁGUA] [LOOK]
+The drone descends and arcs around to the right side of the truck, ending in a perfect perpendicular side view at 1.5 m height: CAB ON THE RIGHT SIDE OF THE FRAME, the whole vehicle visible from rear bumper to front bumper, cab and tank together.
+The truck exits the last curve, straightens, slows down smoothly and stops in the center of the frame. As it stops, a soft reflection glides along the glossy tank from rear to front — a natural studio-light reflection, not a light effect.
+6 seconds. Avoid: [NEGATIVO]
 ```
 
-### Vídeo (K5 → K6)
+### CENA 5 (opcional) — Do projeto ao real (≈6 s)
+
+Quadros: `img/cf51c02b-c5bc-4eb4-8f61-116f8343b7c5.webp` (wireframe) → `img/eaa7b799-3334-4737-a0be-9b4a6494f12b.webp` (maquete real).
 ```
-The camera starts at asphalt level and rushes forward along the straight road, accelerating, then smoothly rises up and tilts down into a high drone view, revealing the road turning into elegant S-curves on a pure white landscape, with the tanker truck entering the first curve.
-One continuous fluid camera move, no cuts, cinematic speed ramp, photorealistic, 4 seconds.
+Start: transparent CAD wireframe of a tanker truck floating above engineering blueprint sheets on a wooden table. End: the finished photorealistic model on the same blueprints.
+The wireframe materializes from the bottom up: chassis first in black steel, then the tank in glossy white with the cobalt-blue lower half and yellow pinstripe, then a warm LED glow under the chassis. Static camera with a very slow push-in, soft studio light, photorealistic product visualization. 6 seconds.
+Avoid: sparkles, magic particles, text, logos, morphing shapes.
 ```
 
 ---
 
-## CENA 3 — Caminhão nas curvas, em zigue-zague (≈6–8 s)
+## 4. Prompt mestre (quando a ferramenta gera o filme inteiro de uma vez)
 
-Drone em 3/4 (alto e um pouco atrás), **não** reto de cima, seguindo o caminhão. O caminhão faz as curvas da pista, inclinando levemente a carroceria em cada uma, com o zigue-zague natural da estrada.
+Use em ferramentas com **multi-shot / storyboard** (Kling multi-shot, Veo/Flow, Sora storyboard etc.). Peça **30 a 35 segundos**. Se a ferramenta limitar a 8–10 s, gere as cenas separadas (seção 3).
 
-### Imagens-chave
-**K6** (do fim da cena 2) como quadro inicial.
-
-**K7 — saindo da última curva** · anexe K6
 ```
-Use the reference image. Same road, same white world, same truck, same 3/4 drone angle.
-Now the truck is exiting the last S-curve and starting a straight section, seen from the side-rear at 3/4, body slightly leaning from the curve. Photorealistic, 16:9. No text.
-```
+A 32-second photorealistic live-action commercial for a tanker-truck manufacturer. One single truck in the entire film.
+TRUCK: one single modern white cab-over heavy truck with a boxy flat front, no badges, 6x4 (exactly 3 axles), black chassis, silver hubs.
+WORLD: seamless pure white minimalist landscape with one dark asphalt road with a white dashed center line. Natural soft daylight, real contact shadows, fine asphalt texture, shot on ARRI Alexa 35. NOT a 3D render.
 
-### Vídeo (K6 → K7)
-```
-Drone follow shot at a 3/4 high angle behind and slightly to the side of the tanker truck, which drives through a sequence of smooth S-curves on a dark asphalt road across a pure white landscape.
-The truck steers left and right following the road — a gentle zig-zag — with realistic weight transfer and slight body roll in each curve; the wheels turn into each bend.
-The drone smoothly banks with the curves, keeping the truck centered. Photorealistic, cinematic, 6 seconds.
-```
+[00–20s] SHOT 1 — locked side tracking shot at 1.5 m, perpendicular to the road. Cab on the RIGHT side of the frame, truck driving right, road as a horizontal strip parallel to the truck, wheels spinning. Every 5 seconds a straight vertical bar of soft white light slides along the tank from rear to front and the tank body changes completely, including accessories:
+  00–05s water tank: white upper / cobalt-blue lower half, thin yellow pinstripe, two manhole domes, no handrails, rear cabinet with blue hose reel.
+  05–10s fuel tank: entirely glossy yellow with one blue band, yellow handrails, orange hazard placard, no hose reel.
+  10–15s sewer vacuum tank: white upper / dark green lower, reinforcing rings, round rear door, two orange suction hoses, no handrails.
+  15–20s agricultural tank: entirely dark green, yellow handrails, red water cannon on top, no hoses — then back to the water tank at 20s.
+[20–24s] SHOT 2 — hard cut to a low camera at asphalt level in the middle of the road; the water-tank truck is 40 m ahead driving away; the camera rushes forward low over the white center lines.
+[24–30s] SHOT 3 — the camera rises into a 3/4 drone follow shot behind the truck as it drives through S-curves in the right-hand lane, gentle zig-zag, slight body roll in each bend.
+[30–32s] SHOT 4 — the drone arcs down to a perfect side view at truck height (cab on the right); the truck straightens, slows and stops centered, a soft reflection gliding along the tank.
 
----
-
-## CENA 4 — Câmera lateral: caminhão e tanque juntos (≈5–6 s)
-
-Saindo das curvas, a câmera desce do drone e **termina em vista LATERAL**, mostrando o caminhão e o tanque inteiros, juntos, de perfil. O caminhão desacelera e para, e uma luz percorre o tanque.
-
-### Imagem-chave
-**K8 — perfil final** · anexe REF-ÁGUA e K7
-```
-Use the first reference image for the truck. Perfect side profile of the full tanker truck — cab and tank together, entire vehicle visible from rear bumper to front bumper — standing on the dark asphalt road from the second image, in the same pure white minimalist world.
-Camera at about 1.2 m height, perfectly perpendicular to the truck, the truck facing right.
-Soft studio-like light, a subtle glossy reflection running along the tank, soft contact shadow. Photorealistic, 16:9, generous empty white space above the truck for text. No text, no logos.
-```
-
-### Vídeo (K7 → K8)
-```
-The drone smoothly descends and orbits from behind the truck to its side, ending in a perfect perpendicular side view at truck height.
-The truck exits the curve, straightens, slows down and comes to a gentle stop in full side profile, showing the cab and the tank together.
-As it stops, a soft beam of light sweeps along the tank from rear to front. Photorealistic, cinematic, 5 seconds.
+Avoid: second truck, mirrored truck, cab on the left, sparkles, lightning, glitter, lens flare streaks, camera passing under the truck, morphing wheels, extra axles, floating truck, text, logos, watermark, 3d render look, plastic look.
 ```
 
 ---
 
-## CENA 5 (opcional) — Arquitetura do tanque: do projeto ao real (≈5–6 s)
+## 5. Montagem e entrega
 
-Para fechar, ou para usar na seção "Arquitetura do tanque" do site: o wireframe sobre as plantas vira o caminhão real.
-
-**Quadros:** REF-WIRE (início) e REF-MAQUETE (fim). Já existem, não precisa gerar.
-
-### Vídeo (REF-WIRE → REF-MAQUETE)
-```
-Start: a transparent CAD wireframe of a tanker truck floating on engineering blueprint sheets on a wooden table. End: the finished photorealistic tanker truck model on the same blueprints.
-The wireframe materializes into the real truck: first the chassis becomes solid black steel, then the tank fills with glossy white painted steel from the bottom up, the cobalt-blue band appears, and a warm light turns on under the chassis.
-Very slow push-in, static composition, elegant architectural visualization, photorealistic, 6 seconds. No text.
-```
-
----
-
-## Montagem final
-
-1. Ordem: **Cena 1 → Cena 2 → Cena 3 → Cena 4** (+ Cena 5 opcional no início ou no fim).
-2. Junte os clipes **sem transição de corte**: o último quadro de uma cena é o primeiro da próxima, então emendam sozinhos. Se der "pulo", use um *cross dissolve* de 6 a 10 quadros.
+1. Ordem: cena 1 (4 clipes) → 2 → 3 → 4 (+ 5 opcional). Entre as cenas, use **corte seco** ou um *cross dissolve* curto (6 a 8 quadros).
+2. Se algum clipe sair espelhado, dá para **espelhar na edição** (*flip horizontal*), porque não há texto na imagem.
 3. Cor: um leve aumento de contraste e saturação deixa tudo igual ao site.
-4. Exporte em **MP4 H.264, 1920×1080**, sem áudio para o site (com áudio para redes sociais).
+4. Exporte em **MP4 H.264, 1920×1080, 24 ou 30 fps**.
 
-### Para colocar no site
-Me mande o MP4 final. Eu otimizo (quadro a quadro, para avançar suave com o scroll) e coloco como `public/img/real/filme-fabrica.mp4`.
-O site já está preparado: quando esse arquivo existir, aparece logo depois da cena "A fábrica" uma seção em tela cheia em que **o scroll controla o vídeo**.
-A cena 5, se gerada separada, pode virar `arquitetura-agua.mp4` e entra sozinha na prancha de arquitetura do tanque de água.
+**Para o site:** me mande o MP4. Ele entra como `public/img/real/filme-fabrica.mp4`, numa seção em tela cheia em que o scroll controla o vídeo, logo depois da cena "A fábrica".
+
+### Referências (pasta `img/` do GitHub)
+| Apelido | Arquivo |
+|---|---|
+| REF-ÁGUA | `img/cbefb5a7-aee0-498b-954d-1850958cba5f.webp` |
+| REF-COMB | `img/ce5089dd-d284-48a6-97d4-52c1e16bfde8.webp` |
+| REF-SAN | `img/35917f0a-eb88-4c5e-a584-12c1786b5397.webp` |
+| REF-AGRO | `img/c03ad696-e855-4a27-8d68-96e8148c9b66.webp` |
+| REF-ESTRADA | `img/9cb4acd8a661195035a5be5e0b175ff8.jpg` |
+| REF-CURVA | `img/dbc4cce5-c10d-471f-b469-cdb9df3aa09f.webp` |
+| Quadros prontos | `img/video/K1-agua.jpg` … `K4-agricola.jpg`, `fundo-estrada-lateral.jpg` |
