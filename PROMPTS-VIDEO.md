@@ -42,36 +42,64 @@ text, letters, watermark, logo, brand names, extra vehicles, people, trees, buil
 
 ## CENA 1 — Caminhão andando de lado, trocando de tanque (≈8–10 s)
 
-Câmera lateral acompanhando o caminhão (*tracking shot*) na mesma velocidade. O caminhão fica no centro, o chão corre e as rodas giram. O tanque se transforma de uma especialidade para a outra: **água → combustível → saneamento → agrícola**.
+Câmera lateral acompanhando o caminhão (*tracking shot*) na mesma velocidade. O caminhão fica no centro, o asfalto corre e as rodas giram. O tanque se transforma de uma especialidade para a outra: **água → combustível → saneamento → agrícola**.
 
-### Imagens-chave (4 quadros)
+### Por que dava confusão
+Quando o prompt diz só *"straight road"*, a IA entende uma estrada **indo para o horizonte** (vista de frente, com ponto de fuga), enquanto o caminhão está **de perfil**. Os dois ficam em direções diferentes.
+O certo é a estrada **atravessar a imagem da esquerda para a direita, paralela ao caminhão**, como uma faixa horizontal, igual ao site.
 
-**K1 — água andando** · anexe REF-ÁGUA
+### Caminho mais fácil: quadros prontos (recomendado)
+Já montei os 4 quadros com os seus caminhões reais em cima de uma estrada vista de lado, todos no mesmo enquadramento. Use direto como *start/end frame* no Kling ou no Veo:
+
+| Quadro | Arquivo (GitHub) |
+|---|---|
+| K1 água | `img/video/K1-agua.jpg` |
+| K2 combustível | `img/video/K2-combustivel.jpg` |
+| K3 saneamento | `img/video/K3-saneamento.jpg` |
+| K4 agrícola | `img/video/K4-agricola.jpg` |
+| Só a estrada (fundo) | `img/video/fundo-estrada-lateral.jpg` |
+
+Se quiser que os quadros fiquem mais fotográficos antes do vídeo, passe cada um no Nano Banana com o prompt de "realismo" abaixo.
+
+**Prompt de realismo (anexe o quadro K pronto)**
 ```
-Use the reference image. Keep exactly the same truck, same tank, same side camera angle, same scale and position.
-Place the truck driving on a straight dark asphalt road with a white dashed center line, seen from a perfect side view, the truck facing and moving to the right.
-Environment: minimalist infinite pure white ground and soft white sky, high-key lighting, only the road is dark.
-Motion: wheels spinning with radial motion blur, slight horizontal motion blur on the road surface and ground, the truck itself sharp.
-Photorealistic automotive tracking photography, soft natural shadow under the truck, 16:9. No text, no logos.
+Use the reference image as the exact layout. Keep the truck exactly as it is: same position, size, side profile, colors and details. Keep the road exactly where it is: a horizontal asphalt strip crossing the whole image from the left edge to the right edge, parallel to the truck.
+Only make it more photographic: realistic asphalt texture with fine grain, slightly worn yellow edge lines, white dashed center line as horizontal dashes, a soft natural contact shadow under the tires, subtle reflections on the tank paint, soft white minimalist environment above the road.
+Do not rotate the road, do not add perspective, no vanishing point. No text, no logos.
 ```
 
-**K2 — combustível andando** · anexe REF-COMB e K1
+### Se preferir gerar do zero (prompts corrigidos)
+
+**Passo A — primeiro o fundo (estrada de lado, sem caminhão)**
 ```
-Use both reference images. Same scene, road, camera and position as the second image (driving shot), but the tank is the yellow fuel tank from the first image. Everything else identical: same cab, chassis, wheels, motion blur, white environment. Photorealistic, 16:9. No text, no logos.
+Photorealistic SIDE VIEW of an empty two-lane asphalt road, camera at 1.5 m height looking perpendicular to the road (90° to the direction of travel).
+The road is seen from its side: it appears as a horizontal strip that crosses the entire image from the left edge to the right edge, occupying the lower third of the frame.
+The far edge of the road (yellow line) is a straight horizontal line; the white dashed center line runs horizontally across the image as a row of short horizontal dashes; the near edge (yellow line) is another horizontal line closer to the bottom of the frame.
+NO vanishing point, the road does NOT go toward the horizon, NO perspective lines converging. Behind the road: a seamless pure white minimalist world, soft high-key light. 16:9, 1920x1080. No vehicles, no text.
 ```
 
-**K3 — saneamento andando** · anexe REF-SAN e K1 (mesmo texto do K2, trocando *"yellow fuel tank"* por *"sewer vacuum tank with orange suction hoses"*)
+**Passo B — K1 água (anexe REF-ÁGUA + o fundo do passo A)**
+```
+Image 1 is the truck, image 2 is the road. Place the truck from image 1 ON the road from image 2, keeping the road exactly as it is (horizontal, parallel to the truck, crossing the frame from left to right).
+The truck is in perfect side profile, facing and driving to the RIGHT, parallel to the road. All six tires rest on the asphalt of the far lane, just above the white dashed center line; the dashed line is visible in front of the wheels.
+Truck about 75% of the image width, centered. Soft contact shadow under the tires. Wheels with radial motion blur (spinning), slight horizontal motion blur on the asphalt only, truck sharp.
+Photorealistic tracking photography, 16:9. Do not change the truck. No text, no logos.
+```
 
-**K4 — agrícola andando** · anexe REF-AGRO e K1 (mesmo texto do K2, trocando por *"dark green agricultural water tank with the red water cannon on top"*)
+**K2, K3, K4** — anexe a nova referência do tanque (REF-COMB, REF-SAN, REF-AGRO) + o **K1 pronto**:
+```
+Image 1 is the new tank version of the truck, image 2 is the previous keyframe. Keep EVERYTHING from image 2 identical — the road (horizontal strip, parallel to the truck), the camera, the truck position, cab, chassis, wheels and motion blur — and only replace the tank body with the [yellow fuel tank / white-and-green sewer vacuum tank with orange hoses / dark green agricultural tank with red water cannon] from image 1.
+Do not move the camera, do not rotate the road. No text, no logos.
+```
 
 ### Vídeo (3 clipes: K1→K2, K2→K3, K3→K4)
 ```
-Side tracking shot moving at the same speed as the truck, which drives steadily to the right on a straight asphalt road in a minimalist white world.
-The camera stays locked on the truck; the road and the white dashed line stream from right to left; the wheels spin realistically.
-Midway, a bright line of light sweeps over the tank from the rear to the front and the tank smoothly transforms into the tank of the end frame — the paint, shape and equipment morph cleanly while the cab, chassis and wheels stay exactly the same.
-Realistic suspension movement, subtle body vibration, cinematic, photorealistic, smooth, 5 seconds.
+Locked side tracking shot: the camera moves sideways at exactly the same speed as the truck, so the truck stays fixed in the center of the frame, in perfect side profile, driving to the right.
+The road is a horizontal strip parallel to the truck: the asphalt texture and the white dashed center line stream from right to left under the truck; the wheels spin realistically in the driving direction.
+Midway, a bright line of light sweeps over the tank from the rear to the front and the tank changes into the tank of the end frame like a paint wipe — the cab, chassis, wheels and road stay exactly the same.
+Realistic suspension movement, subtle body vibration, no camera rotation, no perspective change, photorealistic, smooth, 5 seconds.
 ```
-> Dica: se a IA deformar o caminhão na troca, peça *"the transformation happens like a paint wipe from rear to front"* em vez de *"morph"*.
+> Se a IA mudar o ângulo da estrada no meio do vídeo, acrescente no fim: *"the road must remain a horizontal strip parallel to the truck during the whole clip"*.
 
 ---
 
