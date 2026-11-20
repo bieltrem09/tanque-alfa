@@ -22,6 +22,7 @@ export type RealAssets = {
   lateral: (Lateral | null)[];
   topo: RealImg | null;
   agua: string | null;
+  filme: string | null;
   estradaReta: RealImg | null;
   estradaPerspectiva: (RealImg & { vx: number; vy: number }) | null;
   estradaCurva: (RealImg & { pts: [number, number][]; roadW: number }) | null;
@@ -92,6 +93,7 @@ export async function getRealAssets(): Promise<RealAssets> {
     lateral,
     topo,
     agua: video("agua-loop"),
+    filme: video("filme-fabrica"),
     estradaReta: reta,
     estradaPerspectiva: persp ? { ...persp, vx: meta.perspectiva?.vx ?? 0.5, vy: meta.perspectiva?.vy ?? 0.45 } : null,
     estradaCurva: curva && meta.curva ? { ...curva, ...meta.curva } : null,

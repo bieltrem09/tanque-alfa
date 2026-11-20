@@ -7,6 +7,8 @@ import Clientes from "@/components/sections/Clientes";
 import Atendimento from "@/components/sections/Atendimento";
 import CtaContato from "@/components/sections/CtaContato";
 import Reveals from "@/components/ui/Reveals";
+import TankBlueprint from "@/components/sections/TankBlueprint";
+import VideoScrub from "@/components/sections/VideoScrub";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { tanques } from "@/content/tanques";
@@ -21,7 +23,9 @@ export default async function Home() {
       <Reveals />
       <Hero />
       <FactoryScene real={real} />
+      {real.filme && <VideoScrub src={real.filme} />}
       <Clientes />
+      <TankBlueprint chassi={real.montagem?.chassi.src ?? null} real={real.lateral[0]?.src ?? null} />
       <div id="tanques">
         {destaque.map((t, i) => <ProductLine key={t.slug} t={t} dark={i % 2 === 0} flip={i % 2 === 1} video={real.arquitetura[t.slug]} produto={real.produto[t.slug]} frames={real.arquiteturaQuadros[t.slug]} />)}
         <section aria-label="Outras linhas" className="bg-ink py-16 text-white">

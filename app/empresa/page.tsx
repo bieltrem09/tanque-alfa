@@ -7,6 +7,8 @@ import CtaContato from "@/components/sections/CtaContato";
 import Reveals from "@/components/ui/Reveals";
 import SplitHeading from "@/components/ui/SplitHeading";
 import { InmetroSeal } from "@/components/sections/Normas";
+import TankBlueprint from "@/components/sections/TankBlueprint";
+import { getRealAssets } from "@/lib/realAssets";
 
 export const metadata: Metadata = {
   title: "A fábrica",
@@ -14,7 +16,8 @@ export const metadata: Metadata = {
   alternates: { canonical: "/empresa/" },
 };
 
-export default function EmpresaPage() {
+export default async function EmpresaPage() {
+  const real = await getRealAssets();
   return (
     <>
       <Reveals />
@@ -56,6 +59,7 @@ export default function EmpresaPage() {
         </div>
       </section>
 
+      <TankBlueprint chassi={real.montagem?.chassi.src ?? null} real={real.lateral[0]?.src ?? null} />
       <Numbers />
 
       <section id="normas" aria-labelledby="normas-title" className="bg-ink py-20 text-white md:py-28">
