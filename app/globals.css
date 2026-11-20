@@ -159,3 +159,7 @@ body {
   padding-bottom: 0.12em;
   margin-bottom: -0.12em;
 }
+
+/* caminhão parado com motor ligado: vibração mínima (desligada em reduced motion) */
+@keyframes truck-idle { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-0.12%); } }
+.truck-idle { animation: truck-idle 0.45s ease-in-out infinite; }

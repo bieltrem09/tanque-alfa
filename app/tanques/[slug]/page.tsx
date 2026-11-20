@@ -60,7 +60,7 @@ export default async function TanquePage({ params }: { params: Promise<{ slug: s
         </div>
       </section>
 
-      <ProductLine t={t} dark showLink={false} video={real.arquitetura[t.slug]} produto={real.produto[t.slug]} />
+      <ProductLine t={t} dark showLink={false} video={real.arquitetura[t.slug]} produto={real.produto[t.slug]} frames={real.arquiteturaQuadros[t.slug]} />
 
       <section aria-labelledby="galeria-produto" className="bg-paper py-20 md:py-28">
         <div className="mx-auto max-w-[1400px] px-4 md:px-8">

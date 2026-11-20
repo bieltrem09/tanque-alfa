@@ -12,6 +12,7 @@ export const metadata: Metadata = {
 };
 
 const grupos = [
+  { titulo: "Linha Alfa em estúdio", bases: ["estudio-agua", "estudio-combustivel", "estudio-saneamento", "estudio-agricola", "estudio-agua-projeto", "estudio-combustivel-projeto", "estudio-maquete"] },
   { titulo: "Combustível e óleo", bases: ["combustivel", "oleo"] },
   { titulo: "Água", bases: ["agua"] },
   { titulo: "Saneamento", bases: ["saneamento"] },
@@ -28,7 +29,7 @@ export default function GaleriaPage() {
         <section key={g.titulo} aria-labelledby={`g-${i}`} className={`${i % 2 ? "bg-ink text-white" : "bg-paper"} py-16 md:py-24`}>
           <div className="mx-auto max-w-[1400px] px-4 md:px-8">
             <h2 id={`g-${i}`} className="display mb-10 text-[clamp(40px,5vw,80px)]">{g.titulo}</h2>
-            <Gallery fotos={nomes.filter((n) => g.bases.includes(n.replace(/^tanques_/, "").replace(/\d+$/, ""))).map(foto)} />
+            <Gallery fotos={nomes.filter((n) => g.bases.includes(n) || g.bases.includes(n.replace(/^tanques_/, "").replace(/\d+$/, ""))).map(foto)} />
           </div>
         </section>
       ))}

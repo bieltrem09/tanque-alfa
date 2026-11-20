@@ -23,7 +23,7 @@ export default async function Home() {
       <FactoryScene real={real} />
       <Clientes />
       <div id="tanques">
-        {destaque.map((t, i) => <ProductLine key={t.slug} t={t} dark={i % 2 === 0} flip={i % 2 === 1} video={real.arquitetura[t.slug]} produto={real.produto[t.slug]} />)}
+        {destaque.map((t, i) => <ProductLine key={t.slug} t={t} dark={i % 2 === 0} flip={i % 2 === 1} video={real.arquitetura[t.slug]} produto={real.produto[t.slug]} frames={real.arquiteturaQuadros[t.slug]} />)}
         <section aria-label="Outras linhas" className="bg-ink py-16 text-white">
           <div className="mx-auto flex max-w-[1400px] flex-col gap-6 px-4 md:flex-row md:items-center md:justify-between md:px-8">
             <p className="display text-[clamp(32px,4vw,56px)]">Também fabricamos</p>

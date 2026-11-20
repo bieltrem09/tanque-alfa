@@ -38,6 +38,11 @@ PNG e JPG são convertidos para WebP automaticamente antes do build (`scripts/op
 As fotos atuais foram ampliadas 2× com IA (Real-ESRGAN) para ficarem nítidas. Os recortes sem fundo
 e os traços técnicos (`public/img/arquitetura/*-linhas.webp`) foram gerados a partir delas.
 
+As imagens geradas por IA (pasta `img/` do repositório) foram ampliadas 2×, receberam ajuste de cor
+(saturação, contraste e nitidez) e foram recortadas sem fundo. A geometria usada pela animação
+(posição das rodas que giram, ponto do gancho, traçado da estrada em curva) fica em `content/cena-real.json`.
+Se você trocar uma dessas imagens por outra com enquadramento diferente, esses números precisam ser refeitos.
+
 ## Hospedar
 
 **Vercel:** importe o repositório em vercel.com/new. Ele detecta Next.js e usa `npm run build`; com `output: "export"` o resultado é estático.

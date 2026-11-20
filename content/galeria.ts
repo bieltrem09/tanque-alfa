@@ -1,5 +1,12 @@
 // Legendas das fotos. O nome do arquivo está em public/img/fotos/<nome>.webp
 export const legendas: Record<string, string> = {
+  "estudio-agua": "Caminhão-pipa Alfa branco e azul em estúdio, vista lateral",
+  "estudio-combustivel": "Tanque de combustível Alfa amarelo em estúdio, vista lateral",
+  "estudio-saneamento": "Tanque de saneamento Alfa com mangotes laterais em estúdio",
+  "estudio-agricola": "Tanque agrícola Alfa verde com canhão de água em estúdio",
+  "estudio-agua-projeto": "Tanque de água Alfa com a cabine em desenho técnico",
+  "estudio-combustivel-projeto": "Tanque de combustível Alfa com a cabine em desenho técnico",
+  "estudio-maquete": "Maquete do caminhão-tanque Alfa sobre as plantas do projeto",
   agua01: "Caminhão-pipa verde com canhão de água e passarela",
   agua03: "Tanque verde para água com guarda-corpo",
   agua4: "Detalhe da traseira e mangote de um tanque de água",

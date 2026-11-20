@@ -6,9 +6,9 @@ import { useRef } from "react";
 import { gsap, useGSAP, reducedMotion } from "@/lib/gsap";
 
 type Spec = { valor: string; rotulo: string };
-type Props = { slug: string; nome: string; specs: Spec[]; photo: string; lineart: string | null; video: string | null; dark?: boolean };
+type Props = { slug: string; nome: string; specs: Spec[]; photo: string; lineart: string | null; video: string | null; frames?: { inicio: string; fim: string } | null; dark?: boolean };
 
-export default function TankArchitecture({ slug, nome, specs, photo, lineart, video, dark = true }: Props) {
+export default function TankArchitecture({ slug, nome, specs, photo, lineart, video, frames = null, dark = true }: Props) {
   const ref = useRef<HTMLDivElement>(null);
 
   useGSAP(() => {
@@ -27,6 +27,16 @@ export default function TankArchitecture({ slug, nome, specs, photo, lineart, vi
         tl.to(seek, { t: v.duration - 0.05, duration: 1, onUpdate: () => { v.currentTime = seek.t; } }, 0);
       };
       v.readyState >= 1 ? setup() : v.addEventListener("loadedmetadata", setup, { once: true });
+    } else if (frames) {
+      // wireframe sobre as plantas → caminhão real: varredura de baixo para cima com luz
+      gsap.set(q("[data-fim]"), { clipPath: "inset(100% 0 0 0)" });
+      gsap.set(q("[data-scan]"), { autoAlpha: 0 });
+      tl.fromTo(q("[data-inicio]"), { scale: 1.06 }, { scale: 1, duration: 1 }, 0)
+        .fromTo(q("[data-fim]"), { scale: 1.06 }, { scale: 1, duration: 1 }, 0)
+        .to(q("[data-scan]"), { autoAlpha: 1, duration: 0.05 }, 0.25)
+        .fromTo(q("[data-scan]"), { top: "100%" }, { top: "0%", duration: 0.55, ease: "power1.inOut" }, 0.25)
+        .to(q("[data-fim]"), { clipPath: "inset(0% 0 0 0)", duration: 0.55, ease: "power1.inOut" }, 0.25)
+        .to(q("[data-scan]"), { autoAlpha: 0, duration: 0.05 }, 0.8);
     } else {
       gsap.set(q("[data-lines]"), { clipPath: "inset(0 100% 0 0)" });
       gsap.set(q("[data-photo]"), { clipPath: "inset(100% 0 0 0)" });
@@ -49,7 +59,16 @@ export default function TankArchitecture({ slug, nome, specs, photo, lineart, vi
       <div aria-hidden="true" className="blueprint-grid absolute inset-0 opacity-60" />
       <div aria-hidden="true" className={`absolute inset-3 rounded-xl border ${line}`} />
       <div className={`relative grid aspect-[16/10] place-items-center px-[6%] pb-[13%] pt-[8%] md:aspect-[16/9]`}>
-        {video ? (
+        {frames && !video ? (
+          <div className="absolute inset-0 overflow-hidden">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={frames.inicio} alt="" aria-hidden="true" data-inicio className="absolute inset-0 h-full w-full object-cover" />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={frames.fim} alt={`${nome}: do projeto em wireframe ao caminhão real`} data-fim className="absolute inset-0 h-full w-full object-cover" />
+            <div data-scan aria-hidden="true" className="pointer-events-none absolute inset-x-0 z-30 h-[3px] -translate-y-1/2 bg-accent shadow-[0_0_28px_8px_rgba(255,196,0,.55)]" />
+            <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-r from-black/45 via-transparent to-transparent" />
+          </div>
+        ) : video ? (
           <video src={video} muted playsInline preload="auto" aria-label={`Animação: ${nome} do projeto ao tanque real`} className="absolute inset-0 h-full w-full object-cover" />
         ) : (
           <div className="relative w-full">
