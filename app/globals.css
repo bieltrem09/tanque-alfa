@@ -163,11 +163,3 @@ body {
 /* caminhão parado com motor ligado: vibração mínima (desligada em reduced motion) */
 @keyframes truck-idle { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-0.12%); } }
 .truck-idle { animation: truck-idle 0.45s ease-in-out infinite; }
-
-/* HERO líquido: ondas em loop (deslocam exatamente um período) e bolhas subindo */
-@keyframes liq-move { from { transform: translateX(0); } to { transform: translateX(-1000px); } }
-.liq-wave { animation: liq-move 5.5s linear infinite; }
-.liq-wave-slow { animation: liq-move 9s linear infinite reverse; }
-@keyframes liq-bubble { 0% { transform: translateY(0); opacity: 0; } 15% { opacity: .9; } 100% { transform: translateY(-210px); opacity: 0; } }
-.liq-bubbles circle { animation: liq-bubble 4.2s ease-in infinite; }
-.liq-bubbles circle:nth-child(odd) { animation-duration: 5.6s; }

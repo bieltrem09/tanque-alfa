@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRef } from "react";
 import { gsap, SplitText, useGSAP, reducedMotion } from "@/lib/gsap";
 import Drop from "@/components/ui/Drop";
+import Road from "@/components/ui/Road";
 import { READY_EVENT } from "./Preloader";
 
 type Props = { label: string; title: string; subtitle?: string; image?: string; imageAlt?: string; dropColor?: string; cutout?: boolean };
@@ -27,7 +28,7 @@ export default function PageHero({ label, title, subtitle, image, imageAlt = "",
   return (
     <section ref={ref} className="hero-bg grain relative isolate overflow-hidden text-white">
       <div aria-hidden="true" className="display pointer-events-none absolute -right-[4vw] top-8 -z-10 select-none whitespace-nowrap text-[28vw] leading-[.8] text-white/[.08]">ALFA</div>
-      <div className={`mx-auto grid max-w-[1400px] items-center gap-8 px-4 pb-20 pt-32 md:px-8 md:pt-40 ${image ? "lg:grid-cols-[1fr_1.1fr]" : ""}`}>
+      <div className={`mx-auto grid max-w-[1400px] items-center gap-8 px-4 pb-28 pt-36 md:px-8 md:pt-44 ${image ? "lg:grid-cols-[1fr_1.1fr]" : ""}`}>
         <div>
           <p className="label label-slash text-accent">{label}</p>
           <h1 className="display mt-4 text-[clamp(56px,9vw,150px)]">{title}</h1>
@@ -44,6 +45,7 @@ export default function PageHero({ label, title, subtitle, image, imageAlt = "",
           </div>
         )}
       </div>
+      <div className="absolute inset-x-0 bottom-0"><Road height={52} /></div>
     </section>
   );
 }

@@ -61,7 +61,7 @@ export default function PageTransition() {
 
   return (
     <div ref={ref} aria-hidden="true" className="hero-bg fixed inset-0 z-[150] hidden place-items-center">
-      <Image src="/img/logo-alfa-hd.webp" alt="" width={640} height={223} className="h-16 w-auto" />
+      <Image src="/img/logo-alfa.png" alt="" width={253} height={88} className="h-16 w-auto rounded-lg" />
     </div>
   );
 }
