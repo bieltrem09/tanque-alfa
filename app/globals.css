@@ -62,7 +62,7 @@ body {
   font-weight: 400;
 }
 /* Linhas com acento em caixa alta precisam de respiro com line-height baixo */
-.display .accent-line { padding-top: 0.14em; display: block; }
+.display .accent-line { padding-top: 0.24em; display: block; }
 
 .label {
   font-family: var(--font-ui);
