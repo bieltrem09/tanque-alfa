@@ -3,9 +3,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
-import { Phone, ChevronRight, Menu, X } from "lucide-react";
+import { ChevronRight, Menu, X } from "lucide-react";
 import { contato, nav, whatsappLink } from "@/content/site";
-import { WhatsAppIcon } from "./Icons";
 import { gsap, reducedMotion } from "@/lib/gsap";
 
 export default function Header() {
@@ -54,19 +53,9 @@ export default function Header() {
         className={`fixed inset-x-0 top-0 z-[80] text-white transition-transform duration-500 ease-[cubic-bezier(.16,1,.3,1)] ${hidden && !open ? "-translate-y-full" : "translate-y-0"}`}
       >
         <div className={`transition-colors duration-300 ${solid ? "bg-deep/90 backdrop-blur-md" : "bg-transparent"}`}>
-          <div className="hidden border-b border-white/10 md:block">
-            <div className="mx-auto flex h-9 max-w-[1400px] items-center justify-between px-6 text-[13px] text-white/85">
-              <span>{contato.horario}</span>
-              <div className="flex items-center gap-6">
-                <a href={contato.telefoneHref} className="flex items-center gap-1.5 hover:text-white"><Phone className="h-3.5 w-3.5" aria-hidden />{contato.telefone}</a>
-                <a href={whatsappLink()} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 hover:text-white"><WhatsAppIcon className="h-3.5 w-3.5" />{contato.whatsapp}</a>
-                <a href={`mailto:${contato.email}?subject=Trabalhe%20conosco`} className="hover:text-white">Trabalhe conosco</a>
-              </div>
-            </div>
-          </div>
-          <div className="mx-auto flex h-[68px] max-w-[1400px] items-center justify-between gap-4 px-4 md:px-6">
+          <div className="mx-auto flex h-[76px] max-w-[1400px] items-center justify-between gap-4 px-4 md:px-6">
             <Link href="/" aria-label="Tanques Alfa — início" className="shrink-0">
-              <Image src="/img/logo-alfa.png" alt="Tanques Alfa — Equipamentos Rodoviários" width={253} height={88} priority className="h-10 w-auto rounded-md ring-1 ring-white/30 md:h-11" />
+              <Image src="/img/logo-alfa-hd.webp" alt="Tanques Alfa — Equipamentos Rodoviários" width={640} height={223} priority className="h-10 w-auto md:h-12" />
             </Link>
             <nav aria-label="Principal" className="hidden lg:block">
               <ul className="flex items-center gap-1 rounded-full bg-white/10 p-1 backdrop-blur-sm ring-1 ring-white/15">

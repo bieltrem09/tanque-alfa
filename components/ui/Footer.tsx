@@ -2,7 +2,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { contato, nav, whatsappLink } from "@/content/site";
 import { tanques } from "@/content/tanques";
-import Road from "./Road";
 import { FacebookIcon, InstagramIcon, YoutubeIcon } from "./Icons";
 
 export default function Footer() {
@@ -13,10 +12,9 @@ export default function Footer() {
   ];
   return (
     <footer className="bg-ink text-white">
-      <Road height={44} />
       <div className="mx-auto grid max-w-[1400px] gap-12 px-4 py-16 md:grid-cols-2 md:px-6 lg:grid-cols-[1.3fr_1fr_1fr_1.3fr]">
         <div>
-          <Image src="/img/logo-alfa.png" alt="Tanques Alfa" width={253} height={88} className="h-12 w-auto rounded-md" />
+          <Image src="/img/logo-alfa-hd.webp" alt="Tanques Alfa" width={640} height={223} className="h-12 w-auto" />
           <p className="mt-5 max-w-sm text-white/70">
             Tanques rodoviários e estacionários fabricados sob medida em Limeira-SP. Certificada pelo INMETRO desde 2018 para produtos perigosos.
           </p>

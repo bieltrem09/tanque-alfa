@@ -36,6 +36,22 @@ export const nav = [
   { label: "Contato", href: "/contato/" },
 ];
 
+export const heroLiquido = {
+  label: "Tanques rodoviários e estacionários · Limeira-SP",
+  titulo1: "Do primeiro litro",
+  titulo2: "ao último quilômetro.",
+  texto: "Projetamos e fabricamos tanques em aço carbono para cada líquido que a sua operação transporta, com certificação INMETRO para produtos perigosos.",
+  ctaPrimario: "Pedir orçamento",
+  ctaSecundario: "Ver os tanques",
+  rolar: "Role e entre na fábrica",
+  liquidos: [
+    { slug: "agua", nome: "Água", cor: "#2AB7FF", cor2: "#0A6FD6" },
+    { slug: "combustivel", nome: "Combustível", cor: "#FFB21F", cor2: "#E07800" },
+    { slug: "saneamento", nome: "Saneamento", cor: "#5DBB7A", cor2: "#2A7A47" },
+    { slug: "agricola", nome: "Agrícola", cor: "#9BDB4D", cor2: "#4E9A1E" },
+  ],
+};
+
 export const hero = {
   linha1: "Do primeiro litro",
   linha2: "ao último",

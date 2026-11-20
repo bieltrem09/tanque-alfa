@@ -95,7 +95,16 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
 
       // 2a — Montagem
       if (has("svg [data-tank]")) tl.to(q("svg [data-tank]"), { y: 0, duration: 1.6, ease: "power2.inOut" }, 0);
-      if (has("[data-real-tank]")) tl.to(q("[data-real-tank]"), { yPercent: 0, duration: 1.6, ease: "power2.inOut" }, 0);
+      if (has("[data-real-tank]")) {
+        const g = real.montagem?.gancho;
+        gsap.set(q("[data-real-tank]"), { rotation: -1.6, transformOrigin: `${(g?.x ?? 0.4) * 100}% 0%` });
+        gsap.set(q("[data-tank-shadow]"), { opacity: 0.15, scaleX: 1.25 });
+        tl.to(q("[data-real-tank]"), { yPercent: 0, duration: 1.6, ease: "power2.inOut" }, 0)
+          .to(q("[data-real-tank]"), { rotation: 1.0, duration: 0.6, ease: "sine.inOut" }, 0)
+          .to(q("[data-real-tank]"), { rotation: -0.5, duration: 0.5, ease: "sine.inOut" }, 0.6)
+          .to(q("[data-real-tank]"), { rotation: 0, duration: 0.5, ease: "sine.out" }, 1.1)
+          .to(q("[data-tank-shadow]"), { opacity: 0.55, scaleX: 1, duration: 1.6, ease: "power2.in" }, 0);
+      }
       if (has("[data-cables]")) tl.to(q("[data-cables]"), { y: -320, autoAlpha: 0, duration: 0.6, ease: "power2.in" }, 1.7);
       // com fotos reais: o caminhão montado (sem as lingas) substitui a montagem
       if (photoSide) {
@@ -105,6 +114,7 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
       tl
         // 2b — Horizonte
         .to(q("[data-crane]"), { y: -120, autoAlpha: 0, duration: 0.6 }, 2.0)
+        .to(q("[data-galpao]"), { autoAlpha: 0, duration: 0.6 }, 2.0)
         .to(q("[data-cable], [data-crane]"), { autoAlpha: 0, duration: 0.3 }, 1.7)
         .to(q("[data-a-label]"), { autoAlpha: 0, duration: 0.3 }, 2.0)
         .to(q("[data-ink]"), { yPercent: 0, duration: 0.8, ease: "power2.out" }, 2.1)
@@ -199,7 +209,17 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
       <div data-stage className="relative h-[100svh] overflow-hidden motion-reduce:hidden">
         {/* Camada lateral (2a–2c) */}
         <div data-side-layer className="absolute inset-0">
-          <p data-a-label className="label label-slash absolute left-4 top-24 text-ink/70 md:left-8 md:top-32">{fabrica.label}</p>
+          {real.montagem && (
+            <div data-galpao aria-hidden="true" className="absolute inset-0">
+              {/* interior real da fábrica Alfa (Limeira) ao fundo */}
+              <img src="/img/real/galpao.webp" alt="" width={1110} height={301} className="absolute inset-x-0 top-0 h-[64%] w-full object-cover object-top opacity-70 [filter:blur(2px)_saturate(.75)_brightness(1.06)]" />
+              <div className="absolute inset-x-0 top-0 h-[64%] bg-gradient-to-b from-paper/30 via-paper/55 to-paper" />
+              {/* piso de concreto */}
+              <div className="absolute inset-x-0 bottom-0 h-[42%] bg-gradient-to-b from-[#e2e2de] to-[#cfcfca]" />
+              <div className="absolute inset-x-0 bottom-[42%] h-px bg-black/10" />
+            </div>
+          )}
+          <p data-a-label className="label label-slash absolute left-4 top-24 z-10 text-ink/70 md:left-8 md:top-32">{fabrica.label}</p>
 
           <p
             data-big
@@ -213,7 +233,9 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
             <div data-assembly className="relative">
               {real.montagem ? (
                 <>
-                  <img src={real.montagem.chassi.src} alt="" width={real.montagem.chassi.w} height={real.montagem.chassi.h} className="block h-auto w-full" />
+                  <span data-floor-shadow aria-hidden="true" className="absolute inset-x-[3%] bottom-[-3%] h-[9%] rounded-[50%] bg-black/40 blur-xl" />
+                  <span data-tank-shadow aria-hidden="true" className="absolute bottom-[-2%] left-[8%] h-[7%] w-[56%] rounded-[50%] bg-black/30 blur-lg" />
+                  <img src={real.montagem.chassi.src} alt="" width={real.montagem.chassi.w} height={real.montagem.chassi.h} className="relative block h-auto w-full" />
                   <div data-real-tank className="absolute inset-0">
                     {real.montagem.gancho && (
                       <span data-cable aria-hidden="true" className="absolute w-[3px] -translate-x-1/2 bg-[#2b2c30]" style={{ left: `${real.montagem.gancho.x * 100}%`, bottom: `${(1 - real.montagem.gancho.y) * 100 - 0.5}%`, height: `${-LIFT * 0.85}%` }} />
