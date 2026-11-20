@@ -3,17 +3,20 @@ import Link from "next/link";
 import Image from "next/image";
 import { ChevronRight } from "lucide-react";
 import type { Tanque } from "@/content/tanques";
-import Blueprint from "@/components/ui/Blueprint";
+import TankArchitecture from "@/components/ui/TankArchitecture";
+import type { RealImg } from "@/lib/realAssets";
+import { lineartFor } from "@/content/arquitetura";
 import Accordion from "@/components/ui/Accordion";
 import SplitHeading from "@/components/ui/SplitHeading";
 
-export default function ProductLine({ t, dark, flip = false, showLink = true, headingLevel = "h2" }: { t: Tanque; dark: boolean; flip?: boolean; showLink?: boolean; headingLevel?: "h2" | "h3" }) {
+export default function ProductLine({ t, dark, flip = false, showLink = true, headingLevel = "h2", video = null, produto = null }: { t: Tanque; dark: boolean; flip?: boolean; showLink?: boolean; headingLevel?: "h2" | "h3"; video?: string | null; produto?: RealImg | null }) {
   const isCut = t.recorte.includes("/recortes/");
+  const foto = produto?.src ?? t.recorte;
   return (
     <section aria-labelledby={`linha-${t.slug}`} className={`relative overflow-hidden ${dark ? "bg-ink text-white" : "bg-paper text-ink"}`}>
       <div className="mx-auto max-w-[1400px] px-4 pt-20 md:px-8 md:pt-28">
         <div className={`h-px w-full ${dark ? "bg-white/15" : "bg-ink/15"}`} />
-        <div className="mt-10 grid gap-8 md:grid-cols-[1fr_2fr] md:items-end">
+        <div className="mt-10 grid gap-8 md:grid-cols-[1fr_1.9fr] md:items-center">
           <div>
             <p className={`label label-slash ${dark ? "text-accent" : "text-primary"}`}>{t.nome}</p>
             <SplitHeading as={headingLevel} className="display mt-4 text-[clamp(44px,6vw,96px)]">
@@ -21,7 +24,7 @@ export default function ProductLine({ t, dark, flip = false, showLink = true, he
             </SplitHeading>
             <p className={`mt-4 max-w-md ${dark ? "text-white/75" : "text-ink/75"}`}>{t.resumo}</p>
           </div>
-          <Blueprint specs={t.specs} dark={dark} />
+          <TankArchitecture slug={t.slug} nome={t.nome} specs={t.specs} photo={t.recorte} lineart={lineartFor(t.slug)} video={video} dark={dark} />
         </div>
       </div>
 
@@ -29,10 +32,10 @@ export default function ProductLine({ t, dark, flip = false, showLink = true, he
         <div className={`mx-auto grid max-w-[1400px] items-center gap-10 px-4 py-16 md:grid-cols-2 md:px-8 md:py-24`}>
           <div className={`relative ${flip ? "md:order-2" : ""}`}>
             <Image
-              src={t.recorte}
+              src={foto}
               alt={`${t.nome} fabricado pela Tanques Alfa`}
-              width={800}
-              height={460}
+              width={produto?.w ?? 1600}
+              height={produto?.h ?? 900}
               sizes="(min-width: 768px) 55vw, 100vw"
               className={`relative h-auto w-[115%] max-w-none ${flip ? "md:ml-0" : "md:-ml-[18%]"} ${isCut ? "drop-shadow-[0_30px_30px_rgba(0,0,0,.35)]" : "rounded-2xl"}`}
               data-reveal

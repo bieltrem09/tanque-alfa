@@ -33,4 +33,8 @@ export const legendas: Record<string, string> = {
   tanques_saneamento2: "Traseira de tanque de saneamento com tampa de descarga",
   tanques_saneamento3: "Mangotes e conexões de um tanque de saneamento",
 };
-export const foto = (nome: string) => ({ src: `/img/fotos/${nome}.webp`, alt: legendas[nome] ?? "Tanque fabricado pela Tanques Alfa" });
+export const foto = (nome: string) => ({
+  src: `/img/fotos/${nome}.webp`,
+  thumb: `/img/fotos/thumb/${nome}.webp`,
+  alt: legendas[nome] ?? "Tanque fabricado pela Tanques Alfa",
+});

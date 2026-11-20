@@ -32,7 +32,7 @@ export default function EmpresaPage() {
 
       <section aria-labelledby="pessoas" className="bg-ink py-20 text-white md:py-28">
         <div className="mx-auto grid max-w-[1400px] items-center gap-12 px-4 md:grid-cols-2 md:px-8">
-          <Image src="/img/fotos/tanques_combustivel4.webp" alt="Detalhe das válvulas de um tanque de combustível fabricado pela Alfa" width={555} height={377} className="h-auto w-full rounded-3xl" data-reveal />
+          <Image src="/img/fotos/tanques_combustivel4.webp" alt="Detalhe das válvulas de um tanque de combustível fabricado pela Alfa" width={1110} height={754} className="h-auto w-full rounded-3xl" data-reveal />
           <div>
             <p className="label label-slash text-accent">Pessoas</p>
             <SplitHeading className="display mt-4 text-[clamp(40px,5vw,84px)]"><span id="pessoas">Solda, cálculo e desenho</span></SplitHeading>

@@ -125,8 +125,8 @@ export default function Hero({ bottom = "road" }: { bottom?: "road" | "wave" }) 
             <Image
               src="/img/recortes/hero-truck.webp"
               alt="Caminhão-tanque de combustível fabricado pela Tanques Alfa, cabine vermelha e tanque laranja"
-              width={702}
-              height={423}
+              width={1247}
+              height={836}
               priority
               sizes="(min-width: 1024px) 46vw, 92vw"
               className="relative h-auto w-full scale-[1.08] drop-shadow-[0_30px_40px_rgba(0,0,30,.45)] [transform:rotateY(-8deg)]"

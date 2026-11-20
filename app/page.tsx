@@ -10,18 +10,20 @@ import Reveals from "@/components/ui/Reveals";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { tanques } from "@/content/tanques";
+import { getRealAssets } from "@/lib/realAssets";
 
-export default function Home() {
+export default async function Home() {
+  const real = await getRealAssets();
   const destaque = ["combustivel", "agua", "saneamento"].map((s) => tanques.find((t) => t.slug === s)!);
   const outros = tanques.filter((t) => !destaque.includes(t));
   return (
     <>
       <Reveals />
       <Hero />
-      <FactoryScene />
+      <FactoryScene real={real} />
       <Clientes />
       <div id="tanques">
-        {destaque.map((t, i) => <ProductLine key={t.slug} t={t} dark={i % 2 === 0} flip={i % 2 === 1} />)}
+        {destaque.map((t, i) => <ProductLine key={t.slug} t={t} dark={i % 2 === 0} flip={i % 2 === 1} video={real.arquitetura[t.slug]} produto={real.produto[t.slug]} />)}
         <section aria-label="Outras linhas" className="bg-ink py-16 text-white">
           <div className="mx-auto flex max-w-[1400px] flex-col gap-6 px-4 md:flex-row md:items-center md:justify-between md:px-8">
             <p className="display text-[clamp(32px,4vw,56px)]">Também fabricamos</p>

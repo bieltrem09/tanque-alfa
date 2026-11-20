@@ -15,7 +15,7 @@ export default function Atendimento() {
             <li key={a.titulo} data-reveal>
               <Link href={a.href} className="group flex h-full flex-col overflow-hidden rounded-3xl bg-white ring-1 ring-ink/10 transition-shadow duration-300 hover:shadow-[0_30px_60px_-30px_rgba(6,28,224,.45)]">
                 <div className="aspect-[16/10] overflow-hidden">
-                  <Image src={a.imagem} alt="" width={800} height={450} sizes="(min-width:768px) 33vw, 100vw" className="h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(.16,1,.3,1)] group-hover:scale-[1.06]" />
+                  <Image src={a.imagem.replace("/fotos/", "/fotos/thumb/")} alt="" width={720} height={405} sizes="(min-width:768px) 33vw, 100vw" className="h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(.16,1,.3,1)] group-hover:scale-[1.06]" />
                 </div>
                 <div className="flex flex-1 flex-col p-6 md:p-8">
                   <h3 className="ui text-base">{a.titulo}</h3>

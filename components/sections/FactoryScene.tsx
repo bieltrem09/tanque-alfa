@@ -8,6 +8,7 @@ import { fabrica } from "@/content/site";
 import { tanques } from "@/content/tanques";
 import { gsap, SplitText, useGSAP, reducedMotion } from "@/lib/gsap";
 import { TruckSide, TruckTop, SteelTopDefs } from "@/components/ui/TruckSvgs";
+import type { RealAssets } from "@/lib/realAssets";
 
 const prodIcons = [Droplets, Fuel, Cylinder, Waves, Sprout];
 const difIcons = [ShieldCheck, PencilRuler, Wrench, Factory];
@@ -16,7 +17,9 @@ const benIcons = [Gem, ClipboardCheck, Flame, CalendarCheck];
 const ROAD = "M880,-120 C880,140 700,170 700,330 C700,480 880,470 880,600 L880,1200";
 const ROUTE = "M880,-120 C880,140 700,170 700,330 C700,480 880,470 880,600";
 
-export default function FactoryScene() {
+export default function FactoryScene({ real }: { real: RealAssets }) {
+  const photoSide = !!real.lateral[0];
+  const pick = (i: number) => (real.lateral[i] ? i : 0);
   const root = useRef<HTMLElement>(null);
 
   useGSAP(() => {
@@ -30,7 +33,9 @@ export default function FactoryScene() {
       const split = SplitText.create(q("[data-final]"), { type: "lines", mask: "lines" });
 
       // estados iniciais
-      gsap.set(q("[data-tank]"), { y: -150 });
+      gsap.set(q("svg [data-tank]"), { y: -150 });
+      gsap.set(q("[data-real-tank]"), { yPercent: -62 });
+      gsap.set(q("[data-photo-paint]"), { autoAlpha: 0 });
       gsap.set(q("[data-ink]"), { yPercent: 100 });
       gsap.set(q("[data-big]"), { xPercent: 0, x: () => window.innerWidth });
       gsap.set(q("[data-hl] > *"), { yPercent: 110 });
@@ -61,8 +66,15 @@ export default function FactoryScene() {
       });
 
       // 2a — Montagem
-      tl.to(q("[data-tank]"), { y: 0, duration: 1.6, ease: "power2.inOut" }, 0)
-        .to(q("[data-cables]"), { y: -320, autoAlpha: 0, duration: 0.6, ease: "power2.in" }, 1.7)
+      tl.to(q("svg [data-tank]"), { y: 0, duration: 1.6, ease: "power2.inOut" }, 0)
+        .to(q("[data-real-tank]"), { yPercent: 0, duration: 1.6, ease: "power2.inOut" }, 0)
+        .to(q("[data-cables]"), { y: -320, autoAlpha: 0, duration: 0.6, ease: "power2.in" }, 1.7);
+      // com fotos reais: o caminhão montado (sem as lingas) substitui a montagem
+      if (photoSide) {
+        tl.to(q("[data-photo-paint='0']"), { autoAlpha: 1, duration: 0.5 }, 1.75)
+          .to(q("[data-assembly]"), { autoAlpha: 0, duration: 0.5 }, 1.75);
+      }
+      tl
         // 2b — Horizonte
         .to(q("[data-crane]"), { y: -120, autoAlpha: 0, duration: 0.6 }, 2.0)
         .to(q("[data-a-label]"), { autoAlpha: 0, duration: 0.3 }, 2.0)
@@ -87,11 +99,15 @@ export default function FactoryScene() {
           tl.to(q("[data-track]"), { x: colX(i), duration: 0.6, ease: "power2.inOut" }, at)
             .to(cols, { autoAlpha: (j: number) => (j === i ? 1 : 0.35), duration: 0.3 }, at + 0.2)
             .to(q("[data-paint]"), { opacity: (j: number) => (j === i ? 1 : 0), duration: 0.35 }, at + 0.15);
+          if (photoSide) tl.to(q("[data-photo-paint]"), { autoAlpha: (_j: number, el: HTMLElement) => (Number(el.dataset.photoPaint) === pick(i) ? 1 : 0), duration: 0.35 }, at + 0.15);
         });
         t = 4.2 + cols.length * 0.7 + 0.2;
       } else {
         // mobile: a pintura do tanque varia rapidamente; as colunas viram cards abaixo da cena
-        [1, 2, 3, 4, 0].forEach((p, k) => tl.to(q("[data-paint]"), { opacity: (j: number) => (j === p ? 1 : 0), duration: 0.2 }, 3.6 + k * 0.25));
+        [1, 2, 3, 4, 0].forEach((p, k) => {
+          tl.to(q("[data-paint]"), { opacity: (j: number) => (j === p ? 1 : 0), duration: 0.2 }, 3.6 + k * 0.25);
+          if (photoSide) tl.to(q("[data-photo-paint]"), { autoAlpha: (_j: number, el: HTMLElement) => (Number(el.dataset.photoPaint) === pick(p) ? 1 : 0), duration: 0.2 }, 3.6 + k * 0.25);
+        });
         t = 5.0;
       }
 
@@ -150,7 +166,22 @@ export default function FactoryScene() {
           </p>
 
           <div data-side className="absolute bottom-[45%] left-1/2 z-10 w-[min(92vw,880px,calc(55svh*1.42))] -translate-x-1/2 origin-bottom">
-            <TruckSide />
+            <div data-assembly className="relative">
+              {real.montagem ? (
+                <>
+                  <img data-crane src={real.montagem.ponte.src} alt="" width={real.montagem.ponte.w} height={real.montagem.ponte.h} className="pointer-events-none absolute bottom-[calc(100%+min(18svh,160px))] left-1/2 w-[220vw] max-w-none -translate-x-1/2" />
+                  <img src={real.montagem.chassi.src} alt="" width={real.montagem.chassi.w} height={real.montagem.chassi.h} className="block h-auto w-full" />
+                  <img data-real-tank src={real.montagem.tanque.src} alt="" width={real.montagem.tanque.w} height={real.montagem.tanque.h} className="absolute inset-0 h-full w-full object-contain" />
+                </>
+              ) : (
+                <TruckSide />
+              )}
+            </div>
+            {real.lateral.map((im, i) =>
+              im ? (
+                <img key={i} data-photo-paint={i} src={im.src} alt="" width={im.w} height={im.h} loading="lazy" className="invisible absolute bottom-0 left-0 h-auto w-full" />
+              ) : null,
+            )}
           </div>
 
           <div data-ink className="absolute inset-x-0 bottom-0 z-20 h-[45%] bg-ink text-white">
@@ -191,7 +222,9 @@ export default function FactoryScene() {
               <path data-road d={ROAD} fill="none" stroke="#0B0B0C" strokeWidth="150" />
               <path d={ROAD} fill="none" stroke="#fff" strokeWidth="4" strokeDasharray="34 30" opacity=".75" />
               <path data-route d={ROUTE} fill="none" stroke="none" />
-              <g data-truck-top><TruckTop /></g>
+              <g data-truck-top>
+                {real.topo ? <image href={real.topo.src} x={-150} y={(-150 * real.topo.h) / real.topo.w} width={300} height={(300 * real.topo.h) / real.topo.w} /> : <TruckTop />}
+              </g>
             </g>
           </svg>
 
@@ -225,12 +258,17 @@ export default function FactoryScene() {
           {/* 2e — água */}
           <div data-water className="absolute left-1/2 top-[60%] h-[260vmax] w-[260vmax] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-full">
             <div className="water absolute inset-0" />
+            {real.agua && <video src={real.agua} autoPlay muted loop playsInline preload="none" aria-hidden="true" className="absolute left-1/2 top-1/2 h-[100svh] w-[100vw] -translate-x-1/2 -translate-y-1/2 object-cover" />}
           </div>
           <div className="pointer-events-none absolute inset-0 grid place-items-center">
-            <svg data-water-truck viewBox="-140 -50 280 100" className="w-[min(60vw,420px)] -rotate-90 md:rotate-0" aria-hidden="true">
+            {real.topo ? (
+              <img data-water-truck src={real.topo.src} alt="" width={real.topo.w} height={real.topo.h} className="w-[min(60vw,460px)] -rotate-90 md:rotate-0" />
+            ) : (
+              <svg data-water-truck viewBox="-140 -50 280 100" className="w-[min(60vw,420px)] -rotate-90 md:rotate-0" aria-hidden="true">
               <defs><SteelTopDefs /></defs>
               <TruckTop id="truck-top-water" />
             </svg>
+            )}
           </div>
           <ul className="pointer-events-none absolute inset-0 mx-auto grid max-w-[1200px] grid-cols-2 content-between gap-x-4 px-4 py-24 text-white md:content-center md:gap-x-[34vw] md:gap-y-[30vh] md:px-8">
             {fabrica.beneficios.map((b, i) => {

@@ -9,6 +9,7 @@ import CtaContato from "@/components/sections/CtaContato";
 import Gallery from "@/components/ui/Gallery";
 import Reveals from "@/components/ui/Reveals";
 import SplitHeading from "@/components/ui/SplitHeading";
+import { getRealAssets } from "@/lib/realAssets";
 
 export const dynamicParams = false;
 export function generateStaticParams() {
@@ -28,6 +29,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 export default async function TanquePage({ params }: { params: Promise<{ slug: string }> }) {
   const t = getTanque((await params).slug);
   if (!t) notFound();
+  const real = await getRealAssets();
   const productLd = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -58,7 +60,7 @@ export default async function TanquePage({ params }: { params: Promise<{ slug: s
         </div>
       </section>
 
-      <ProductLine t={t} dark showLink={false} />
+      <ProductLine t={t} dark showLink={false} video={real.arquitetura[t.slug]} produto={real.produto[t.slug]} />
 
       <section aria-labelledby="galeria-produto" className="bg-paper py-20 md:py-28">
         <div className="mx-auto max-w-[1400px] px-4 md:px-8">

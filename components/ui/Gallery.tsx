@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 
-export type Foto = { src: string; alt: string };
+export type Foto = { src: string; thumb?: string; alt: string };
 
 export default function Gallery({ fotos }: { fotos: Foto[] }) {
   const [idx, setIdx] = useState<number | null>(null);
@@ -36,7 +36,7 @@ export default function Gallery({ fotos }: { fotos: Foto[] }) {
         {fotos.map((f, i) => (
           <li key={f.src} data-reveal>
             <button type="button" onClick={(e) => open(i, e.currentTarget)} className="group block w-full overflow-hidden rounded-2xl" aria-label={`Ampliar foto: ${f.alt}`}>
-              <Image src={f.src} alt={f.alt} width={800} height={450} sizes="(min-width:1024px) 25vw, (min-width:768px) 33vw, 50vw" className="aspect-[4/3] h-auto w-full object-cover transition-transform duration-700 ease-[cubic-bezier(.16,1,.3,1)] group-hover:scale-[1.06]" />
+              <Image src={f.thumb ?? f.src} alt={f.alt} width={720} height={405} loading="lazy" sizes="(min-width:1024px) 25vw, (min-width:768px) 33vw, 50vw" className="aspect-[4/3] h-auto w-full object-cover transition-transform duration-700 ease-[cubic-bezier(.16,1,.3,1)] group-hover:scale-[1.06]" />
             </button>
           </li>
         ))}

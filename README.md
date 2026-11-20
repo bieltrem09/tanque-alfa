@@ -29,6 +29,15 @@ Todo o texto fica em `content/`. Não é preciso mexer nos componentes.
 - Logos de clientes: `public/img/clientes/`.
 - Veja `ASSETS.md` para a lista de imagens recomendadas em alta resolução, com prompts de IA.
 
+### Imagens e vídeos reais das cenas animadas
+
+Coloque os arquivos em `public/img/real/` com os nomes de `PROMPTS-IMAGENS.md` (seção 8) e faça o build.
+O site **detecta sozinho** o que existe. Cada foto real substitui a ilustração vetorial da sua cena e o que faltar continua como está.
+PNG e JPG são convertidos para WebP automaticamente antes do build (`scripts/optimize-real.mjs`).
+
+As fotos atuais foram ampliadas 2× com IA (Real-ESRGAN) para ficarem nítidas. Os recortes sem fundo
+e os traços técnicos (`public/img/arquitetura/*-linhas.webp`) foram gerados a partir delas.
+
 ## Hospedar
 
 **Vercel:** importe o repositório em vercel.com/new. Ele detecta Next.js e usa `npm run build`; com `output: "export"` o resultado é estático.
