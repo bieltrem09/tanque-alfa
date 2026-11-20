@@ -118,8 +118,6 @@ export default function Header() {
           <Link href="/contato/" onClick={() => setOpen(false)} className="ui inline-flex items-center gap-1 rounded-full bg-white px-6 py-4 text-sm font-extrabold text-primary">
             Pedir orçamento <ChevronRight className="h-4 w-4" aria-hidden />
           </Link>
-          <p><a href={contato.telefoneHref}>{contato.telefone}</a> · <a href={whatsappLink()}>{contato.whatsapp}</a></p>
-          <p className="text-sm text-white/70">{contato.horario}</p>
         </div>
       </div>
     </>
