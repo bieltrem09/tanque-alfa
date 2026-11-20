@@ -23,7 +23,7 @@ export default async function Home() {
       <Reveals />
       <Hero />
       <FactoryScene real={real} />
-      {real.filme && <VideoScrub src={real.filme} poster="/img/real/filme-fabrica-poster.jpg" />}
+      {real.filme && <VideoScrub src={real.filme} />}
       <Clientes />
       <TankBlueprint chassi={real.montagem?.chassi.src ?? null} real={real.lateral[0]?.src ?? null} />
       <div id="tanques">

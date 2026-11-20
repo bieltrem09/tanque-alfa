@@ -29,14 +29,6 @@ Todo o texto fica em `content/`. Não é preciso mexer nos componentes.
 - Logos de clientes: `public/img/clientes/`.
 - Veja `ASSETS.md` para a lista de imagens recomendadas em alta resolução, com prompts de IA.
 
-### Filme do caminhão (seção com scroll)
-
-`public/img/real/filme-fabrica.mp4` (+ `.webm`) é a montagem final dos dois vídeos gerados por IA.
-O scroll controla o tempo do vídeo e os textos sincronizados (nome do tanque, legendas e final) ficam em
-`content/site.ts → filme` (tempos em segundos). A versão em alta para redes sociais está em `img/video/filme-alfa-final-1080p.mp4`.
-Para trocar o filme, gere um MP4 novo com quadros-chave frequentes (necessário para o scroll ficar suave):
-`ffmpeg -i novo.mp4 -vf scale=1280:-2 -c:v libx264 -crf 24 -g 6 -bf 0 -an -movflags +faststart public/img/real/filme-fabrica.mp4`
-
 ### Imagens e vídeos reais das cenas animadas
 
 Coloque os arquivos em `public/img/real/` com os nomes de `PROMPTS-IMAGENS.md` (seção 8) e faça o build.

@@ -159,20 +159,3 @@ export const ctaFinal = {
   titulo2: "o seu tanque?",
   texto: "Preencha os dados abaixo e a mensagem já sai pronta no WhatsApp da fábrica. Respondemos em horário comercial.",
 };
-
-// Filme do caminhão (public/img/real/filme-fabrica.mp4) — tempos em segundos do vídeo.
-export const filme = {
-  duracao: 13.2,
-  label: "Uma fábrica, quatro especialidades",
-  linhas: [
-    { nome: "Água", de: 0 },
-    { nome: "Combustível", de: 2.5 },
-    { nome: "Saneamento", de: 4.8 },
-    { nome: "Agrícola", de: 7.0 },
-  ],
-  legendas: [
-    { texto: "Pronto para a estrada.", de: 7.9, ate: 9.3 },
-    { texto: "Segurança em cada curva.", de: 9.4, ate: 11.0 },
-  ],
-  final: { de: 11.2, titulo: "Tanques Alfa", sub: "Do primeiro litro ao último quilômetro.", cta: "Pedir orçamento", cta2: "Ver os tanques" },
-};
