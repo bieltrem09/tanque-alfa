@@ -155,20 +155,6 @@ export const atendimento = [
   },
 ];
 
-// Política da Qualidade (texto oficial do site da Tanques Alfa)
-export const qualidade = {
-  titulo: "Política da Qualidade",
-  texto: "A Política da Qualidade da Tanques Alfa estabelece compromissos permanentes com a competitividade, a qualidade e a excelência de seus produtos, tendo como foco principal a satisfação de seus clientes, a qualificação de colaboradores, as parcerias e a busca constante pela melhoria contínua.",
-  compromissos: [
-    { titulo: "Competitividade", texto: "Equipamentos com o custo-benefício certo para a sua operação." },
-    { titulo: "Qualidade e excelência", texto: "Controle de materiais e soldas em todas as etapas da fabricação." },
-    { titulo: "Satisfação do cliente", texto: "O foco principal: tanque entregue como foi combinado." },
-    { titulo: "Colaboradores e parcerias", texto: "Equipe qualificada e fornecedores que dividem o mesmo padrão." },
-    { titulo: "Melhoria contínua", texto: "Atualização constante de processos, normas e equipe." },
-  ],
-  ponte: "Agora é com você: vamos fabricar o seu tanque?",
-};
-
 export const ctaFinal = {
   titulo1: "Bora fabricar",
   titulo2: "o seu tanque?",

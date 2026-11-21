@@ -167,3 +167,6 @@ body {
 /* celular do rodapé: flutuação lenta e entrada das bolhas da conversa */
 @keyframes flutua { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-14px) rotate(-0.6deg); } }
 @keyframes bolha { from { opacity: 0; transform: translateY(10px) scale(.92); } to { opacity: 1; transform: none; } }
+/* transição "tanque enchendo" */
+@keyframes onda { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@keyframes bolha-sobe { 0% { transform: translateY(0); opacity: 0; } 10% { opacity: 1; } 100% { transform: translateY(-100svh); opacity: 0; } }
