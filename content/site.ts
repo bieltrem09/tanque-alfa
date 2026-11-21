@@ -97,6 +97,7 @@ export const fabrica = {
     { titulo: "Chapa e solda certificadas", texto: "Equipe qualificada em solda, cálculo e desenho." },
     { titulo: "Entrega no prazo", texto: "Planejamento de produção com compromisso de data." },
   ],
+  porque: "Por que a Alfa",
   fechamento: "Tanques que trabalham tão duro quanto você.",
 };
 

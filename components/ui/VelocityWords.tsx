@@ -10,14 +10,17 @@ export default function VelocityWords({ words }: { words: string[] }) {
     if (reducedMotion()) return;
     const rows = gsap.utils.toArray<HTMLElement>("[data-row]", ref.current);
     const pos = rows.map(() => 0);
-    let dir = 1, visible = false;
+    let dir = 1, visible = false, cur = 0;
     const io = new IntersectionObserver(([e]) => (visible = e.isIntersecting));
     io.observe(ref.current!);
     const tick = (_t: number, dt: number) => {
       if (!visible) return;
       const v = window.__lenis?.velocity ?? 0;
       if (Math.abs(v) > 0.3) dir = v > 0 ? 1 : -1;
-      const speed = (0.035 + Math.min(Math.abs(v) * 0.012, 0.35)) * dt; // % por frame
+      // deriva lenta (~6%/s da faixa, antes ~35%/s) + empurrão suave da velocidade do scroll, com inércia
+      const target = 0.006 + Math.min(Math.abs(v) * 0.0025, 0.05);
+      cur += (target - cur) * Math.min(1, dt / 220);
+      const speed = cur * dt; // % por frame
       rows.forEach((row, k) => {
         pos[k] = gsap.utils.wrap(-50, 0, pos[k] + (k ? 1 : -1) * dir * speed);
         gsap.set(row, { xPercent: pos[k] });

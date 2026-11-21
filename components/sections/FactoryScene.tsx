@@ -11,8 +11,8 @@ import { TruckSide, TruckTop, SteelTopDefs } from "@/components/ui/TruckSvgs";
 import type { RealAssets } from "@/lib/realAssets";
 import { HeroBackdrop, HeroUI, HeroStatic } from "./HeroCeu";
 import { READY_EVENT } from "./Preloader";
+import { createTruckRoad } from "@/components/ui/truckRoad";
 
-const SEQ_N = 180, SEQ_DUR = 13.6; // quadros em public/img/real/seq (nt-d-*, nt-m-*)
 const prodIcons = [Droplets, Fuel, Cylinder, Waves, Sprout];
 const difIcons = [ShieldCheck, PencilRuler, Wrench, Factory];
 const benIcons = [Gem, ClipboardCheck, Flame, CalendarCheck];
@@ -45,12 +45,11 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
   const curva = real.estradaCurva;
   const curvaH = curva ? (1000 * curva.h) / curva.w : 1000;
   const rota = curva ? rotaDaCurva(curva, curvaH) : null;
-  const fimRota = rota ? rota[rota.length - 1] : { x: 880, y: 600 };
   const topoW = curva ? curva.roadW * 1000 * 0.42 : 0; // largura do caminhão ≈ 42% da pista
   const LIFT = -32; // quanto o tanque começa suspenso (% da altura do quadro)
   const craneBottom = 100 + (-LIFT / 100 - (real.montagem?.gancho?.y ?? 0.11)) * 100; // ponte logo acima do gancho
   const root = useRef<HTMLElement>(null);
-  const seq = useRef<{ imgs: HTMLImageElement[]; started: boolean; draw: (force?: boolean) => void }>({ imgs: [], started: false, draw: () => {} });
+  const truckRoad = useRef<ReturnType<typeof createTruckRoad> | null>(null);
   const sway = useRef({ amp: 1 }); // balanço do tanque suspenso (zera ao encaixar)
   const G = real.montagem?.gancho ?? { x: 0.4, y: 0.01 };
 
@@ -60,26 +59,11 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
     const loadDeferred = () => {
       q("[data-defer-src]").forEach((el) => { (el as HTMLImageElement).src = el.getAttribute("data-defer-src")!; el.removeAttribute("data-defer-src"); });
       q("[data-defer-href]").forEach((el) => { el.setAttribute("href", el.getAttribute("data-defer-href")!); el.removeAttribute("data-defer-href"); });
-      // sequência de quadros (canvas): carrega em ordem grossa→fina, para qualquer ponto do scroll já ter um quadro próximo
+      // caminhão na pista (canvas ao vivo): baixa as imagens só depois do carregamento inicial
       const cv = q("[data-film]")[0] as HTMLCanvasElement | undefined;
-      if (cv && !seq.current.started) {
-        seq.current.started = true;
-        const big = cv.getBoundingClientRect().width * Math.min(window.devicePixelRatio || 1, 2) > 1100;
-        const set = big ? "d" : "m";
-        cv.width = big ? 1600 : 960; cv.height = big ? 600 : 360;
-        const order: number[] = [], seen = new Set<number>();
-        for (const stp of [32, 16, 8, 4, 2, 1]) for (let i = 0; i < SEQ_N; i += stp) if (!seen.has(i)) { seen.add(i); order.push(i); }
-        if (!seen.has(SEQ_N - 1)) order.splice(1, 0, SEQ_N - 1);
-        let k = 0;
-        const next = () => {
-          if (k >= order.length) return;
-          const i = order[k++], im = new Image();
-          im.decoding = "async";
-          im.onload = () => { im.decode?.().catch(() => {}).finally(() => { seq.current.imgs[i] = im; seq.current.draw(true); next(); }); };
-          im.onerror = next;
-          im.src = `/img/real/seq/nt-${set}-${String(i).padStart(3, "0")}.webp`;
-        };
-        for (let c = 0; c < 6; c++) next(); // 6 downloads em paralelo
+      if (cv) {
+        if (!truckRoad.current) truckRoad.current = createTruckRoad(cv, fabrica.nossos.toUpperCase());
+        truckRoad.current.load();
       }
       q("[data-defer-bg]").forEach((el) => { (el as HTMLElement).style.backgroundImage = `url(${el.getAttribute("data-defer-bg")})`; el.removeAttribute("data-defer-bg"); });
     };
@@ -116,6 +100,15 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
       const desktop = !!ctx.conditions?.desktop;
       const stage = q("[data-stage]")[0];
       const split = SplitText.create(q("[data-final]"), { type: "lines", mask: "lines" });
+      gsap.set(split.lines, { yPercent: 110 });
+      gsap.set(q("[data-shutter]"), { scaleY: 0, transformOrigin: "50% 100%" });
+      gsap.set(q("[data-why]"), { autoAlpha: 0 });
+      gsap.set(q("[data-why-bg]"), { autoAlpha: 0 });
+      gsap.set(q("[data-why-content]"), { autoAlpha: 0 });
+      gsap.set(q("[data-why-in]"), { autoAlpha: 0, y: 16 });
+      gsap.set(q("[data-why-bar]"), { scaleX: 0 });
+      gsap.set(q("[data-ben-line]"), { scaleX: 0 });
+      gsap.set(q("[data-ben]"), { autoAlpha: 0, y: 24 });
 
       // estados iniciais
       const has = (sel: string) => q(sel).length > 0;
@@ -133,12 +126,6 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
       if (q("[data-road]").length) gsap.set(q("[data-road]"), { drawSVG: "0%" });
       gsap.set(q("[data-curva]"), { autoAlpha: 0, scale: 1.08, transformOrigin: "50% 50%" });
       gsap.set(q("[data-dif]"), { autoAlpha: 0, y: 30 });
-      gsap.set(q("[data-water]"), { scale: 0 });
-      gsap.set(q("[data-ben]"), { autoAlpha: 0, scale: 0.8 });
-      gsap.set(q("[data-water-truck]"), { scale: 1.8, autoAlpha: 0 });
-      gsap.set(q("[data-final-wrap]"), { autoAlpha: 0 });
-      gsap.set(q("[data-cloud]"), { yPercent: 160 });
-      gsap.set(q("[data-white]"), { autoAlpha: 0 });
 
       const tl = gsap.timeline({ defaults: { ease: "none" } });
       gsap.set(q("[data-crane]"), { autoAlpha: 0 });
@@ -196,26 +183,10 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
 
       // VÍDEO "nossos tanques": entra quando o horizonte sobe; o scroll controla o tempo
       if (film) {
-        const cv = q("[data-film]")[0] as HTMLCanvasElement;
-        const ctx = cv.getContext("2d");
         const vt = { t: 0 };
-        let shown = -1, raf = 0;
-        // desenha o quadro carregado mais próximo do alvo; só redesenha quando muda
-        seq.current.draw = (force = false) => {
-          if (raf && !force) return;
-          cancelAnimationFrame(raf);
-          raf = requestAnimationFrame(() => {
-            raf = 0;
-            const want = Math.round((vt.t / SEQ_DUR) * (SEQ_N - 1));
-            const imgs = seq.current.imgs;
-            let f = -1;
-            for (let d = 0; d < SEQ_N; d++) { if (imgs[want - d]) { f = want - d; break; } if (imgs[want + d]) { f = want + d; break; } }
-            if (f < 0 || !ctx || (f === shown && !force)) return;
-            shown = f;
-            ctx.drawImage(imgs[f], 0, 0, cv.width, cv.height);
-          });
-        };
-        const seek = () => seq.current.draw();
+        const cvEl = q("[data-film]")[0] as HTMLCanvasElement;
+        if (!truckRoad.current) truckRoad.current = createTruckRoad(cvEl, fabrica.nossos.toUpperCase());
+        const seek = () => truckRoad.current?.set(vt.t);
         tl.to(q("[data-film]"), { autoAlpha: 1, duration: 0.45 }, 2.05)
           .to(q("[data-assembly]"), { autoAlpha: 0, duration: 0.45 }, 2.05);
         // pontos-chave: tanque exibido em sincronia com a coluna ativa (água, combustível, —, saneamento, agrícola)
@@ -259,22 +230,21 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
       });
       t += 3.2;
 
-      // 2e — Mergulho no líquido
-      tl.to(q("[data-zoom]"), { scale: 9, svgOrigin: `${fimRota.x} ${fimRota.y}`, duration: 1.0, ease: "power2.in" }, t)
-        .to(q("[data-top-text]"), { autoAlpha: 0, duration: 0.4 }, t)
-        .to(q("[data-water]"), { scale: 1, duration: 0.9, ease: "power2.inOut" }, t + 0.4)
-        .to(q("[data-water-truck]"), { autoAlpha: 1, duration: 0.3 }, t + 1.0)
-        .to(q("[data-water-truck]"), { scale: 0.6, duration: 1.8, ease: "power1.out" }, t + 1.0)
-        .to(q("[data-ben]"), { autoAlpha: 1, scale: 1, duration: 0.4, stagger: 0.18, ease: "back.out(1.6)" }, t + 1.2)
-        .to(q("[data-ben]"), { autoAlpha: 0, duration: 0.35 }, t + 2.6)
-        .to(q("[data-water-truck]"), { autoAlpha: 0, duration: 0.35 }, t + 2.6)
-        .to(q("[data-final-wrap]"), { autoAlpha: 1, duration: 0.1 }, t + 2.9)
-        .from(split.lines, { yPercent: 110, duration: 0.6, stagger: 0.12, ease: "expo.out" }, t + 2.9);
+      // 2e — cortinas cobalto sobem, painel "Por que a Alfa" se monta, cortinas claras entregam para a próxima seção
+      const lines = split.lines;
+      tl.set(q("[data-why]"), { autoAlpha: 1 }, t)
+        .to(q("[data-top-text]"), { autoAlpha: 0, y: -30, duration: 0.45, ease: "power2.in" }, t)
+        .to(q("[data-shutter]"), { scaleY: 1, duration: 0.7, stagger: { each: 0.06, from: "start" }, ease: "power3.inOut" }, t)
+        .to(q("[data-why-bg]"), { autoAlpha: 1, duration: 0.15 }, t + 0.95)
+        .set(q("[data-why-content]"), { autoAlpha: 1 }, t + 0.98)
+        .to(q("[data-why-in]"), { autoAlpha: 1, y: 0, duration: 0.4, ease: "power2.out" }, t + 1.0)
+        .to(lines, { yPercent: 0, duration: 0.7, stagger: 0.1, ease: "expo.out" }, t + 1.05)
+        .to(q("[data-why-bar]"), { scaleX: 1, duration: 3.0 }, t + 1.0);
+      q("[data-ben-line]").forEach((el, i) => {
+        tl.to(el, { scaleX: 1, duration: 0.5, ease: "power2.inOut" }, t + 1.35 + i * 0.3)
+          .to(q("[data-ben]")[i], { autoAlpha: 1, y: 0, duration: 0.5, ease: "power3.out" }, t + 1.5 + i * 0.3);
+      });
       t += 4.0;
-
-      // 2f — Vapor / nuvens revelam a próxima seção
-      tl.to(q("[data-cloud]"), { yPercent: -40, duration: 1.2, stagger: 0.06, ease: "power2.out" }, t)
-        .to(q("[data-white]"), { autoAlpha: 1, duration: 0.5 }, t + 0.7);
 
       // HERO → MONTAGEM: o céu some, o caminhão-chassi entra e o MESMO tanque do hero passa ao tamanho da cena
       const side = q("[data-side]")[0] as HTMLElement;
@@ -324,9 +294,7 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
           <div data-side className="absolute inset-x-0 bottom-[calc(45%-6svh)] z-30 mx-auto w-[min(92vw,880px,calc(55svh*1.6))] origin-bottom [container-type:inline-size]">
             {film && (
               // vídeo 1920×720: caminhão de 1000 px centralizado, rodas em y=470 → alinhado à base desta caixa
-              <canvas data-film width={1600} height={600} aria-hidden="true"
-                className="invisible absolute left-[-46%] top-[-3.6cqw] aspect-[8/3] h-auto w-[192%] max-w-none [clip-path:inset(0_0_17.8%_0)]"
-                style={{ backgroundImage: "url(/img/real/nossos-tanques-poster.jpg)", backgroundSize: "100% 100%" }} />
+              <canvas data-film aria-hidden="true" className="invisible absolute left-1/2 top-[-3.6cqw] -ml-[50vw] h-[59.2cqw] w-[100vw] max-w-none" />
             )}
             <div data-assembly className="relative">
               {real.montagem ? (
@@ -477,48 +445,43 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
             </ul>
           </div>
 
-          {/* 2e — água */}
-          <div data-water className="absolute left-1/2 top-[60%] h-[260vmax] w-[260vmax] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-full">
-            <div className="water absolute inset-0" />
-            {real.agua && <video src={real.agua} autoPlay muted loop playsInline preload="none" aria-hidden="true" className="absolute left-1/2 top-1/2 h-[100svh] w-[100vw] -translate-x-1/2 -translate-y-1/2 object-cover" />}
-          </div>
-          <div className="pointer-events-none absolute inset-0 grid place-items-center">
-            {real.topo ? (
-              <img data-water-truck data-defer-src={real.topo.src} alt="" width={real.topo.w} height={real.topo.h} className="w-[min(60vw,460px)] -rotate-90 md:rotate-0" />
-            ) : (
-              <svg data-water-truck viewBox="-140 -50 280 100" className="w-[min(60vw,420px)] -rotate-90 md:rotate-0" aria-hidden="true">
-              <defs><SteelTopDefs /></defs>
-              <TruckTop id="truck-top-water" />
-            </svg>
-            )}
-          </div>
-          <ul className="pointer-events-none absolute inset-0 mx-auto grid max-w-[1200px] grid-cols-2 content-between gap-x-4 px-4 py-24 text-white md:content-center md:gap-x-[34vw] md:gap-y-[30vh] md:px-8">
-            {fabrica.beneficios.map((b, i) => {
-              const Icon = benIcons[i];
-              return (
-                <li key={b.titulo} data-ben className={`${i % 2 ? "text-right" : ""}`}>
-                  <Icon className={`h-8 w-8 text-accent ${i % 2 ? "ml-auto" : ""}`} aria-hidden />
-                  <h3 className="display mt-2 text-[clamp(22px,2.6vw,40px)]">{b.titulo}</h3>
-                  <p className="mt-1 hidden text-white/85 md:block">{b.texto}</p>
-                </li>
-              );
-            })}
-          </ul>
-          <div data-final-wrap className="absolute inset-0 grid place-items-center px-4 text-center text-white">
-            <p data-final className="display max-w-[14ch] text-[clamp(48px,8vw,140px)] [text-shadow:0_6px_40px_rgba(0,20,80,.35)]">
-              {fabrica.fechamento}
-            </p>
-          </div>
         </div>
 
-        {/* 2f — vapor */}
-        <div className="pointer-events-none absolute inset-0 z-40" aria-hidden="true">
-          {[
-            ["-10%", "70vmax"], ["20%", "60vmax"], ["45%", "80vmax"], ["70%", "65vmax"], ["85%", "75vmax"], ["5%", "55vmax"], ["60%", "50vmax"],
-          ].map(([l, s], i) => (
-            <div key={i} data-cloud className="absolute bottom-0 rounded-full bg-white blur-2xl" style={{ left: l, width: s, height: s }} />
-          ))}
-          <div data-white className="absolute inset-0 bg-white" />
+        {/* 2e — "Por que a Alfa": cortinas cobalto fecham a estrada e abrem um painel editorial */}
+        <div data-why className="pointer-events-none absolute inset-0 z-40 overflow-hidden text-white">
+          <div className="absolute inset-0 grid grid-cols-4 md:grid-cols-6" aria-hidden="true">
+            {Array.from({ length: 6 }, (_, i) => <span key={i} data-shutter className={`block h-full bg-[#061CE0] ${i > 3 ? "hidden md:block" : ""}`} />)}
+          </div>
+          <div data-why-bg aria-hidden="true" className="absolute inset-0" style={{ background: "radial-gradient(110% 90% at 88% 8%, #2a4bff 0%, #061CE0 32%, #04108f 72%, #020a52 100%)" }}>
+            <div className="absolute inset-0 opacity-[.10] [background-image:linear-gradient(to_right,#fff_1px,transparent_1px)] [background-size:25%_100%] md:[background-size:calc(100%/6)_100%]" />
+          </div>
+          <div data-why-content className="relative mx-auto grid h-full max-w-[1400px] content-center gap-8 px-5 pt-16 md:grid-cols-[1.05fr_1fr] md:items-center md:gap-16 md:px-8 md:pt-20">
+            <div>
+              <p data-why-in className="label label-slash text-accent">{fabrica.porque}</p>
+              <p data-final className="display mt-4 max-w-[13ch] text-[clamp(40px,6.4vw,112px)] leading-[1.08]">{fabrica.fechamento}</p>
+            </div>
+            <ol className="md:pl-6">
+              {fabrica.beneficios.map((b, i) => {
+                const Icon = benIcons[i];
+                return (
+                  <li key={b.titulo} className="relative py-4 md:py-6">
+                    <span data-ben-line aria-hidden="true" className="absolute inset-x-0 top-0 h-px origin-left bg-white/30" />
+                    <div data-ben className="grid grid-cols-[auto_1fr] items-start gap-x-4 md:gap-x-6">
+                      <span className="ui pt-1 text-[12px] text-accent md:pt-2">{String(i + 1).padStart(2, "0")}</span>
+                      <div>
+                        <h3 className="display flex items-center gap-3 text-[clamp(22px,2.3vw,36px)] leading-none">
+                          {b.titulo}
+                          <Icon className="h-5 w-5 shrink-0 text-accent md:h-6 md:w-6" aria-hidden />
+                        </h3>
+                        <p className="mt-1.5 text-[14px] leading-snug text-white/75 md:text-[16px]">{b.texto}</p>
+                      </div>
+                    </div>
+                  </li>
+                );
+              })}
+            </ol>
+          </div>
+          <span data-why-bar aria-hidden="true" className="absolute bottom-0 left-0 h-[3px] w-full origin-left bg-accent" />
         </div>
       </div>
 
