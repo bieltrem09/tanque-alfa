@@ -10,6 +10,7 @@ import VelocityWords from "@/components/ui/VelocityWords";
 import TankBlueprint from "@/components/sections/TankBlueprint";
 import VideoScrub from "@/components/sections/VideoScrub";
 import Link from "next/link";
+import { Suspense } from "react";
 import { ChevronRight } from "lucide-react";
 import { tanques } from "@/content/tanques";
 import { getRealAssets } from "@/lib/realAssets";
@@ -22,31 +23,49 @@ export default async function Home() {
     <>
       <Reveals />
       <FactoryScene real={real} />
-      <TipoStrip />
-      {real.filme && <VideoScrub src={real.filme} />}
-      <Clientes />
-      <TankBlueprint chassi={real.montagem?.chassi.src ?? null} real={real.lateral[0]?.src ?? null} />
-      <VelocityWords words={["Água", "Combustível", "Saneamento", "Agrícola", "Estacionário"]} />
-      <div id="tanques">
-        {destaque.map((t, i) => <ProductLine key={t.slug} t={t} dark={i % 2 === 0} flip={i % 2 === 1} video={real.arquitetura[t.slug]} produto={real.produto[t.slug]} frames={real.arquiteturaQuadros[t.slug]} />)}
-        <section aria-label="Outras linhas" className="bg-ink py-16 text-white">
-          <div className="mx-auto flex max-w-[1400px] flex-col gap-6 px-4 md:flex-row md:items-center md:justify-between md:px-8">
-            <p className="display text-[clamp(32px,4vw,56px)]">Também fabricamos</p>
-            <ul className="flex flex-wrap gap-3">
-              {outros.map((t) => (
-                <li key={t.slug}>
-                  <Link href={`/tanques/${t.slug}/`} className="ui inline-flex min-h-12 items-center gap-1 rounded-full px-6 text-[12px] ring-1 ring-white/30 transition-colors hover:bg-white hover:text-ink">
-                    {t.nome} <ChevronRight className="h-4 w-4" aria-hidden />
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </section>
-      </div>
-      <Numbers />
-      <Normas />
-      <TanqueEnche />
+      <Suspense fallback={null}>
+        <TipoStrip />
+      </Suspense>
+      <Suspense fallback={null}>
+        {real.filme && <VideoScrub src={real.filme} />}
+      </Suspense>
+      <Suspense fallback={null}>
+        <Clientes />
+      </Suspense>
+      <Suspense fallback={null}>
+        <TankBlueprint chassi={real.montagem?.chassi.src ?? null} real={real.lateral[0]?.src ?? null} />
+      </Suspense>
+      <Suspense fallback={null}>
+        <VelocityWords words={["Água", "Combustível", "Saneamento", "Agrícola", "Estacionário"]} />
+      </Suspense>
+      <Suspense fallback={null}>
+        <div id="tanques">
+          {destaque.map((t, i) => <ProductLine key={t.slug} t={t} dark={i % 2 === 0} flip={i % 2 === 1} video={real.arquitetura[t.slug]} produto={real.produto[t.slug]} frames={real.arquiteturaQuadros[t.slug]} />)}
+          <section aria-label="Outras linhas" className="bg-ink py-16 text-white">
+            <div className="mx-auto flex max-w-[1400px] flex-col gap-6 px-4 md:flex-row md:items-center md:justify-between md:px-8">
+              <p className="display text-[clamp(32px,4vw,56px)]">Também fabricamos</p>
+              <ul className="flex flex-wrap gap-3">
+                {outros.map((t) => (
+                  <li key={t.slug}>
+                    <Link href={`/tanques/${t.slug}/`} className="ui inline-flex min-h-12 items-center gap-1 rounded-full px-6 text-[12px] ring-1 ring-white/30 transition-colors hover:bg-white hover:text-ink">
+                      {t.nome} <ChevronRight className="h-4 w-4" aria-hidden />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </section>
+        </div>
+      </Suspense>
+      <Suspense fallback={null}>
+        <Numbers />
+      </Suspense>
+      <Suspense fallback={null}>
+        <Normas />
+      </Suspense>
+      <Suspense fallback={null}>
+        <TanqueEnche />
+      </Suspense>
     </>
   );
 }

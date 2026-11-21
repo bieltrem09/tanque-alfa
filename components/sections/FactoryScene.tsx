@@ -18,6 +18,8 @@ const difIcons = [ShieldCheck, PencilRuler, Wrench, Factory];
 const benIcons = [Gem, ClipboardCheck, Flame, CalendarCheck];
 
 
+const v900 = (src: string) => src.replace(/\.(webp|png|jpe?g)$/i, "-900.$1");
+
 export default function FactoryScene({ real }: { real: RealAssets }) {
   const film = real.nossosTanques; // vídeo do caminhão andando e trocando de tanque (controlado pelo scroll)
   const photoSide = !film && !!real.lateral[0];
@@ -33,7 +35,11 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
   useGSAP(() => {
     const q = gsap.utils.selector(root);
     const loadDeferred = () => {
-      q("[data-defer-src]").forEach((el) => { (el as HTMLImageElement).src = el.getAttribute("data-defer-src")!; el.removeAttribute("data-defer-src"); });
+      q("[data-defer-src]").forEach((el) => {
+        const img = el as HTMLImageElement, ss = el.getAttribute("data-defer-srcset");
+        if (ss) { img.sizes = el.getAttribute("data-sizes") || "100vw"; img.srcset = ss; el.removeAttribute("data-defer-srcset"); }
+        img.src = el.getAttribute("data-defer-src")!; el.removeAttribute("data-defer-src");
+      });
       q("[data-defer-href]").forEach((el) => { el.setAttribute("href", el.getAttribute("data-defer-href")!); el.removeAttribute("data-defer-href"); });
       // caminhão na pista (canvas ao vivo): baixa as imagens só depois do carregamento inicial
       const cv = q("[data-film]")[0] as HTMLCanvasElement | undefined;
@@ -288,7 +294,7 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
               im ? (
                 <div key={i} data-photo-paint={i} className="invisible absolute bottom-0 left-0 w-full">
                   <div className="truck-idle relative">
-                    <img data-defer-src={im.src} alt="" width={im.w} height={im.h} className="block h-auto w-full" />
+                    <img data-defer-src={im.src} data-defer-srcset={`${v900(im.src)} 900w, ${im.src} ${im.w}w`} data-sizes="(min-width: 768px) 70vw, 112vw" alt="" width={im.w} height={im.h} className="block h-auto w-full" />
                     {im.rodas.map((r) => (
                       <img key={r.src} data-wheel data-defer-src={r.src} alt="" className="absolute h-auto" style={{ left: `${r.x * 100}%`, top: `${r.y * 100}%`, width: `${r.d * 100}%` }} />
                     ))}
@@ -343,12 +349,12 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
         <div data-top className="absolute inset-0 z-30 overflow-hidden bg-[#7fb0f0]">
           {/* foto real composta: céu, pátio, asfalto (16:9, sempre cobrindo a tela) + caminhão real de lado */}
           <div aria-hidden="true" className="absolute left-1/2 top-1/2 aspect-[16/9] w-[max(100vw,177.78svh)] -translate-x-1/2 -translate-y-1/2">
-            <img data-defer-src="/img/real/pista-real.webp" alt="" width={2400} height={1350} className="absolute inset-0 h-full w-full object-cover" />
+            <img data-defer-src="/img/real/pista-real.webp" data-defer-srcset="/img/real/pista-real-900.webp 900w, /img/real/pista-real.webp 2400w" data-sizes="max(100vw, 177.78svh)" alt="" width={2400} height={1350} className="absolute inset-0 h-full w-full object-cover" />
           </div>
           <div aria-hidden="true" className="absolute inset-x-0 mx-auto w-[94vw] md:w-[min(54vw,100svh)]" style={{ bottom: "calc(50% - 0.145 * max(100svh, 56.25vw))" }}>
             <div data-road-truck className="relative">
               <span className="absolute inset-x-[3%] -bottom-[1.2%] h-[6%] rounded-[50%] bg-black/55 blur-[10px]" />
-              <img data-defer-src="/img/real/nt/caminhao-agua.webp" alt="" width={1772} height={769} className="relative block h-auto w-full" />
+              <img data-defer-src="/img/real/nt/caminhao-agua.webp" data-defer-srcset="/img/real/nt/caminhao-agua-900.webp 900w, /img/real/nt/caminhao-agua.webp 1772w" data-sizes="(min-width: 768px) 54vw, 94vw" alt="" width={1772} height={769} className="relative block h-auto w-full" />
               {[{ x: 0.17269, y: 0.75032, d: 0.10383 }, { x: 0.30362, y: 0.75032, d: 0.10383 }, { x: 0.80135, y: 0.74903, d: 0.1061 }].map((r, k) => (
                 <img key={k} data-road-wheel data-defer-src={`/img/real/nt/roda-agua-${k}.webp`} alt="" width={184} height={184} className="absolute h-auto" style={{ left: `${r.x * 100}%`, top: `${r.y * 100}%`, width: `${r.d * 100}%` }} />
               ))}

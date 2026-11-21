@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata, Viewport } from "next";
 import { Anton, Archivo, Inter } from "next/font/google";
 import "./globals.css";
@@ -67,8 +68,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <SmoothScroll />
         <Header />
         <main id="conteudo">{children}</main>
-        <WhatsAppCta />
-        <Footer />
+        <Suspense fallback={null}><WhatsAppCta /></Suspense>
+        <Suspense fallback={null}><Footer /></Suspense>
         <WhatsAppFloat />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       </body>
