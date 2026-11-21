@@ -7,18 +7,22 @@ import { gsap, useGSAP, reducedMotion } from "@/lib/gsap";
 import SplitHeading from "@/components/ui/SplitHeading";
 import ScrollWordReveal from "@/components/ui/ScrollWordReveal";
 
+// Selo: anel com texto (gira no scroll, via [data-seal-rot]) + logo oficial do INMETRO fixo no centro
 export function InmetroSeal({ className = "" }: { className?: string }) {
   return (
-    <svg viewBox="0 0 240 240" className={className} role="img" aria-label="Selo: fabricação certificada INMETRO desde 2018">
-      <defs><path id="seal-normas" d="M120,120 m-92,0 a92,92 0 1,1 184,0 a92,92 0 1,1 -184,0" /></defs>
-      <circle cx="120" cy="120" r="116" fill="none" stroke="var(--alfa-accent)" strokeWidth="2" />
-      <circle cx="120" cy="120" r="70" fill="var(--alfa-primary)" />
-      <text fill="#fff" style={{ fontFamily: "var(--font-archivo)", fontWeight: 800, fontSize: 12 }}>
-        <textPath href="#seal-normas" textLength="572" lengthAdjust="spacing">CERTIFICAÇÃO INMETRO • PRODUTOS PERIGOSOS • PORTARIA 16/2016 •</textPath>
-      </text>
-      <text x="120" y="114" textAnchor="middle" fill="#fff" style={{ fontFamily: "var(--font-anton)", fontSize: 30 }}>DESDE</text>
-      <text x="120" y="148" textAnchor="middle" fill="var(--alfa-accent)" style={{ fontFamily: "var(--font-anton)", fontSize: 40 }}>2018</text>
-    </svg>
+    <div className={`relative aspect-square ${className}`} role="img" aria-label="Selo: fabricação certificada pelo INMETRO desde 2018 para produtos perigosos">
+      <svg viewBox="0 0 240 240" data-seal-rot className="absolute inset-0 h-full w-full" aria-hidden="true">
+        <defs><path id="seal-normas" d="M120,120 m-92,0 a92,92 0 1,1 184,0 a92,92 0 1,1 -184,0" /></defs>
+        <circle cx="120" cy="120" r="116" fill="none" stroke="var(--alfa-accent)" strokeWidth="2" />
+        <text fill="#fff" style={{ fontFamily: "var(--font-archivo)", fontWeight: 800, fontSize: 12 }}>
+          <textPath href="#seal-normas" textLength="572" lengthAdjust="spacing">CERTIFICAÇÃO INMETRO • PRODUTOS PERIGOSOS • DESDE 2018 •</textPath>
+        </text>
+      </svg>
+      <div className="absolute inset-[20.8%] grid place-items-center rounded-full bg-white shadow-[0_0_0_6px_rgba(255,196,0,.9),0_20px_60px_-10px_rgba(6,28,224,.6)]">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/img/inmetro.webp" alt="" width={650} height={762} className="h-auto w-[52%]" />
+      </div>
+    </div>
   );
 }
 
@@ -31,7 +35,7 @@ export default function Normas() {
   return (
     <section ref={ref} id="normas" aria-labelledby="normas-title" className="relative overflow-hidden bg-ink py-20 text-white md:py-32">
       <div className="mx-auto grid max-w-[1400px] items-center gap-12 px-4 md:grid-cols-[1fr_1.2fr] md:px-8">
-        <div className="mx-auto w-[min(80vw,420px)]" data-seal-rot><InmetroSeal className="h-auto w-full" /></div>
+        <div className="mx-auto w-[min(80vw,420px)]"><InmetroSeal className="w-full" /></div>
         <div>
           <p className="label label-slash text-accent">Normas</p>
           <SplitHeading className="display mt-4 text-[clamp(44px,6vw,96px)]"><span id="normas-title">{normas.titulo}</span></SplitHeading>

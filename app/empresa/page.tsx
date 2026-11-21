@@ -6,6 +6,7 @@ import Numbers from "@/components/sections/Numbers";
 import Reveals from "@/components/ui/Reveals";
 import SplitHeading from "@/components/ui/SplitHeading";
 import { InmetroSeal } from "@/components/sections/Normas";
+import ScrollWordReveal from "@/components/ui/ScrollWordReveal";
 import TankBlueprint from "@/components/sections/TankBlueprint";
 import { getRealAssets } from "@/lib/realAssets";
 
@@ -28,7 +29,7 @@ export default async function EmpresaPage() {
             <p className="label label-slash text-primary">A empresa</p>
             <SplitHeading className="display mt-4 text-[clamp(40px,5vw,84px)]"><span id="quem-somos">Tanques Alfa</span></SplitHeading>
           </div>
-          <div className="space-y-5 text-lg text-ink/80">{empresa.intro.map((p) => <p key={p}>{p}</p>)}</div>
+          <div className="space-y-5 text-lg text-ink/80">{empresa.intro.map((p) => <ScrollWordReveal key={p} text={p} />)}</div>
         </div>
       </section>
 
@@ -38,20 +39,20 @@ export default async function EmpresaPage() {
           <div>
             <p className="label label-slash text-accent">Pessoas</p>
             <SplitHeading className="display mt-4 text-[clamp(40px,5vw,84px)]"><span id="pessoas">Solda, cálculo e desenho</span></SplitHeading>
-            {empresa.pessoas.map((p) => <p key={p} className="mt-5 text-lg text-white/80">{p}</p>)}
+            {empresa.pessoas.map((p) => <ScrollWordReveal key={p} text={p} className="mt-5 text-lg text-white/80" />)}
           </div>
         </div>
       </section>
 
-      <section aria-labelledby="missao" className="bg-paper py-20 md:py-28">
+      <section aria-label="Missão" className="bg-paper py-20 md:py-28">
         <div className="mx-auto max-w-[1400px] px-4 md:px-8">
           <p className="label label-slash text-primary">Missão</p>
-          <h2 id="missao" className="mt-6 max-w-5xl font-[family-name:var(--font-archivo)] text-[clamp(24px,2.6vw,40px)] font-bold leading-tight">{empresa.missao}</h2>
+          <ScrollWordReveal as="h2" text={empresa.missao} from={0.1} blur={8} className="mt-6 max-w-5xl font-[family-name:var(--font-archivo)] text-[clamp(24px,2.6vw,40px)] font-bold leading-tight" />
           <ul className="mt-14 grid gap-px overflow-hidden rounded-3xl bg-ink/10 sm:grid-cols-2 lg:grid-cols-4">
             {empresa.valores.map((v) => (
               <li key={v.titulo} className="bg-white p-8" data-reveal>
                 <h3 className="display text-4xl text-primary">{v.titulo}</h3>
-                <p className="mt-3 text-ink/75">{v.texto}</p>
+                <ScrollWordReveal text={v.texto} className="mt-3 text-ink/75" />
               </li>
             ))}
           </ul>
@@ -67,12 +68,12 @@ export default async function EmpresaPage() {
           <div>
             <p className="label label-slash text-accent">Normas</p>
             <SplitHeading className="display mt-4 text-[clamp(40px,5vw,84px)]"><span id="normas-title">Certificação INMETRO</span></SplitHeading>
-            {empresa.certificacao.map((p) => <p key={p} className="mt-5 text-lg text-white/80">{p}</p>)}
+            {empresa.certificacao.map((p) => <ScrollWordReveal key={p} text={p} className="mt-5 text-lg text-white/80" />)}
             <ul className="mt-10 grid gap-6 sm:grid-cols-3">
               {empresa.pilares.map((p) => (
                 <li key={p.titulo} data-reveal>
                   <h3 className="ui text-sm text-accent">{p.titulo}</h3>
-                  <p className="mt-2 text-white/75">{p.texto}</p>
+                  <ScrollWordReveal text={p.texto} className="mt-2 text-white/75" />
                 </li>
               ))}
             </ul>

@@ -33,6 +33,7 @@ export const nav = [
   { label: "A Fábrica", href: "/empresa/" },
   { label: "Normas", href: "/empresa/#normas" },
   { label: "Galeria", href: "/galeria/" },
+  { label: "Blog", href: "/blog/" },
   { label: "Contato", href: "/contato/" },
 ];
 
