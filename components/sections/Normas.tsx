@@ -20,7 +20,7 @@ export function InmetroSeal({ className = "" }: { className?: string }) {
       </svg>
       <div className="absolute inset-[20.8%] grid place-items-center rounded-full bg-white shadow-[0_0_0_6px_rgba(255,196,0,.9),0_20px_60px_-10px_rgba(6,28,224,.6)]">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/img/inmetro.webp" alt="" width={650} height={762} className="h-auto w-[52%]" />
+        <img src="/img/inmetro.webp" alt="" width={650} height={762} loading="lazy" decoding="async" className="h-auto w-[52%]" />
       </div>
     </div>
   );

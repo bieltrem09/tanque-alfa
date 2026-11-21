@@ -12,21 +12,27 @@ export default function ScrollWordReveal({ text, as: Tag = "p", className = "", 
   const ref = useRef<HTMLElement>(null);
   useGSAP(() => {
     if (reducedMotion()) return;
-    const words = gsap.utils.toArray<HTMLElement>("[data-w]", ref.current);
-    gsap.fromTo(
-      words,
-      { opacity: from, filter: `blur(${blur}px)`, y: 6 },
-      {
+    const el = ref.current!;
+    const words = gsap.utils.toArray<HTMLElement>("[data-w]", el);
+    gsap.set(words, { opacity: from, filter: `blur(${blur}px)`, y: 6 }); // só escrita, sem medir a página
+    // o gatilho de scroll (que mede o layout) só é criado quando o bloco chega perto da tela
+    let tw: gsap.core.Tween | null = null;
+    const io = new IntersectionObserver(([e]) => {
+      if (!e.isIntersecting) return;
+      io.disconnect();
+      tw = gsap.to(words, {
         opacity: 1, filter: "blur(0px)", y: 0, ease: "none", stagger: 0.12,
-        scrollTrigger: { trigger: ref.current, start: "top 88%", end: "bottom 55%", scrub: 0.6 },
-      },
-    );
+        scrollTrigger: { trigger: el, start: "top 88%", end: "bottom 55%", scrub: 0.6 },
+      });
+    }, { rootMargin: "40% 0px 40% 0px" });
+    io.observe(el);
+    return () => { io.disconnect(); tw?.scrollTrigger?.kill(); tw?.kill(); };
   }, { scope: ref });
 
   const parts = text.split(/(\s+)/);
   return (
     <Tag ref={ref} className={className}>
-      {parts.map((p, i) => (/^\s+$/.test(p) ? p : <span key={i} data-w className="inline-block will-change-[opacity,filter]">{p}</span>))}
+      {parts.map((p, i) => (/^\s+$/.test(p) ? p : <span key={i} data-w className="inline-block">{p}</span>))}
     </Tag>
   );
 }

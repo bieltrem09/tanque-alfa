@@ -142,13 +142,13 @@ export default function TankBlueprint({ chassi, real }: Props) {
                   <img data-chassi loading="lazy" decoding="async" src={chassi} alt="" aria-hidden="true" className="absolute inset-0 h-full w-full" />
                 )}
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img data-base loading="lazy" decoding="async" src="/img/arquitetura/projeto-agua-base.webp" alt="" aria-hidden="true" className="absolute inset-0 h-full w-full" />
+                <img data-base loading="lazy" decoding="async" src="/img/arquitetura/projeto-agua-base.webp" srcSet="/img/arquitetura/projeto-agua-base-900.webp 900w, /img/arquitetura/projeto-agua-base.webp 1800w" sizes="(min-width: 768px) 60vw, 100vw" alt="" aria-hidden="true" className="absolute inset-0 h-full w-full" />
                 {real && (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img data-real loading="lazy" decoding="async" src={real} alt="Caminhão-tanque de água Alfa pronto, vista lateral" className="absolute inset-0 h-full w-full drop-shadow-[0_20px_20px_rgba(0,0,0,.45)]" />
                 )}
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img data-tankline loading="lazy" decoding="async" src="/img/arquitetura/projeto-agua-tanque.webp" alt="" aria-hidden="true" className="absolute inset-0 h-full w-full" />
+                <img data-tankline loading="lazy" decoding="async" src="/img/arquitetura/projeto-agua-tanque.webp" srcSet="/img/arquitetura/projeto-agua-tanque-900.webp 900w, /img/arquitetura/projeto-agua-tanque.webp 1800w" sizes="(min-width: 768px) 60vw, 100vw" alt="" aria-hidden="true" className="absolute inset-0 h-full w-full" />
                 <div data-scan aria-hidden="true" className="pointer-events-none absolute inset-x-[-3%] z-20 h-[3px] -translate-y-1/2 bg-accent shadow-[0_0_26px_8px_rgba(255,196,0,.55)]" />
 
                 <svg viewBox={`0 0 ${W} ${H}`} className="absolute inset-0 z-10 h-full w-full overflow-visible" fill="none" aria-hidden="true">

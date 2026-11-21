@@ -62,7 +62,7 @@ export default function PhoneWhatsApp({ className = "" }: { className?: string }
             <span aria-hidden="true" className="text-lg leading-none">‹</span>
             <span className="grid h-9 w-9 shrink-0 place-items-center overflow-hidden rounded-full bg-white">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/img/logo-alfa.png" alt="" className="h-auto w-[30px]" />
+              <img src="/img/logo-alfa.png" alt="" width={253} height={88} loading="lazy" className="h-auto w-[30px]" />
             </span>
             <span className="min-w-0 flex-1 leading-tight">
               <span className="block truncate text-[14px] font-semibold">Tanques Alfa</span>

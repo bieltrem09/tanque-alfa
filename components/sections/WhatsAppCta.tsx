@@ -5,7 +5,9 @@ import PhoneWhatsApp from "@/components/ui/PhoneWhatsApp";
 export default function WhatsAppCta() {
   return (
         <section id="whatsapp" aria-labelledby="rodape-whats" className="hero-bg grain relative isolate overflow-hidden text-white">
-          <div aria-hidden="true" className="display pointer-events-none absolute -left-[4vw] top-0 -z-10 select-none text-[30vw] leading-[.8] text-white/[.08]">ALFA</div>
+          {/* emenda: começa na mesma cor em que termina o painel da seção anterior */}
+          <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[45%] bg-gradient-to-b from-[#0414a8] to-transparent" />
+          <div aria-hidden="true" className="display pointer-events-none absolute -left-[4vw] top-[22%] -z-10 select-none text-[30vw] leading-[.8] text-white/[.08]">ALFA</div>
           <div className="mx-auto grid max-w-[1400px] items-center gap-10 px-4 pt-16 md:grid-cols-[1.1fr_1fr] md:gap-6 md:px-8 md:pt-0">
           <div className="relative md:py-16">
             <p className="label label-slash text-accent">Atendimento direto</p>

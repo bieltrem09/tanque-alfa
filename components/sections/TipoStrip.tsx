@@ -5,11 +5,11 @@ import { tanques } from "@/content/tanques";
 import { heroCeu as H } from "@/content/site";
 
 const thumbs: Record<string, string> = {
-  agua: "/img/real/nt/caminhao-agua.webp",
-  combustivel: "/img/real/nt/caminhao-combustivel.webp",
-  estacionario: "/img/fotos/tanques_estacionario1.webp",
-  saneamento: "/img/real/nt/caminhao-saneamento.webp",
-  agricola: "/img/real/nt/caminhao-agricola.webp",
+  agua: "/img/real/nt/thumb/caminhao-agua.webp",
+  combustivel: "/img/real/nt/thumb/caminhao-combustivel.webp",
+  estacionario: "/img/fotos/thumb/tanques_estacionario1.webp",
+  saneamento: "/img/real/nt/thumb/caminhao-saneamento.webp",
+  agricola: "/img/real/nt/thumb/caminhao-agricola.webp",
 };
 
 // "Explore por tipo de tanque": cards grandes com o caminhão em destaque, logo após a cena da fábrica.

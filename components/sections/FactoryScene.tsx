@@ -353,14 +353,14 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
         <div data-top className="absolute inset-0 z-30 overflow-hidden bg-[#7fb0f0]">
           {/* foto real composta: céu, pátio, asfalto (16:9, sempre cobrindo a tela) + caminhão real de lado */}
           <div aria-hidden="true" className="absolute left-1/2 top-1/2 aspect-[16/9] w-[max(100vw,177.78svh)] -translate-x-1/2 -translate-y-1/2">
-            <img data-defer-src="/img/real/pista-real.webp" alt="" className="absolute inset-0 h-full w-full object-cover" />
+            <img data-defer-src="/img/real/pista-real.webp" alt="" width={2400} height={1350} className="absolute inset-0 h-full w-full object-cover" />
           </div>
           <div aria-hidden="true" className="absolute inset-x-0 mx-auto w-[94vw] md:w-[min(54vw,100svh)]" style={{ bottom: "calc(50% - 0.145 * max(100svh, 56.25vw))" }}>
             <div data-road-truck className="relative">
               <span className="absolute inset-x-[3%] -bottom-[1.2%] h-[6%] rounded-[50%] bg-black/55 blur-[10px]" />
               <img data-defer-src="/img/real/nt/caminhao-agua.webp" alt="" width={1772} height={769} className="relative block h-auto w-full" />
               {[{ x: 0.17269, y: 0.75032, d: 0.10383 }, { x: 0.30362, y: 0.75032, d: 0.10383 }, { x: 0.80135, y: 0.74903, d: 0.1061 }].map((r, k) => (
-                <img key={k} data-road-wheel data-defer-src={`/img/real/nt/roda-agua-${k}.webp`} alt="" className="absolute h-auto" style={{ left: `${r.x * 100}%`, top: `${r.y * 100}%`, width: `${r.d * 100}%` }} />
+                <img key={k} data-road-wheel data-defer-src={`/img/real/nt/roda-agua-${k}.webp`} alt="" width={184} height={184} className="absolute h-auto" style={{ left: `${r.x * 100}%`, top: `${r.y * 100}%`, width: `${r.d * 100}%` }} />
               ))}
             </div>
           </div>

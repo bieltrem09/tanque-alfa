@@ -159,12 +159,12 @@ export function WordmarkRevealFooter({
       const descent = Math.max(0, Math.round((rowBox.bottom - probeBox.top) * 10) / 10);
       setMetrics((previous) => (previous.descent === descent && previous.fit === fit ? previous : { descent, fit }));
     };
-    measure();
-    document.fonts?.ready.then(measure);
-    if (typeof ResizeObserver === "undefined") return;
+    // mede fora do carregamento inicial (o rodapé está longe da primeira tela)
+    const raf = requestAnimationFrame(() => document.fonts?.ready.then(measure) ?? measure());
+    if (typeof ResizeObserver === "undefined") return () => cancelAnimationFrame(raf);
     const observer = new ResizeObserver(() => measure());
     observer.observe(wrapper, { box: "border-box" });
-    return () => observer.disconnect();
+    return () => { cancelAnimationFrame(raf); observer.disconnect(); };
   }, [wordmark]);
 
   // Sequência: letras sobem pela linha do chão, o reflexo acende e depois a faixa de status.

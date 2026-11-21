@@ -85,7 +85,7 @@ export default async function EmpresaPage() {
         <div className="mx-auto max-w-[1400px] px-4 md:px-8">
           <p className="label label-slash text-primary">Qualidade</p>
           <SplitHeading className="display mt-4 text-[clamp(40px,5vw,84px)]"><span id="qualidade-title">Política da qualidade</span></SplitHeading>
-          <p className="mt-6 max-w-3xl text-lg"><span className="confirmar">{empresa.politicaQualidade}</span></p>
+          <ScrollWordReveal text={empresa.politicaQualidade} className="mt-6 max-w-3xl text-lg" />
         </div>
       </section>
     </>

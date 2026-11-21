@@ -29,5 +29,5 @@ export const empresa = {
     "Em 2018 a Alfa passou a atender aos requisitos para a produção de Tanques de Carga Rodoviários Destinados ao Transporte de Produtos Perigosos, conforme a certificação compulsória da Portaria INMETRO nº 16, de 14/01/2016.",
     "O registro nº 002462/2019 foi concedido com certificação do OCP 0135. Seguimos em busca constante de atualização e aperfeiçoamento da equipe para manter o padrão de qualidade dos nossos serviços.",
   ],
-  politicaQualidade: "[CONFIRMAR — texto da Política da Qualidade a ser enviado pelo cliente]",
+  politicaQualidade: "A Política da Qualidade da Tanques Alfa estabelece compromissos permanentes com a competitividade, qualidade e excelência de seus produtos, tendo como foco principal a satisfação de seus clientes, qualificação de colaboradores, parcerias e a busca constante pela melhoria contínua.",
 };

@@ -94,7 +94,7 @@ export async function getRealAssets(): Promise<RealAssets> {
     lateral,
     topo,
     agua: video("agua-loop"),
-    nossosTanques: video("nossos-tanques"),
+    nossosTanques: fs.existsSync(path.join(dir, "nt/caminhao-agua.webp")) ? "/img/real/nt" : null,
     filme: video("filme-fabrica"),
     estradaReta: reta,
     estradaPerspectiva: persp ? { ...persp, vx: meta.perspectiva?.vx ?? 0.5, vy: meta.perspectiva?.vy ?? 0.45 } : null,
