@@ -32,6 +32,7 @@ export type WordmarkRevealFooterProps = FooterProps & {
   socials?: FooterSocial[];
   legal?: FooterLink[];
   legalNote?: React.ReactNode;
+  feature?: React.ReactNode;
   reflection?: boolean;
   reveal?: "mount" | "inView" | "manual";
   revealed?: boolean;
@@ -81,6 +82,7 @@ export function WordmarkRevealFooter({
   socials,
   legal,
   legalNote,
+  feature,
   reflection = true,
   reveal = "inView",
   revealed,
@@ -340,6 +342,8 @@ export function WordmarkRevealFooter({
             ))}
           </div>
         </div>
+
+        {feature && <div data-feature className="mt-14 @3xl:mt-20">{feature}</div>}
 
         {(status || (offices && offices.length > 0)) && (
           <div data-band className="mt-10 flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-t border-[var(--border)] py-3 text-xs @3xl:mt-12">

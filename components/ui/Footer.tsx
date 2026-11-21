@@ -4,6 +4,7 @@ import Image from "next/image";
 import { contato, nav, whatsappLink } from "@/content/site";
 import { tanques } from "@/content/tanques";
 import { WordmarkRevealFooter } from "./wordmark-reveal-footer";
+import PhoneWhatsApp from "./PhoneWhatsApp";
 import { FacebookIcon, InstagramIcon, YoutubeIcon } from "./Icons";
 
 export default function Footer() {
@@ -45,6 +46,30 @@ export default function Footer() {
       status={{ label: contato.horario, tone: "ok" }}
       offices={[{ city: "Limeira", timeZone: "America/Sao_Paulo" }]}
       socials={redes}
+      feature={
+        <section aria-labelledby="rodape-whats" className="relative grid items-center gap-10 overflow-hidden rounded-[28px] bg-gradient-to-br from-[#061CE0] via-[#04108f] to-[#020a52] px-6 pt-12 md:grid-cols-[1.1fr_1fr] md:gap-6 md:px-14 md:pt-0">
+          <div className="relative md:py-16">
+            <p className="label label-slash text-accent">Atendimento direto</p>
+            <h2 id="rodape-whats" className="display mt-4 text-[clamp(40px,5.4vw,84px)] leading-[1.02]">
+              Fale com a fábrica <span className="text-[#25D366]">no WhatsApp.</span>
+            </h2>
+            <p className="mt-5 max-w-md text-white/75">
+              Conte o uso do tanque e o modelo do seu caminhão. Quem responde é a equipe que projeta e fabrica, sem intermediários.
+            </p>
+            <a
+              href={whatsappLink("Olá! Vim pelo site da Tanques Alfa e quero um orçamento.")}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="ui mt-8 inline-flex min-h-12 items-center gap-2 rounded-full bg-[#25D366] px-7 py-3 text-[12px] font-extrabold text-white shadow-[0_14px_30px_-12px_rgba(37,211,102,.9)] transition-transform hover:scale-[1.04] active:scale-[.97]"
+            >
+              Chamar no WhatsApp<span className="hidden sm:inline"> · {contato.whatsapp}</span>
+            </a>
+          </div>
+          <div className="relative mx-auto pb-10 md:py-12">
+            <PhoneWhatsApp />
+          </div>
+        </section>
+      }
       legalNote={<span>{contato.razaoSocial} · CNPJ <span className="confirmar">{contato.cnpj}</span></span>}
     />
   );

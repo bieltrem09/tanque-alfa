@@ -163,3 +163,7 @@ body {
 /* caminhão parado com motor ligado: vibração mínima (desligada em reduced motion) */
 @keyframes truck-idle { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-0.12%); } }
 .truck-idle { animation: truck-idle 0.45s ease-in-out infinite; }
+
+/* celular do rodapé: flutuação lenta e entrada das bolhas da conversa */
+@keyframes flutua { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-14px) rotate(-0.6deg); } }
+@keyframes bolha { from { opacity: 0; transform: translateY(10px) scale(.92); } to { opacity: 1; transform: none; } }
