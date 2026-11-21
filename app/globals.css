@@ -170,3 +170,36 @@ body {
 /* transição "tanque enchendo" */
 @keyframes onda { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 @keyframes bolha-sobe { 0% { transform: translateY(0); opacity: 0; } 10% { opacity: 1; } 100% { transform: translateY(-100svh); opacity: 0; } }
+
+/* ===== Preloader e entrada do hero em CSS (rodam desde o 1º quadro) ===== */
+@property --pl-n { syntax: "<integer>"; inherits: false; initial-value: 0; }
+:root { --intro: 0.95s; }
+html[data-intro="fast"] { --intro: 0s; }
+html:not([data-intro="slow"]) #preloader { display: none; }
+.pl { animation: pl-gone 0s linear var(--intro) forwards; }
+.pl-top { animation: pl-up .55s cubic-bezier(.87,0,.13,1) calc(var(--intro) - .05s) forwards; }
+.pl-bottom { animation: pl-down .55s cubic-bezier(.87,0,.13,1) calc(var(--intro) - .05s) forwards; }
+.pl-content { animation: pl-fade .25s ease-in calc(var(--intro) - .15s) forwards; }
+.pl-fill { transform: translateY(120px); animation: pl-fill .8s cubic-bezier(.65,0,.35,1) forwards; }
+.pl-wave { animation: pl-wave .6s linear infinite; }
+.pl-count::before { counter-reset: n var(--pl-n); content: counter(n); animation: pl-count .8s cubic-bezier(.65,0,.35,1) forwards; }
+@keyframes pl-gone { to { visibility: hidden; pointer-events: none; } }
+@keyframes pl-up { to { transform: translateY(-100%); } }
+@keyframes pl-down { to { transform: translateY(100%); } }
+@keyframes pl-fade { to { opacity: 0; transform: scale(.92); } }
+@keyframes pl-fill { to { transform: translateY(0); } }
+@keyframes pl-wave { to { transform: translateX(-120px); } }
+@keyframes pl-count { from { --pl-n: 0; } to { --pl-n: 100; } }
+
+/* entrada do hero: começa quando o preloader abre */
+@keyframes h-word { from { transform: translateY(105%); } }
+@keyframes h-in { from { opacity: 0; transform: translateY(26px); } }
+@keyframes h-drop { from { transform: translateY(-75vh); } }
+@keyframes h-sky { from { transform: scale(1.12); } }
+[data-h-word-in] { animation: h-word 1.2s cubic-bezier(.16,1,.3,1) calc(var(--intro) + .05s) both; }
+[data-h-sky-in] { animation: h-sky 2s cubic-bezier(.16,1,.3,1) var(--intro) both; }
+[data-drop] { animation: h-drop 1.5s cubic-bezier(.34,1.25,.64,1) calc(var(--intro) + .25s) both; }
+[data-h-in] { animation: h-in .9s cubic-bezier(.16,1,.3,1) calc(var(--intro) + .5s + var(--i, 0) * .08s) both; }
+@media (prefers-reduced-motion: reduce) {
+  [data-h-word-in], [data-h-sky-in], [data-drop], [data-h-in] { animation: none; }
+}

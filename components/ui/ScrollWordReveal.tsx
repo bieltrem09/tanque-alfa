@@ -8,7 +8,7 @@ import { gsap, useGSAP, reducedMotion } from "@/lib/gsap";
 
 type Props = { text: string; as?: ElementType; className?: string; from?: number; blur?: number };
 
-export default function ScrollWordReveal({ text, as: Tag = "p", className = "", from = 0.14, blur = 6 }: Props) {
+export default function ScrollWordReveal({ text, as: Tag = "p", className = "", from = 0, blur = 6 }: Props) {
   const ref = useRef<HTMLElement>(null);
   useGSAP(() => {
     if (reducedMotion()) return;

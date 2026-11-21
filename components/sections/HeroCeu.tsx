@@ -3,6 +3,7 @@
 // o tanque suspenso é a própria camada de montagem — ao rolar, o céu some, o chassi entra
 // e o mesmo tanque desce e encaixa no caminhão.
 import Image from "next/image";
+import type React from "react";
 import { ArrowUpRight, Play, ShieldCheck } from "lucide-react";
 import { heroCeu as H, clientes, whatsappLink } from "@/content/site";
 import WordFlip from "@/components/ui/WordFlip";
@@ -47,11 +48,11 @@ export function HeroUI() {
   return (
     <div className="pointer-events-none absolute inset-2 z-[45] md:inset-3">
       <p data-h-ui className="ui absolute left-4 top-[30%] hidden -rotate-180 text-[11px] text-white/85 [writing-mode:vertical-rl] md:block">
-        <span data-h-in className="block">{H.lateral}</span>
+        <span data-h-in style={{ "--i": 0 } as React.CSSProperties} className="block">{H.lateral}</span>
       </p>
 
       <div data-h-ui className="pointer-events-auto absolute right-5 top-[57%] hidden md:right-8 md:block">
-        <a data-h-in href="#fabrica" onClick={(e) => { e.preventDefault(); const y = window.innerHeight * 1.6; window.__lenis ? window.__lenis.scrollTo(y, { duration: 2.4 }) : window.scrollTo({ top: y, behavior: "smooth" }); }} className="group flex items-center gap-3 text-white">
+        <a data-h-in style={{ "--i": 1 } as React.CSSProperties} href="#fabrica" onClick={(e) => { e.preventDefault(); const y = window.innerHeight * 1.6; window.__lenis ? window.__lenis.scrollTo(y, { duration: 2.4 }) : window.scrollTo({ top: y, behavior: "smooth" }); }} className="group flex items-center gap-3 text-white">
           <span className="grid h-16 w-16 place-items-center rounded-full bg-white text-primary shadow-[0_10px_30px_-10px_rgba(0,0,0,.4)] transition-transform duration-300 group-hover:scale-110">
             <Play className="ml-1 h-6 w-6 fill-current" aria-hidden />
           </span>
@@ -60,7 +61,7 @@ export function HeroUI() {
       </div>
 
       <div data-h-ui className="pointer-events-auto absolute inset-x-2 bottom-2 md:inset-x-auto md:bottom-8 md:left-8 md:w-[min(560px,42vw)]">
-        <div data-h-in className="rounded-[20px] border border-white/25 bg-gradient-to-br from-[#1f5fe0]/60 to-[#05216f]/80 p-5 text-white shadow-[0_30px_60px_-30px_rgba(4,20,70,.6)] backdrop-blur-xl md:p-8">
+        <div data-h-in style={{ "--i": 2 } as React.CSSProperties} className="rounded-[20px] border border-white/25 bg-gradient-to-br from-[#1f5fe0]/60 to-[#05216f]/80 p-5 text-white shadow-[0_30px_60px_-30px_rgba(4,20,70,.6)] backdrop-blur-xl md:p-8">
           <p className="ui text-[11px] text-white/80 md:text-[12px]">
             {H.eyebrow} <WordFlip words={H.tipos} className="text-accent" />
           </p>
@@ -78,7 +79,7 @@ export function HeroUI() {
       </div>
 
       <div data-h-ui className="absolute bottom-8 right-8 hidden lg:block">
-        <div data-h-in className="flex items-center gap-4 rounded-2xl border border-white/20 bg-[#062a7a]/50 py-3 pl-3 pr-5 text-white backdrop-blur-md">
+        <div data-h-in style={{ "--i": 3 } as React.CSSProperties} className="flex items-center gap-4 rounded-2xl border border-white/20 bg-[#062a7a]/50 py-3 pl-3 pr-5 text-white backdrop-blur-md">
           <ul className="flex -space-x-3">
             {clientes.logos.slice(0, 4).map((c) => (
               <li key={c.nome} className="grid h-12 w-12 place-items-center overflow-hidden rounded-full bg-white ring-2 ring-white">
