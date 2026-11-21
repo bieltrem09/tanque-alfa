@@ -4,7 +4,7 @@
 // → 03 componentes (chamadas numeradas + quebra-ondas) → 04 fabricação (foto real se materializa) → 05 entrega (selo)
 import { useRef } from "react";
 import { arquitetura as A } from "@/content/arquitetura";
-import { gsap, useGSAP, reducedMotion } from "@/lib/gsap";
+import { gsap, ScrollTrigger, useGSAP, reducedMotion } from "@/lib/gsap";
 import ScrollWordReveal from "@/components/ui/ScrollWordReveal";
 
 type Props = { chassi: string | null; real: string | null };
@@ -27,7 +27,9 @@ export default function TankBlueprint({ chassi, real }: Props) {
     };
     if (reducedMotion()) { final(); return; }
 
+    // a prancha pinada só é montada quando chega perto da tela (não pesa no carregamento)
     const mm = gsap.matchMedia();
+    const build = () => {
     mm.add({ desktop: "(min-width: 768px)", mobile: "(max-width: 767.98px)" }, (ctx) => {
       const desktop = !!ctx.conditions?.desktop;
       gsap.set(q("[data-base], [data-tankline]"), { clipPath: "inset(0 100% 0 0)" });
@@ -89,6 +91,11 @@ export default function TankBlueprint({ chassi, real }: Props) {
         .fromTo(q("[data-stamp]"), { autoAlpha: 0, scale: 1.6, rotation: -30 }, { autoAlpha: 1, scale: 1, rotation: -12, duration: 0.35, ease: "back.out(1.8)" }, 4.3)
         .to({}, { duration: 0.4 }, 4.65);
     });
+    ScrollTrigger.sort(); ScrollTrigger.refresh();
+    };
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { io.disconnect(); build(); } }, { rootMargin: "150% 0px 150% 0px" });
+    io.observe(root.current!);
+    return () => { io.disconnect(); mm.revert(); };
   }, { scope: root });
 
   const sheet = "rounded-2xl border border-white/15 bg-[#0d1a45]";
