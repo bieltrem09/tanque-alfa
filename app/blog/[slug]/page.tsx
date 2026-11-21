@@ -32,37 +32,45 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
     <>
       <Reveals />
       <article>
-        <header className="hero-bg grain relative isolate overflow-hidden pt-32 text-white md:pt-40">
-          <div className="mx-auto max-w-[1000px] px-4 md:px-8">
-            <Link href="/blog/" className="ui inline-flex items-center gap-1.5 text-[11px] text-white/75 hover:text-white"><ArrowLeft className="h-4 w-4" aria-hidden /> Todos os artigos</Link>
-            <p className="mt-6 flex flex-wrap items-center gap-3 text-[13px] text-white/80">
-              <span className="ui rounded-full bg-accent px-3 py-1 text-[11px] text-ink">{p.categoria}</span>
+        <header className="relative isolate overflow-hidden text-white">
+          <Image src={p.capa} alt={p.capaAlt} fill priority sizes="100vw" className="-z-20 object-cover" />
+          <div aria-hidden="true" className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(4,11,108,.55)_0%,rgba(4,11,108,.72)_55%,rgba(2,8,60,.9)_100%)]" />
+          <div className="mx-auto max-w-[1400px] px-4 pb-40 pt-32 md:px-8 md:pb-48 md:pt-40">
+            <Link href="/blog/" className="ui inline-flex items-center gap-1.5 text-[11px] text-white/80 hover:text-white"><ArrowLeft className="h-4 w-4" aria-hidden /> Todos os artigos</Link>
+            <ul className="mt-6 flex flex-wrap gap-2" aria-label="Assuntos">
+              {(p.tags ?? [p.categoria]).map((t) => <li key={t} className="rounded-full bg-primary px-4 py-1.5 text-[13px] font-semibold ring-1 ring-white/25">{t}</li>)}
+            </ul>
+            <h1 className="mt-6 max-w-5xl font-[family-name:var(--font-archivo)] text-[clamp(34px,4.6vw,64px)] font-extrabold leading-[1.05]">{p.titulo}</h1>
+            {p.subtitulo && <p className="mt-4 max-w-3xl text-[clamp(18px,1.6vw,24px)] text-white/85">{p.subtitulo}</p>}
+            <p className="mt-10 flex items-center gap-4 text-[15px] text-white/85">
               <time dateTime={p.data}>{formatData(p.data)}</time>
-              <span className="inline-flex items-center gap-1"><Clock className="h-3.5 w-3.5" aria-hidden /> {tempoLeitura(p)} min de leitura</span>
+              <span aria-hidden="true">•</span>
+              <span className="inline-flex items-center gap-1.5"><Clock className="h-4 w-4" aria-hidden /> {tempoLeitura(p)} min de leitura</span>
             </p>
-            <h1 className="display mt-5 text-[clamp(40px,6vw,88px)] leading-[0.98]">{p.titulo}</h1>
-            <p className="mt-5 max-w-2xl text-lg text-white/80">{p.resumo}</p>
-          </div>
-          <div className="mx-auto mt-12 max-w-[1100px] px-4 md:px-8">
-            <div className="relative aspect-[16/8] overflow-hidden rounded-t-[28px]">
-              <Image src={p.capa} alt={p.capaAlt} fill priority sizes="(min-width: 1100px) 1100px, 100vw" className="object-cover" />
-            </div>
           </div>
         </header>
-        <div className="bg-paper pb-20 pt-12 md:pb-28 md:pt-16">
-          <div className="mx-auto max-w-[760px] px-4 text-[18px] leading-[1.75] text-ink/85 md:px-8">
+        <div className="bg-paper pb-20 md:pb-28">
+          <div className="relative z-10 mx-auto -mt-28 max-w-[1240px] rounded-[28px] bg-white px-6 py-12 text-[18px] leading-[1.8] text-ink/80 shadow-[0_30px_80px_-40px_rgba(4,11,108,.45)] md:-mt-32 md:px-24 md:py-16">
             {p.corpo.map((b, i) => (
               <div key={i}>
                 {b.h2 && <h2 className="mt-12 font-[family-name:var(--font-archivo)] text-[clamp(24px,2.4vw,32px)] font-bold leading-tight text-ink">{b.h2}</h2>}
                 {b.p && <ScrollWordReveal text={b.p} className="mt-5" />}
                 {b.lista && (
                   <ul className="mt-5 space-y-3">
-                    {b.lista.map((l) => <li key={l} className="flex gap-3" data-reveal><span aria-hidden="true" className="mt-[0.7em] h-2 w-2 shrink-0 rounded-full bg-primary" />{l}</li>)}
+                    {b.lista.map((l) => {
+                      const i2 = l.indexOf(": ");
+                      return (
+                        <li key={l} className="flex gap-3" data-reveal>
+                          <span aria-hidden="true" className="mt-[0.75em] h-2 w-2 shrink-0 rounded-full bg-primary" />
+                          <span>{i2 > 0 && i2 < 40 ? <><strong className="font-semibold text-ink">{l.slice(0, i2)}:</strong>{l.slice(i2 + 1)}</> : l}</span>
+                        </li>
+                      );
+                    })}
                   </ul>
                 )}
               </div>
             ))}
-            <aside className="mt-14 rounded-3xl bg-primary p-8 text-white md:p-10" data-reveal>
+            <aside className="mx-auto mt-14 max-w-3xl rounded-3xl bg-primary p-8 text-white md:p-10" data-reveal>
               <p className="display text-[clamp(28px,3vw,40px)] leading-none">Tem dúvida sobre o seu tanque?</p>
               <p className="mt-3 text-white/80">Fale direto com quem projeta e fabrica.</p>
               <a href={whatsappLink(`Olá! Li o artigo "${p.titulo}" no site e tenho uma dúvida.`)} target="_blank" rel="noopener noreferrer" className="ui mt-6 inline-flex min-h-12 items-center rounded-full bg-[#25D366] px-6 text-[12px] font-extrabold text-white">Chamar no WhatsApp</a>

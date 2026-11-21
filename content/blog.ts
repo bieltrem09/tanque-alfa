@@ -6,6 +6,8 @@ export type Post = {
   titulo: string;
   data: string; // AAAA-MM-DD
   categoria: string;
+  tags?: string[];
+  subtitulo?: string;
   resumo: string;
   capa: string;
   capaAlt: string;
@@ -14,7 +16,60 @@ export type Post = {
 
 export const posts: Post[] = [
   {
+    slug: "alfa-certificada-inmetro-produtos-perigosos",
+    titulo: "Alfa: fabricação certificada pelo INMETRO para produtos perigosos",
+    subtitulo: "Desde 2018, os tanques de carga da Alfa são produzidos dentro da certificação compulsória do INMETRO",
+    data: "2026-11-20",
+    categoria: "Notícias Alfa",
+    tags: ["Notícias Alfa", "INMETRO", "Produtos perigosos"],
+    resumo: "Registro nº 002462/2019, certificado pelo OCP 0135: o que essa certificação garante para quem compra um tanque de combustível Alfa.",
+    capa: "/img/fotos/combustivel06.webp",
+    capaAlt: "Caminhão-tanque de combustível da Alfa no pátio da fábrica",
+    corpo: [
+      { p: "Em 2018, a Alfa Equipamentos Rodoviários passou a atender aos requisitos para a produção de Tanques de Carga Rodoviários Destinados ao Transporte de Produtos Perigosos, conforme a certificação compulsória do INMETRO." },
+      { p: "O registro nº 002462/2019 foi concedido com certificação do OCP 0135, organismo responsável pela avaliação. Na prática, isso significa que o processo de fabricação da Alfa é avaliado: projeto, materiais, soldagem, ensaios e identificação do tanque." },
+      { h2: "O que isso muda para o cliente", lista: ["Segurança: equipamento fabricado dentro das exigências para transporte de combustíveis", "Regularidade: tanque com documentação e identificação exigidas pela fiscalização", "Confiança: fabricante avaliado por organismo de certificação"] },
+      { h2: "Atualização constante", p: "A equipe segue em busca constante de atualização e aperfeiçoamento para manter o padrão de qualidade dos serviços, acompanhando as revisões da regulamentação." },
+      { p: "Quer saber se o seu projeto se enquadra como produto perigoso? Fale com a nossa equipe técnica." },
+    ],
+  },
+  {
+    slug: "checklist-antes-de-pedir-orcamento",
+    titulo: "Checklist: o que ter em mãos antes de pedir o orçamento do seu tanque",
+    subtitulo: "Seis informações que deixam o orçamento mais rápido e o projeto mais preciso",
+    data: "2026-11-12",
+    categoria: "Dicas",
+    tags: ["Dicas", "Orçamento", "Projeto"],
+    resumo: "Produto, volume, chassi, descarga, acessórios e prazo: com essas respostas, a equipe de projeto chega ao equipamento certo já na primeira conversa.",
+    capa: "/img/fotos/tanques_agua3.webp",
+    capaAlt: "Tanque de água fabricado pela Alfa",
+    corpo: [
+      { p: "Um orçamento bem feito começa com boas informações. Quanto mais clara a operação, mais preciso é o projeto e menor a chance de ajustes depois da entrega." },
+      { h2: "Separe estas informações", lista: ["Produto: o que vai ser transportado ou armazenado (água potável, água bruta, diesel, efluente, insumo agrícola)", "Volume: capacidade desejada e se precisa de compartimentos", "Chassi: marca, modelo, ano e entre-eixos; se ainda não tiver o caminhão, dizemos o que ele precisa ter", "Descarga: gravidade, bomba, vácuo, canhão, barra de aspersão ou medidor", "Acessórios: escada, passarela, guarda-corpo, caixa de ferramentas, carretel de mangueira", "Prazo: quando o equipamento precisa estar rodando"] },
+      { h2: "Dica de ouro", p: "Se possível, envie fotos do chassi e do local onde o caminhão vai operar. Isso ajuda a prever acesso, altura de carregamento e espaço para manobra." },
+      { p: "Com essas respostas, o orçamento pode ser feito já pelo WhatsApp, direto com quem projeta e fabrica." },
+    ],
+  },
+  {
+    slug: "manutencao-preventiva-do-tanque",
+    titulo: "Manutenção preventiva: 7 cuidados que aumentam a vida útil do tanque",
+    subtitulo: "Rotinas simples que evitam vazamentos, corrosão e caminhão parado",
+    data: "2026-11-08",
+    categoria: "Dicas",
+    tags: ["Dicas", "Manutenção", "Vida útil"],
+    resumo: "Inspeção visual, vedações, fixação no chassi e pintura: um roteiro prático para o dia a dia da frota.",
+    capa: "/img/fotos/combustivel09.webp",
+    capaAlt: "Detalhe de tanque de combustível com válvulas e escada",
+    corpo: [
+      { p: "Um tanque bem fabricado dura muitos anos, desde que receba cuidados básicos. A maior parte dos problemas começa pequena e é fácil de corrigir quando percebida cedo." },
+      { h2: "O roteiro", lista: ["Inspeção visual semanal: procure manchas, umidade e sinais de vazamento em soldas, válvulas e conexões", "Vedações: troque juntas e anéis de vedação ressecados antes que comecem a vazar", "Fixação no chassi: confira parafusos, grampos e apoios; folgas aumentam o esforço sobre a estrutura", "Pintura: retoque riscos e batidas para impedir que a corrosão avance", "Válvulas: acione periodicamente as válvulas pouco usadas para evitar travamento", "Limpeza interna: siga a frequência adequada ao produto transportado", "Documentação: mantenha em dia as inspeções obrigatórias, quando aplicáveis"] },
+      { h2: "Quando chamar o fabricante", p: "Trincas, deformações, vazamentos em solda e danos após acidentes devem ser avaliados por quem conhece o projeto. Reparos improvisados podem comprometer a segurança e a certificação do equipamento." },
+      { p: "A Alfa faz manutenção e adequação dos tanques que fabrica ao longo de toda a vida útil." },
+    ],
+  },
+  {
     slug: "como-escolher-o-tanque-certo",
+    tags: ["Dicas", "Projeto"],
     titulo: "Como escolher o tanque certo para a sua operação",
     data: "2026-11-18",
     categoria: "Guia",
@@ -32,6 +87,7 @@ export const posts: Post[] = [
   },
   {
     slug: "para-que-servem-os-quebra-ondas",
+    tags: ["Técnico", "Segurança"],
     titulo: "Quebra-ondas: o que são e por que fazem diferença na estrada",
     data: "2026-11-04",
     categoria: "Técnico",
@@ -48,6 +104,7 @@ export const posts: Post[] = [
   },
   {
     slug: "inspecao-de-tanques-de-produtos-perigosos",
+    tags: ["Normas", "Produtos perigosos"],
     titulo: "Tanque para produtos perigosos: certificação e inspeções periódicas",
     data: "2026-10-21",
     categoria: "Normas",
@@ -64,6 +121,7 @@ export const posts: Post[] = [
   },
   {
     slug: "caminhao-pipa-agua-potavel",
+    tags: ["Água", "Normas"],
     titulo: "Caminhão-pipa para água potável: o que observar",
     data: "2026-10-07",
     categoria: "Água",
@@ -80,6 +138,7 @@ export const posts: Post[] = [
   },
   {
     slug: "como-funciona-o-tanque-de-saneamento",
+    tags: ["Saneamento", "Técnico"],
     titulo: "Como funciona um tanque de saneamento a vácuo",
     data: "2026-09-23",
     categoria: "Saneamento",
@@ -96,6 +155,7 @@ export const posts: Post[] = [
   },
   {
     slug: "tanque-estacionario-de-combustivel",
+    tags: ["Estacionário", "Instalação"],
     titulo: "Tanque estacionário de combustível: vantagens e cuidados na instalação",
     data: "2026-09-09",
     categoria: "Estacionário",
