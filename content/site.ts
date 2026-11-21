@@ -36,6 +36,19 @@ export const nav = [
   { label: "Contato", href: "/contato/" },
 ];
 
+// HERO (céu + tanque real suspenso pela ponte rolante)
+export const heroCeu = {
+  palavra: "ALFA",
+  lateral: "Fabricado em Limeira-SP · Certificado INMETRO",
+  titulo: "Do primeiro litro ao último quilômetro.",
+  texto: "Tanques rodoviários e estacionários em aço carbono, projetados sob medida para água, combustível, saneamento e uso agrícola.",
+  cta: "Pedir orçamento",
+  fabrica: "Veja a fábrica em ação",
+  provaNumero: "INMETRO",
+  provaTexto: "Certificada desde 2018 para produtos perigosos",
+  explorar: "Explore por tipo de tanque",
+};
+
 export const hero = {
   linha1: "Do primeiro litro",
   linha2: "ao último",
