@@ -2,6 +2,7 @@ import Image from "next/image";
 import { clientes } from "@/content/site";
 import Marquee from "@/components/ui/Marquee";
 import SplitHeading from "@/components/ui/SplitHeading";
+import ScrollWordReveal from "@/components/ui/ScrollWordReveal";
 
 export default function Clientes() {
   return (
@@ -9,7 +10,7 @@ export default function Clientes() {
       <div className="mx-auto max-w-[1400px] px-4 md:px-8">
         <p className="label label-slash text-primary">Clientes</p>
         <SplitHeading className="display mt-4 text-[clamp(44px,6vw,96px)]"><span id="clientes-title">{clientes.titulo}</span></SplitHeading>
-        <p className="mt-4 max-w-xl text-ink/70">{clientes.texto}</p>
+        <ScrollWordReveal text={clientes.texto} className="mt-4 max-w-xl text-ink/70" />
       </div>
       <div className="mt-12 border-y border-ink/10 py-8">
         <Marquee speed={30}>

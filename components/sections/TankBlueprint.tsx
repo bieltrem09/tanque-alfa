@@ -5,6 +5,7 @@
 import { useRef } from "react";
 import { arquitetura as A } from "@/content/arquitetura";
 import { gsap, useGSAP, reducedMotion } from "@/lib/gsap";
+import ScrollWordReveal from "@/components/ui/ScrollWordReveal";
 
 type Props = { chassi: string | null; real: string | null };
 
@@ -102,7 +103,7 @@ export default function TankBlueprint({ chassi, real }: Props) {
             <h2 id="arq-title" className="display mt-3 text-[clamp(40px,5.2vw,88px)]">
               {A.titulo1} <span className="accent-line text-accent">{A.titulo2}</span>
             </h2>
-            <p className="mt-5 hidden max-w-sm text-white/70 md:block">{A.intro}</p>
+            <ScrollWordReveal text={A.intro} className="mt-5 hidden max-w-sm text-white/70 md:block" />
             <div className="mt-6 flex gap-4 md:mt-8">
               <div aria-hidden="true" className="relative w-[3px] shrink-0 rounded bg-white/15">
                 <div data-bar className="absolute inset-0 origin-top rounded bg-accent" style={{ transform: "scaleY(0.2)" }} />

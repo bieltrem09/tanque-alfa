@@ -1,68 +1,51 @@
-import Link from "next/link";
+// Rodapé: colunas com menu, tanques e contato + marca "ALFA" gigante que sobe pela linha do chão
+// (componente wordmark-reveal-footer, do 21st.dev). Cores da Alfa via variáveis no <footer>.
 import Image from "next/image";
 import { contato, nav, whatsappLink } from "@/content/site";
 import { tanques } from "@/content/tanques";
-import Road from "./Road";
+import { WordmarkRevealFooter } from "./wordmark-reveal-footer";
 import { FacebookIcon, InstagramIcon, YoutubeIcon } from "./Icons";
 
 export default function Footer() {
   const redes = [
-    { nome: "Facebook", href: contato.redes.facebook, Icon: FacebookIcon },
-    { nome: "Instagram", href: contato.redes.instagram, Icon: InstagramIcon },
-    { nome: "YouTube", href: contato.redes.youtube, Icon: YoutubeIcon },
-  ];
+    { label: "Facebook da Tanques Alfa", href: contato.redes.facebook, icon: <FacebookIcon /> },
+    { label: "Instagram da Tanques Alfa", href: contato.redes.instagram, icon: <InstagramIcon /> },
+    { label: "YouTube da Tanques Alfa", href: contato.redes.youtube, icon: <YoutubeIcon /> },
+  ].filter((r) => r.href.startsWith("http")); // só mostra redes com link confirmado
+
   return (
-    <footer className="bg-ink text-white">
-      <Road height={44} />
-      <div className="mx-auto grid max-w-[1400px] gap-12 px-4 py-16 md:grid-cols-2 md:px-6 lg:grid-cols-[1.3fr_1fr_1fr_1.3fr]">
-        <div>
-          <Image src="/img/logo-alfa.png" alt="Tanques Alfa" width={253} height={88} className="h-12 w-auto rounded-md" />
-          <p className="mt-5 max-w-sm text-white/70">
-            Tanques rodoviários e estacionários fabricados sob medida em Limeira-SP. Certificada pelo INMETRO desde 2018 para produtos perigosos.
-          </p>
-          <ul className="mt-6 flex gap-2">
-            {redes.map(({ nome, href, Icon }) => (
-              <li key={nome}>
-                <a
-                  href={href.startsWith("http") ? href : "#"}
-                  aria-label={`${nome} da Tanques Alfa${href.startsWith("http") ? "" : " (link a confirmar)"}`}
-                  className="grid h-11 w-11 place-items-center rounded-full ring-1 ring-white/20 transition-colors hover:bg-white hover:text-ink"
-                >
-                  <Icon />
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <nav aria-label="Rodapé — site">
-          <p className="label label-slash text-accent">Menu</p>
-          <ul className="mt-5 space-y-2.5">
-            {nav.map((n) => <li key={n.href}><Link href={n.href} className="text-white/80 hover:text-white">{n.label}</Link></li>)}
-          </ul>
-        </nav>
-        <nav aria-label="Rodapé — tanques">
-          <p className="label label-slash text-accent">Tanques</p>
-          <ul className="mt-5 space-y-2.5">
-            {tanques.map((t) => <li key={t.slug}><Link href={`/tanques/${t.slug}/`} className="text-white/80 hover:text-white">{t.nome}</Link></li>)}
-          </ul>
-        </nav>
-        <address className="not-italic">
-          <p className="label label-slash text-accent">Contato</p>
-          <ul className="mt-5 space-y-2.5 text-white/80">
-            <li>{contato.endereco}<br />{contato.cidade} · CEP {contato.cep}</li>
-            <li><a href={contato.telefoneHref} className="hover:text-white">Tel. {contato.telefone}</a></li>
-            <li><a href={whatsappLink()} target="_blank" rel="noopener noreferrer" className="hover:text-white">WhatsApp {contato.whatsapp}</a></li>
-            <li><a href={`mailto:${contato.email}`} className="hover:text-white">{contato.email}</a></li>
-            <li>{contato.horario}</li>
-          </ul>
-        </address>
-      </div>
-      <div className="border-t border-white/10">
-        <div className="mx-auto flex max-w-[1400px] flex-col gap-2 px-4 py-6 text-sm text-white/60 md:flex-row md:justify-between md:px-6">
-          <p>© {new Date().getFullYear()} Tanques Alfa · {contato.razaoSocial}</p>
-          <p>CNPJ <span className="confirmar">{contato.cnpj}</span></p>
-        </div>
-      </div>
-    </footer>
+    <WordmarkRevealFooter
+      wordmark="ALFA"
+      reveal="inView"
+      wordmarkClassName="font-display tracking-[0.02em]"
+      className="[--background:var(--ink)] [--foreground:#ffffff] [--muted-foreground:rgba(255,255,255,.6)] [--border:rgba(255,255,255,.14)] [--ring:var(--alfa-accent)] [--chart-2:#3ddc84] [--chart-4:var(--alfa-accent)] [--destructive:#ff5a5a] [--glint-color:var(--alfa-accent)]"
+      brand={{
+        name: "Tanques Alfa",
+        mark: <Image src="/img/logo-alfa.png" alt="" width={253} height={88} className="h-12 w-auto rounded-md" />,
+        blurb: (
+          <>
+            <p>Tanques rodoviários e estacionários fabricados sob medida em Limeira-SP. Certificada pelo INMETRO desde 2018 para produtos perigosos.</p>
+            <address className="mt-4 not-italic">{contato.endereco}<br />{contato.cidade} · CEP {contato.cep}</address>
+          </>
+        ),
+      }}
+      columns={[
+        { title: "Menu", links: nav.map((n) => ({ label: n.label, href: n.href })) },
+        { title: "Tanques", links: tanques.map((t) => ({ label: t.nome, href: `/tanques/${t.slug}/` })) },
+        {
+          title: "Contato",
+          links: [
+            { label: `Tel. ${contato.telefone}`, href: contato.telefoneHref },
+            { label: `WhatsApp ${contato.whatsapp}`, href: whatsappLink(), external: true },
+            { label: contato.email, href: `mailto:${contato.email}` },
+            { label: "Trabalhe conosco", href: `mailto:${contato.email}?subject=Trabalhe%20conosco` },
+          ],
+        },
+      ]}
+      status={{ label: contato.horario, tone: "ok" }}
+      offices={[{ city: "Limeira", timeZone: "America/Sao_Paulo" }]}
+      socials={redes}
+      legalNote={<span>{contato.razaoSocial} · CNPJ <span className="confirmar">{contato.cnpj}</span></span>}
+    />
   );
 }

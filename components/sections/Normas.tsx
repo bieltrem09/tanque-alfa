@@ -5,6 +5,7 @@ import { ChevronRight } from "lucide-react";
 import { normas } from "@/content/site";
 import { gsap, useGSAP, reducedMotion } from "@/lib/gsap";
 import SplitHeading from "@/components/ui/SplitHeading";
+import ScrollWordReveal from "@/components/ui/ScrollWordReveal";
 
 export function InmetroSeal({ className = "" }: { className?: string }) {
   return (
@@ -34,7 +35,7 @@ export default function Normas() {
         <div>
           <p className="label label-slash text-accent">Normas</p>
           <SplitHeading className="display mt-4 text-[clamp(44px,6vw,96px)]"><span id="normas-title">{normas.titulo}</span></SplitHeading>
-          {normas.texto.map((p) => <p key={p} className="mt-5 max-w-xl text-white/75">{p}</p>)}
+          {normas.texto.map((p) => <ScrollWordReveal key={p} text={p} className="mt-5 max-w-xl text-white/75" />)}
           <p className="ui mt-6 text-[12px] text-accent">{normas.registro}</p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link href="/empresa/#qualidade" className="ui inline-flex min-h-12 items-center gap-1 rounded-full bg-white px-6 text-[12px] font-extrabold text-primary transition-transform hover:scale-[1.04]">Política da qualidade <ChevronRight className="h-4 w-4" aria-hidden /></Link>

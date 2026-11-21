@@ -4,6 +4,7 @@ import ContactForm from "./ContactForm";
 import SplitHeading from "@/components/ui/SplitHeading";
 import MagneticButton from "@/components/ui/MagneticButton";
 import { WhatsAppIcon } from "@/components/ui/Icons";
+import ScrollWordReveal from "@/components/ui/ScrollWordReveal";
 
 export default function CtaContato({ tipoInicial = "", headingLevel = "h2" }: { tipoInicial?: string; headingLevel?: "h1" | "h2" }) {
   return (
@@ -14,7 +15,7 @@ export default function CtaContato({ tipoInicial = "", headingLevel = "h2" }: { 
           <span id="cta-title">{ctaFinal.titulo1}</span><br />
           <span className="accent-line text-accent">{ctaFinal.titulo2}</span>
         </SplitHeading>
-        <p className="mt-6 max-w-xl text-white/85">{ctaFinal.texto}</p>
+        <ScrollWordReveal text={ctaFinal.texto} className="mt-6 max-w-xl text-white/85" />
         <div className="mt-12 grid gap-12 lg:grid-cols-[1.3fr_1fr]">
           <ContactForm tipoInicial={tipoInicial} dark />
           <div className="space-y-6">

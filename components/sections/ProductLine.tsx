@@ -8,6 +8,7 @@ import type { RealImg } from "@/lib/realAssets";
 import { lineartFor } from "@/content/arquitetura";
 import Accordion from "@/components/ui/Accordion";
 import SplitHeading from "@/components/ui/SplitHeading";
+import ScrollWordReveal from "@/components/ui/ScrollWordReveal";
 
 export default function ProductLine({ t, dark, flip = false, showLink = true, headingLevel = "h2", video = null, produto = null, frames = null }: { t: Tanque; dark: boolean; flip?: boolean; showLink?: boolean; headingLevel?: "h2" | "h3"; video?: string | null; produto?: RealImg | null; frames?: { inicio: string; fim: string } | null }) {
   const isCut = t.recorte.includes("/recortes/");
@@ -22,7 +23,7 @@ export default function ProductLine({ t, dark, flip = false, showLink = true, he
             <SplitHeading as={headingLevel} className="display mt-4 text-[clamp(44px,6vw,96px)]">
               <span id={`linha-${t.slug}`}>{t.curto}</span>
             </SplitHeading>
-            <p className={`mt-4 max-w-md ${dark ? "text-white/75" : "text-ink/75"}`}>{t.resumo}</p>
+            <ScrollWordReveal text={t.resumo} className={`mt-4 max-w-md ${dark ? "text-white/75" : "text-ink/75"}`} />
           </div>
           <TankArchitecture slug={t.slug} nome={t.nome} specs={t.specs} photo={t.recorte} lineart={lineartFor(t.slug)} video={video} frames={frames} dark={dark} />
         </div>
