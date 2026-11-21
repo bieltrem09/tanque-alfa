@@ -38,6 +38,48 @@ function caminho(p: { x: number; y: number }[]) {
   return d;
 }
 
+// Galpão da fábrica atrás da montagem (pilares, treliça, janelas altas, piso com faixa de segurança).
+// O piso começa exatamente na linha das rodas ([data-side] fica em bottom: calc(45% - 6svh)).
+function ShopBackdrop() {
+  const FLOOR = "calc(55% + 6svh)";
+  return (
+    <div data-shop aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
+      {/* parede de chapa */}
+      <div className="absolute inset-x-0 top-0" style={{ height: FLOOR, background: "linear-gradient(180deg,#d9dee6 0%,#e7eaef 45%,#eef0f3 100%)" }}>
+        <div className="absolute inset-0 opacity-70 [background-image:repeating-linear-gradient(90deg,rgba(20,30,60,.05)_0_2px,transparent_2px_26px)] [mask-image:linear-gradient(to_bottom,black_30%,transparent)]" />
+        {/* janelas altas com luz do dia */}
+        <div className="absolute inset-x-0 top-[17%] flex h-[13%] justify-around px-[6%]">
+          {Array.from({ length: 6 }, (_, i) => (
+            <span key={i} className={`h-full w-[11%] rounded-[2px] border border-[#9aa3b2]/60 ${i > 3 ? "hidden md:block" : ""}`} style={{ background: "linear-gradient(180deg,#f8fbff 0%,#cfe2ff 60%,#b6cdf2 100%)", boxShadow: "0 0 60px 10px rgba(255,255,255,.55)" }}>
+              <span className="block h-full w-full [background-image:linear-gradient(90deg,transparent_48%,rgba(120,130,150,.5)_48%_52%,transparent_52%)]" />
+            </span>
+          ))}
+        </div>
+        {/* treliça do telhado */}
+        <svg className="absolute inset-x-0 top-0 h-[13%] w-full" viewBox="0 0 1600 100" preserveAspectRatio="none">
+          <rect y="0" width="1600" height="8" fill="#3a4150" />
+          <rect y="92" width="1600" height="8" fill="#3a4150" />
+          <path d={Array.from({ length: 33 }, (_, i) => `${i ? "L" : "M"}${i * 50},${i % 2 ? 8 : 92}`).join(" ")} fill="none" stroke="#4a5263" strokeWidth="5" />
+        </svg>
+        {/* pilares de aço (perfil I) */}
+        <div className="absolute inset-x-0 bottom-0 top-[13%] flex justify-between px-[2%]">
+          {Array.from({ length: 7 }, (_, i) => (
+            <span key={i} className={`h-full w-[clamp(14px,1.6vw,28px)] ${i % 2 && i !== 3 ? "hidden md:block" : ""}`} style={{ background: "linear-gradient(90deg,#2b3240 0 18%,#5b6577 18% 30%,#7d8799 30% 70%,#5b6577 70% 82%,#2b3240 82%)" }} />
+          ))}
+        </div>
+        <p className="display absolute bottom-[5%] left-[4%] hidden text-[clamp(22px,2.4vw,44px)] leading-none text-[#061CE0]/[.10] md:block">SETOR DE MONTAGEM · 03</p>
+        <div className="absolute inset-x-0 bottom-0 h-[30%] bg-gradient-to-t from-black/[.06] to-transparent" />
+      </div>
+      {/* piso de concreto */}
+      <div className="absolute inset-x-0 bottom-0" style={{ top: FLOOR, background: "linear-gradient(180deg,#b9bec6 0%,#cdd1d7 30%,#d8dbe0 100%)" }}>
+        <div className="h-[clamp(8px,1.1svh,14px)] w-full [background-image:repeating-linear-gradient(-45deg,#FFC400_0_16px,#15161a_16px_32px)]" />
+        <div className="absolute inset-x-0 top-[38%] h-[3px] bg-[#FFC400]/80" />
+        <div className="absolute inset-0 opacity-40 [background-image:radial-gradient(rgba(0,0,0,.12)_1px,transparent_1px)] [background-size:7px_7px]" />
+      </div>
+    </div>
+  );
+}
+
 export default function FactoryScene({ real }: { real: RealAssets }) {
   const film = real.nossosTanques; // vídeo do caminhão andando e trocando de tanque (controlado pelo scroll)
   const photoSide = !film && !!real.lateral[0];
@@ -191,7 +233,8 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
         if (!truckRoad.current) truckRoad.current = createTruckRoad(cvEl, fabrica.nossos.toUpperCase());
         const seek = () => truckRoad.current?.set(vt.t);
         tl.to(q("[data-film]"), { autoAlpha: 1, duration: 0.45 }, 2.05)
-          .to(q("[data-assembly]"), { autoAlpha: 0, duration: 0.45 }, 2.05);
+          .to(q("[data-assembly]"), { autoAlpha: 0, duration: 0.45 }, 2.05)
+          .to(q("[data-shop]"), { autoAlpha: 0, duration: 0.45 }, 2.0);
         // pontos-chave: tanque exibido em sincronia com a coluna ativa (água, combustível, —, saneamento, agrícola)
         const keys: [number, number][] = desktop
           ? [[2.1, 0], [4.5, 1.6], [5.2, 4.4], [5.9, 5.8], [6.6, 7.3], [7.3, 10.1], [t + 0.8, 13.5]]
@@ -283,6 +326,7 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
       <div data-stage className="relative h-[100svh] overflow-hidden motion-reduce:hidden">
         {/* Camada lateral (2a–2c) */}
         <div data-side-layer className="absolute inset-0">
+          <ShopBackdrop />
           <HeroBackdrop />
           <p data-a-label className="label label-slash absolute left-4 top-24 text-ink/70 md:left-8 md:top-32">{fabrica.label}</p>
 
