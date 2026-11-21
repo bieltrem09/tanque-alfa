@@ -12,6 +12,7 @@ import type { RealAssets } from "@/lib/realAssets";
 import { HeroBackdrop, HeroUI, HeroStatic } from "./HeroCeu";
 import { READY_EVENT } from "./Preloader";
 
+const SEQ_N = 180, SEQ_DUR = 13.6; // quadros em public/img/real/seq (nt-d-*, nt-m-*)
 const prodIcons = [Droplets, Fuel, Cylinder, Waves, Sprout];
 const difIcons = [ShieldCheck, PencilRuler, Wrench, Factory];
 const benIcons = [Gem, ClipboardCheck, Flame, CalendarCheck];
@@ -49,6 +50,7 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
   const LIFT = -32; // quanto o tanque começa suspenso (% da altura do quadro)
   const craneBottom = 100 + (-LIFT / 100 - (real.montagem?.gancho?.y ?? 0.11)) * 100; // ponte logo acima do gancho
   const root = useRef<HTMLElement>(null);
+  const seq = useRef<{ imgs: HTMLImageElement[]; started: boolean; draw: (force?: boolean) => void }>({ imgs: [], started: false, draw: () => {} });
   const sway = useRef({ amp: 1 }); // balanço do tanque suspenso (zera ao encaixar)
   const G = real.montagem?.gancho ?? { x: 0.4, y: 0.01 };
 
@@ -58,12 +60,27 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
     const loadDeferred = () => {
       q("[data-defer-src]").forEach((el) => { (el as HTMLImageElement).src = el.getAttribute("data-defer-src")!; el.removeAttribute("data-defer-src"); });
       q("[data-defer-href]").forEach((el) => { el.setAttribute("href", el.getAttribute("data-defer-href")!); el.removeAttribute("data-defer-href"); });
-      q("[data-defer-video]").forEach((el) => {
-        const v = el as HTMLVideoElement;
-        const webm = v.getAttribute("data-webm"), mp4 = v.getAttribute("data-defer-video")!;
-        v.src = webm && v.canPlayType('video/webm; codecs="vp9"') ? webm : mp4;
-        v.preload = "auto"; v.load(); el.removeAttribute("data-defer-video");
-      });
+      // sequência de quadros (canvas): carrega em ordem grossa→fina, para qualquer ponto do scroll já ter um quadro próximo
+      const cv = q("[data-film]")[0] as HTMLCanvasElement | undefined;
+      if (cv && !seq.current.started) {
+        seq.current.started = true;
+        const big = cv.getBoundingClientRect().width * Math.min(window.devicePixelRatio || 1, 2) > 1100;
+        const set = big ? "d" : "m";
+        cv.width = big ? 1600 : 960; cv.height = big ? 600 : 360;
+        const order: number[] = [], seen = new Set<number>();
+        for (const stp of [32, 16, 8, 4, 2, 1]) for (let i = 0; i < SEQ_N; i += stp) if (!seen.has(i)) { seen.add(i); order.push(i); }
+        if (!seen.has(SEQ_N - 1)) order.splice(1, 0, SEQ_N - 1);
+        let k = 0;
+        const next = () => {
+          if (k >= order.length) return;
+          const i = order[k++], im = new Image();
+          im.decoding = "async";
+          im.onload = () => { im.decode?.().catch(() => {}).finally(() => { seq.current.imgs[i] = im; seq.current.draw(true); next(); }); };
+          im.onerror = next;
+          im.src = `/img/real/seq/nt-${set}-${String(i).padStart(3, "0")}.webp`;
+        };
+        for (let c = 0; c < 6; c++) next(); // 6 downloads em paralelo
+      }
       q("[data-defer-bg]").forEach((el) => { (el as HTMLElement).style.backgroundImage = `url(${el.getAttribute("data-defer-bg")})`; el.removeAttribute("data-defer-bg"); });
     };
     const idle = () => ("requestIdleCallback" in window ? (window as Window & { requestIdleCallback: (cb: () => void) => void }).requestIdleCallback(loadDeferred) : setTimeout(loadDeferred, 300));
@@ -179,9 +196,26 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
 
       // VÍDEO "nossos tanques": entra quando o horizonte sobe; o scroll controla o tempo
       if (film) {
-        const v = q("[data-film]")[0] as HTMLVideoElement;
+        const cv = q("[data-film]")[0] as HTMLCanvasElement;
+        const ctx = cv.getContext("2d");
         const vt = { t: 0 };
-        const seek = () => { if (v.readyState >= 1 && Math.abs(v.currentTime - vt.t) > 0.01) v.currentTime = vt.t; };
+        let shown = -1, raf = 0;
+        // desenha o quadro carregado mais próximo do alvo; só redesenha quando muda
+        seq.current.draw = (force = false) => {
+          if (raf && !force) return;
+          cancelAnimationFrame(raf);
+          raf = requestAnimationFrame(() => {
+            raf = 0;
+            const want = Math.round((vt.t / SEQ_DUR) * (SEQ_N - 1));
+            const imgs = seq.current.imgs;
+            let f = -1;
+            for (let d = 0; d < SEQ_N; d++) { if (imgs[want - d]) { f = want - d; break; } if (imgs[want + d]) { f = want + d; break; } }
+            if (f < 0 || !ctx || (f === shown && !force)) return;
+            shown = f;
+            ctx.drawImage(imgs[f], 0, 0, cv.width, cv.height);
+          });
+        };
+        const seek = () => seq.current.draw();
         tl.to(q("[data-film]"), { autoAlpha: 1, duration: 0.45 }, 2.05)
           .to(q("[data-assembly]"), { autoAlpha: 0, duration: 0.45 }, 2.05);
         // pontos-chave: tanque exibido em sincronia com a coluna ativa (água, combustível, —, saneamento, agrícola)
@@ -254,7 +288,7 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
       };
       const main = gsap.timeline({
         defaults: { ease: "none" },
-        scrollTrigger: { trigger: stage, start: "top top", end: desktop ? "+=920%" : "+=520%", pin: true, scrub: 1, anticipatePin: 1, invalidateOnRefresh: true },
+        scrollTrigger: { trigger: stage, start: "top top", end: desktop ? "+=920%" : "+=520%", pin: true, scrub: 0.5, anticipatePin: 1, invalidateOnRefresh: true },
       });
       const HP = 1.5;
       main.fromTo(side, { scale: () => heroPose().s, x: () => heroPose().x, y: () => heroPose().y }, { scale: 1, x: 0, y: 0, duration: 1.2, ease: "power2.inOut" }, 0.15)
@@ -290,8 +324,9 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
           <div data-side className="absolute inset-x-0 bottom-[calc(45%-6svh)] z-30 mx-auto w-[min(92vw,880px,calc(55svh*1.6))] origin-bottom [container-type:inline-size]">
             {film && (
               // vídeo 1920×720: caminhão de 1000 px centralizado, rodas em y=470 → alinhado à base desta caixa
-              <video data-film data-defer-video={film} data-webm={film.replace(/\.mp4$/, ".webm")} poster="/img/real/nossos-tanques-poster.jpg" muted playsInline preload="none" aria-hidden="true"
-                className="invisible absolute left-[-46%] top-[-3.6cqw] w-[192%] max-w-none [clip-path:inset(0_0_17.8%_0)]" />
+              <canvas data-film width={1600} height={600} aria-hidden="true"
+                className="invisible absolute left-[-46%] top-[-3.6cqw] aspect-[8/3] h-auto w-[192%] max-w-none [clip-path:inset(0_0_17.8%_0)]"
+                style={{ backgroundImage: "url(/img/real/nossos-tanques-poster.jpg)", backgroundSize: "100% 100%" }} />
             )}
             <div data-assembly className="relative">
               {real.montagem ? (
