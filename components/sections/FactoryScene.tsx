@@ -38,7 +38,8 @@ function caminho(p: { x: number; y: number }[]) {
 }
 
 export default function FactoryScene({ real }: { real: RealAssets }) {
-  const photoSide = !!real.lateral[0];
+  const film = real.nossosTanques; // vídeo do caminhão andando e trocando de tanque (controlado pelo scroll)
+  const photoSide = !film && !!real.lateral[0];
   const pick = (i: number) => (real.lateral[i] ? i : 0);
   const curva = real.estradaCurva;
   const curvaH = curva ? (1000 * curva.h) / curva.w : 1000;
@@ -57,6 +58,12 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
     const loadDeferred = () => {
       q("[data-defer-src]").forEach((el) => { (el as HTMLImageElement).src = el.getAttribute("data-defer-src")!; el.removeAttribute("data-defer-src"); });
       q("[data-defer-href]").forEach((el) => { el.setAttribute("href", el.getAttribute("data-defer-href")!); el.removeAttribute("data-defer-href"); });
+      q("[data-defer-video]").forEach((el) => {
+        const v = el as HTMLVideoElement;
+        const webm = v.getAttribute("data-webm"), mp4 = v.getAttribute("data-defer-video")!;
+        v.src = webm && v.canPlayType('video/webm; codecs="vp9"') ? webm : mp4;
+        v.preload = "auto"; v.load(); el.removeAttribute("data-defer-video");
+      });
       q("[data-defer-bg]").forEach((el) => { (el as HTMLElement).style.backgroundImage = `url(${el.getAttribute("data-defer-bg")})`; el.removeAttribute("data-defer-bg"); });
     };
     const idle = () => ("requestIdleCallback" in window ? (window as Window & { requestIdleCallback: (cb: () => void) => void }).requestIdleCallback(loadDeferred) : setTimeout(loadDeferred, 300));
@@ -120,6 +127,8 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
       gsap.set(q("[data-crane]"), { autoAlpha: 0 });
       gsap.set(q("[data-a-label]"), { autoAlpha: 0 });
       gsap.set(q("[data-chassis-in]"), { xPercent: 170 });
+      gsap.set(q("[data-film]"), { autoAlpha: 0 });
+      if (film) gsap.set(q("[data-big]"), { autoAlpha: 0 });
 
       // 2a — Montagem
       if (has("svg [data-tank]")) tl.to(q("svg [data-tank]"), { y: 0, duration: 1.6, ease: "power2.inOut" }, 0);
@@ -136,7 +145,7 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
         .to(q("[data-cable], [data-crane]"), { autoAlpha: 0, duration: 0.3 }, 1.7)
         .to(q("[data-a-label]"), { autoAlpha: 0, duration: 0.3 }, 2.0)
         .to(q("[data-ink]"), { yPercent: 0, duration: 0.8, ease: "power2.out" }, 2.1)
-        .to(q("[data-side]"), { scale: desktop ? 0.74 : 0.92, duration: 0.8, ease: "power2.out" }, 2.1)
+        .to(q("[data-side]"), { scale: film ? 1 : desktop ? 0.74 : 0.92, duration: 0.8, ease: "power2.out" }, 2.1)
         .to(q("[data-big]"), { x: () => -q("[data-big]")[0].offsetWidth, duration: desktop ? 4.6 : 2.6 }, 2.3)
         // 2c — Linhas de produto (headline)
         .to(q("[data-hl] > *"), { yPercent: 0, duration: 0.6, stagger: 0.12, ease: "expo.out" }, 3.0)
@@ -166,6 +175,22 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
           if (photoSide) tl.to(q("[data-photo-paint]"), { autoAlpha: (_j: number, el: HTMLElement) => (Number(el.dataset.photoPaint) === pick(p) ? 1 : 0), duration: 0.2 }, 3.6 + k * 0.25);
         });
         t = 5.0;
+      }
+
+      // VÍDEO "nossos tanques": entra quando o horizonte sobe; o scroll controla o tempo
+      if (film) {
+        const v = q("[data-film]")[0] as HTMLVideoElement;
+        const vt = { t: 0 };
+        const seek = () => { if (v.readyState >= 1 && Math.abs(v.currentTime - vt.t) > 0.01) v.currentTime = vt.t; };
+        tl.to(q("[data-film]"), { autoAlpha: 1, duration: 0.45 }, 2.05)
+          .to(q("[data-assembly]"), { autoAlpha: 0, duration: 0.45 }, 2.05);
+        // pontos-chave: tanque exibido em sincronia com a coluna ativa (água, combustível, —, saneamento, agrícola)
+        const keys: [number, number][] = desktop
+          ? [[2.1, 0], [4.5, 1.6], [5.2, 4.4], [5.9, 5.8], [6.6, 7.3], [7.3, 10.1], [t + 0.8, 13.5]]
+          : [[2.1, 0], [t + 0.8, 13.5]];
+        for (let k = 1; k < keys.length; k++) {
+          tl.to(vt, { t: keys[k][1], duration: keys[k][0] - keys[k - 1][0], ease: "none", onUpdate: seek }, keys[k - 1][0]);
+        }
       }
 
       // caminhão andando: asfalto corre para a esquerda e as rodas giram
@@ -262,7 +287,12 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
             {fabrica.nossos}
           </p>
 
-          <div data-side className="absolute inset-x-0 bottom-[calc(45%-6svh)] z-30 mx-auto w-[min(92vw,880px,calc(55svh*1.6))] origin-bottom">
+          <div data-side className="absolute inset-x-0 bottom-[calc(45%-6svh)] z-30 mx-auto w-[min(92vw,880px,calc(55svh*1.6))] origin-bottom [container-type:inline-size]">
+            {film && (
+              // vídeo 1920×720: caminhão de 1000 px centralizado, rodas em y=470 → alinhado à base desta caixa
+              <video data-film data-defer-video={film} data-webm={film.replace(/\.mp4$/, ".webm")} poster="/img/real/nossos-tanques-poster.jpg" muted playsInline preload="none" aria-hidden="true"
+                className="invisible absolute left-[-46%] top-[-3.6cqw] w-[192%] max-w-none [clip-path:inset(0_0_17.8%_0)]" />
+            )}
             <div data-assembly className="relative">
               {real.montagem ? (
                 <>
@@ -306,7 +336,7 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
 
           <div data-ink className="absolute inset-x-0 bottom-0 z-20 h-[45%] bg-ink text-white">
             {/* pista lateral: asfalto real (ou desenhado) que corre sob o caminhão */}
-            <div aria-hidden="true" className="absolute inset-x-0 top-0 h-[10svh] overflow-hidden border-b border-white/10 bg-[#1a1b1e]">
+            <div aria-hidden="true" className={`absolute inset-x-0 top-0 h-[10svh] overflow-hidden border-b border-white/10 bg-[#1a1b1e] ${film ? "hidden" : ""}`}>
               {real.estradaReta ? (
                 <div data-asfalto data-defer-bg={real.estradaReta.src} className="absolute inset-y-0 left-0 w-[400%]" style={{ backgroundRepeat: "repeat-x", backgroundSize: "auto 100%" }} />
               ) : (
@@ -314,7 +344,7 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
               )}
               <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/40" />
             </div>
-            <div data-hl-wrap className="mx-auto grid h-full max-w-[1400px] content-center gap-6 px-4 pt-[10svh] md:grid-cols-[1.4fr_1fr] md:items-center md:gap-12 md:px-8">
+            <div data-hl-wrap className={`mx-auto grid h-full max-w-[1400px] content-center gap-6 px-4 md:grid-cols-[1.4fr_1fr] md:items-center md:gap-12 md:px-8 ${film ? "pt-[17svh]" : "pt-[10svh]"}`}>
               <h2 data-hl className="display text-[clamp(34px,5.2vw,84px)]">
                 <span className="block overflow-clip"><span className="block">{fabrica.titulo1}</span></span>
                 <span className="block overflow-clip text-white/45"><span className="block">{fabrica.titulo2}</span></span>
@@ -323,7 +353,7 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
             </div>
 
             {/* colunas em scroll horizontal (desktop) */}
-            <div className="absolute inset-x-0 bottom-0 top-[10svh] hidden items-center md:flex" aria-hidden="false">
+            <div className={`absolute inset-x-0 bottom-0 hidden items-center md:flex ${film ? "top-[17svh]" : "top-[10svh]"}`} aria-hidden="false">
               <ul data-track className="flex">
                 {tanques.map((t, i) => {
                   const Icon = prodIcons[i];
