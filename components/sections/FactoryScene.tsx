@@ -6,7 +6,7 @@ import { useRef } from "react";
 import { Droplets, Fuel, Cylinder, Waves, Sprout, ShieldCheck, PencilRuler, Wrench, Factory, Gem, ClipboardCheck, Flame, CalendarCheck, ChevronRight } from "lucide-react";
 import { fabrica } from "@/content/site";
 import { tanques } from "@/content/tanques";
-import { gsap, ScrollTrigger, SplitText, useGSAP, reducedMotion } from "@/lib/gsap";
+import { gsap, SplitText, useGSAP, reducedMotion } from "@/lib/gsap";
 import { TruckSide } from "@/components/ui/TruckSvgs";
 import type { RealAssets } from "@/lib/realAssets";
 import { HeroBackdrop, HeroUI, HeroStatic } from "./HeroCeu";
@@ -67,9 +67,7 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
     if (reducedMotion()) return;
     const q = gsap.utils.selector(root);
     const mm = gsap.matchMedia();
-    // a cena (centenas de tweens + pin) é montada logo após o 1º quadro, fora da tarefa de hidratação
-    let alive = true;
-    const build = () => { if (!alive) return;
+
     mm.add({ desktop: "(min-width: 768px)", mobile: "(max-width: 767.98px)" }, (ctx) => {
       const desktop = !!ctx.conditions?.desktop;
       const stage = q("[data-stage]")[0];
@@ -240,11 +238,6 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
 
       return () => split.revert();
     });
-    // gatilhos criados antes (seções abaixo) recalculam já contando o espaço da cena fixa
-    ScrollTrigger.sort(); ScrollTrigger.refresh();
-    };
-    const raf = requestAnimationFrame(() => setTimeout(build, 0));
-    return () => { alive = false; cancelAnimationFrame(raf); mm.revert(); };
   }, { scope: root });
 
   return (
