@@ -22,15 +22,18 @@ export default function Preloader() {
     const fill = el.querySelector<SVGGElement>("[data-fill]")!;
     const wave = el.querySelector<SVGPathElement>("[data-wave]")!;
     const obj = { v: 0 };
-    const tl = gsap.timeline({ onComplete: () => { el.style.display = "none"; } });
-    tl.to(wave, { x: -120, duration: 0.6, ease: "none", repeat: -1 }, 0);
+    // a onda fica fora da timeline: um tween infinito dentro dela impedia o onComplete,
+    // e o preloader (invisível) continuava por cima da página bloqueando os cliques
+    const waveTw = gsap.to(wave, { x: -120, duration: 0.6, ease: "none", repeat: -1 });
+    const hide = () => { el.style.display = "none"; waveTw.kill(); };
+    const tl = gsap.timeline({ onComplete: hide });
     tl.fromTo(fill, { y: 120 }, { y: 0, duration: 1.1, ease: "power2.inOut" }, 0);
     tl.to(obj, { v: 100, duration: 1.1, ease: "power2.inOut", onUpdate: () => { counter.textContent = String(Math.round(obj.v)); } }, 0);
-    tl.add(done, 1.15);
+    tl.add(() => { done(); el.style.pointerEvents = "none"; }, 1.15);
     tl.to(el.querySelector("[data-content]"), { opacity: 0, scale: 0.92, duration: 0.25, ease: "power2.in" }, 1.15);
     tl.to(el.querySelector("[data-top]"), { yPercent: -100, duration: 0.55, ease: "expo.inOut" }, 1.2);
     tl.to(el.querySelector("[data-bottom]"), { yPercent: 100, duration: 0.55, ease: "expo.inOut" }, 1.2);
-    return () => { tl.kill(); };
+    return () => { tl.kill(); waveTw.kill(); };
   }, []);
 
   return (

@@ -99,8 +99,8 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
     mm.add({ desktop: "(min-width: 768px)", mobile: "(max-width: 767.98px)" }, (ctx) => {
       const desktop = !!ctx.conditions?.desktop;
       const stage = q("[data-stage]")[0];
-      const split = SplitText.create(q("[data-final]"), { type: "lines", mask: "lines" });
-      gsap.set(split.lines, { yPercent: 110 });
+      const split = SplitText.create(q("[data-final]"), { type: "words" });
+      gsap.set(split.words, { autoAlpha: 0, yPercent: 60, rotationX: -70, filter: "blur(14px)", transformOrigin: "50% 100%" });
       gsap.set(q("[data-shutter]"), { scaleY: 0, transformOrigin: "50% 100%" });
       gsap.set(q("[data-why]"), { autoAlpha: 0 });
       gsap.set(q("[data-why-bg]"), { autoAlpha: 0 });
@@ -108,13 +108,16 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
       gsap.set(q("[data-why-in]"), { autoAlpha: 0, y: 16 });
       gsap.set(q("[data-why-bar]"), { scaleX: 0 });
       gsap.set(q("[data-ben-line]"), { scaleX: 0 });
-      gsap.set(q("[data-ben]"), { autoAlpha: 0, y: 24 });
+      gsap.set(q("[data-ben-num]"), { autoAlpha: 0, y: 12 });
+      gsap.set(q("[data-ben-title]"), { clipPath: "inset(0 100% 0 0)", x: -24 });
+      gsap.set(q("[data-ben-icon]"), { scale: 0, rotation: -120 });
+      gsap.set(q("[data-ben-txt]"), { autoAlpha: 0, y: 10, filter: "blur(8px)" });
+      gsap.set(q("[data-ben-hl]"), { xPercent: -101 });
 
       // estados iniciais
       const has = (sel: string) => q(sel).length > 0;
       if (has("svg [data-tank]")) gsap.set(q("svg [data-tank]"), { y: -150 });
       gsap.set(q("[data-real-tank]"), { yPercent: LIFT });
-      gsap.set(q("[data-persp]"), { autoAlpha: 0 });
       gsap.set(q("[data-photo-paint]"), { autoAlpha: 0 });
       gsap.set(q("[data-ink]"), { yPercent: 100 });
       gsap.set(q("[data-big]"), { xPercent: 0, x: () => window.innerWidth });
@@ -203,14 +206,6 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
       tl.fromTo(q("[data-asfalto]"), { xPercent: 0 }, { xPercent: -50, duration: drive }, 2.1)
       if (has("[data-wheel]")) tl.fromTo(q("[data-wheel]"), { rotation: 0 }, { rotation: 360 * (desktop ? 9 : 5), duration: drive, transformOrigin: "50% 50%" }, 2.1);
 
-      // virada de câmera: a estrada em perspectiva avança e vira vista de cima
-      if (q("[data-persp]").length) {
-        tl.to(q("[data-persp]"), { autoAlpha: 1, duration: 0.25, ease: "power1.in" }, t + 0.1)
-          .fromTo(q("[data-persp] img"), { scale: 1 }, { scale: 2.6, duration: 1.1, ease: "power2.in" }, t)
-          .to(q("[data-persp]"), { autoAlpha: 0, duration: 0.35 }, t + 1.0);
-        t += 0.8;
-      }
-
       // 2d — estrada vista de cima
       tl.to(q("[data-side-layer]"), { autoAlpha: 0, duration: 0.5 }, t)
         .to(q("[data-curva]"), { autoAlpha: 1, scale: 1, duration: 0.8, ease: "power2.out" }, t)
@@ -231,20 +226,28 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
       t += 3.2;
 
       // 2e — cortinas cobalto sobem, painel "Por que a Alfa" se monta, cortinas claras entregam para a próxima seção
-      const lines = split.lines;
       tl.set(q("[data-why]"), { autoAlpha: 1 }, t)
         .to(q("[data-top-text]"), { autoAlpha: 0, y: -30, duration: 0.45, ease: "power2.in" }, t)
         .to(q("[data-shutter]"), { scaleY: 1, duration: 0.7, stagger: { each: 0.06, from: "start" }, ease: "power3.inOut" }, t)
         .to(q("[data-why-bg]"), { autoAlpha: 1, duration: 0.15 }, t + 0.95)
         .set(q("[data-why-content]"), { autoAlpha: 1 }, t + 0.98)
         .to(q("[data-why-in]"), { autoAlpha: 1, y: 0, duration: 0.4, ease: "power2.out" }, t + 1.0)
-        .to(lines, { yPercent: 0, duration: 0.7, stagger: 0.1, ease: "expo.out" }, t + 1.05)
-        .to(q("[data-why-bar]"), { scaleX: 1, duration: 3.0 }, t + 1.0);
+        // palavras saem do desfoque e "levantam" em sequência (padrão Words Stagger / Blur Out Up do 21st)
+        .to(split.words, { autoAlpha: 1, yPercent: 0, rotationX: 0, filter: "blur(0px)", duration: 0.6, stagger: 0.08, ease: "power3.out" }, t + 1.05)
+        .to(q("[data-why-bar]"), { scaleX: 1, duration: 3.6 }, t + 1.0);
+      const destaque = split.words.find((w) => /^duro$/i.test(w.textContent?.trim() ?? ""));
+      if (destaque) tl.to(destaque, { color: "#FFC400", duration: 0.3 }, t + 1.9);
+      // tópicos: linha desenha → faixa de luz varre a linha → número, título (wipe), ícone (giro) e texto (desfoque)
       q("[data-ben-line]").forEach((el, i) => {
-        tl.to(el, { scaleX: 1, duration: 0.5, ease: "power2.inOut" }, t + 1.35 + i * 0.3)
-          .to(q("[data-ben]")[i], { autoAlpha: 1, y: 0, duration: 0.5, ease: "power3.out" }, t + 1.5 + i * 0.3);
+        const T = t + 1.6 + i * 0.45;
+        tl.to(el, { scaleX: 1, duration: 0.45, ease: "power2.inOut" }, T)
+          .to(q("[data-ben-hl]")[i], { xPercent: 101, duration: 0.7, ease: "power2.inOut" }, T + 0.05)
+          .to(q("[data-ben-num]")[i], { autoAlpha: 1, y: 0, duration: 0.35, ease: "power2.out" }, T + 0.1)
+          .to(q("[data-ben-title]")[i], { clipPath: "inset(0 0% 0 0)", x: 0, duration: 0.5, ease: "power3.out" }, T + 0.15)
+          .to(q("[data-ben-icon]")[i], { scale: 1, rotation: 0, duration: 0.45, ease: "back.out(2.2)" }, T + 0.4)
+          .to(q("[data-ben-txt]")[i], { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.45, ease: "power2.out" }, T + 0.3);
       });
-      t += 4.0;
+      t += 4.4;
 
       // HERO → MONTAGEM: o céu some, o caminhão-chassi entra e o MESMO tanque do hero passa ao tamanho da cena
       const side = q("[data-side]")[0] as HTMLElement;
@@ -378,13 +381,6 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
 
         <HeroUI />
 
-        {/* Virada de câmera: estrada em perspectiva */}
-        {real.estradaPerspectiva && (
-          <div data-persp aria-hidden="true" className="absolute inset-0 z-[35] overflow-hidden bg-white">
-            <img data-defer-src={real.estradaPerspectiva.src} alt="" width={real.estradaPerspectiva.w} height={real.estradaPerspectiva.h} className="h-full w-full object-cover" style={{ transformOrigin: `${real.estradaPerspectiva.vx * 100}% ${real.estradaPerspectiva.vy * 100}%` }} />
-          </div>
-        )}
-
         {/* Camada de topo (2d) */}
         <div data-top className="absolute inset-0 z-30 bg-white">
           {curva && rota ? (
@@ -458,22 +454,23 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
           <div data-why-content className="relative mx-auto grid h-full max-w-[1400px] content-center gap-8 px-5 pt-16 md:grid-cols-[1.05fr_1fr] md:items-center md:gap-16 md:px-8 md:pt-20">
             <div>
               <p data-why-in className="label label-slash text-accent">{fabrica.porque}</p>
-              <p data-final className="display mt-4 max-w-[13ch] text-[clamp(40px,6.4vw,112px)] leading-[1.08]">{fabrica.fechamento}</p>
+              <p data-final className="display mt-4 max-w-[13ch] [perspective:800px] text-[clamp(40px,6.4vw,112px)] leading-[1.08]">{fabrica.fechamento}</p>
             </div>
             <ol className="md:pl-6">
               {fabrica.beneficios.map((b, i) => {
                 const Icon = benIcons[i];
                 return (
-                  <li key={b.titulo} className="relative py-4 md:py-6">
+                  <li key={b.titulo} className="relative overflow-hidden py-4 md:py-6">
                     <span data-ben-line aria-hidden="true" className="absolute inset-x-0 top-0 h-px origin-left bg-white/30" />
-                    <div data-ben className="grid grid-cols-[auto_1fr] items-start gap-x-4 md:gap-x-6">
-                      <span className="ui pt-1 text-[12px] text-accent md:pt-2">{String(i + 1).padStart(2, "0")}</span>
+                    <span data-ben-hl aria-hidden="true" className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[.12] to-transparent" />
+                    <div className="relative grid grid-cols-[auto_1fr] items-start gap-x-4 md:gap-x-6">
+                      <span data-ben-num className="ui pt-1 text-[12px] text-accent md:pt-2">{String(i + 1).padStart(2, "0")}</span>
                       <div>
                         <h3 className="display flex items-center gap-3 text-[clamp(22px,2.3vw,36px)] leading-none">
-                          {b.titulo}
-                          <Icon className="h-5 w-5 shrink-0 text-accent md:h-6 md:w-6" aria-hidden />
+                          <span data-ben-title className="inline-block pb-1">{b.titulo}</span>
+                          <span data-ben-icon className="inline-flex"><Icon className="h-5 w-5 shrink-0 text-accent md:h-6 md:w-6" aria-hidden /></span>
                         </h3>
-                        <p className="mt-1.5 text-[14px] leading-snug text-white/75 md:text-[16px]">{b.texto}</p>
+                        <p data-ben-txt className="mt-1.5 text-[14px] leading-snug text-white/75 md:text-[16px]">{b.texto}</p>
                       </div>
                     </div>
                   </li>
