@@ -48,7 +48,7 @@ export const tanques: Tanque[] = [
     curto: "Combustível",
     liquido: "combustivel",
     cor: "#FF9A1F",
-    recorte: "/img/recortes/combustivel.webp",
+    recorte: "/img/recortes/lateral-combustivel.webp",
     resumo: "Tanques compartimentados para transporte de combustíveis e óleos, certificados para produtos perigosos.",
     descricao: [
       "Transportar combustível exige um equipamento que não deixa margem para erro. Por isso os tanques de combustível da Alfa são fabricados conforme a certificação INMETRO para produtos perigosos, com controle de soldas e materiais em todas as etapas.",
@@ -98,7 +98,7 @@ export const tanques: Tanque[] = [
     curto: "Saneamento",
     liquido: "saneamento",
     cor: "#3FA36B",
-    recorte: "/img/recortes/saneamento.webp",
+    recorte: "/img/recortes/lateral-saneamento.webp",
     resumo: "Equipamentos de vácuo e sucção para limpeza de fossas, redes de esgoto e efluentes.",
     descricao: [
       "Os tanques de saneamento da Alfa são feitos para trabalho pesado: sucção de fossas, desobstrução de redes e transporte de efluentes com segurança para a equipe e para o meio ambiente.",
@@ -123,7 +123,7 @@ export const tanques: Tanque[] = [
     curto: "Agrícola",
     liquido: "agricola",
     cor: "#8BD44A",
-    recorte: "/img/recortes/agricola.webp",
+    recorte: "/img/recortes/lateral-agricola.webp",
     resumo: "Tanques para irrigação, apoio à lavoura e abastecimento no campo.",
     descricao: [
       "No campo, o tanque precisa aguentar estrada de terra e jornada longa. A linha agrícola da Alfa leva água e insumos líquidos até onde a operação acontece.",
