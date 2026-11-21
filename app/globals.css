@@ -170,3 +170,17 @@ body {
 /* transição "tanque enchendo" */
 @keyframes onda { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 @keyframes bolha-sobe { 0% { transform: translateY(0); opacity: 0; } 10% { opacity: 1; } 100% { transform: translateY(-100svh); opacity: 0; } }
+
+/* ===== Celular: sem preloader e entrada do hero em CSS (começa no 1º quadro) ===== */
+@media (max-width: 767.98px) {
+  #preloader { display: none !important; }
+  @keyframes h-word { from { transform: translateY(105%); } }
+  @keyframes h-in { from { opacity: 0; transform: translateY(26px); } }
+  @keyframes h-drop { from { transform: translateY(-75vh); } }
+  [data-h-word-in] { animation: h-word 1.1s cubic-bezier(.16,1,.3,1) .05s both; }
+  [data-drop] { animation: h-drop 1.4s cubic-bezier(.34,1.25,.64,1) .2s both; }
+  [data-h-in] { animation: h-in .8s cubic-bezier(.16,1,.3,1) .45s both; }
+}
+@media (max-width: 767.98px) and (prefers-reduced-motion: reduce) {
+  [data-h-word-in], [data-drop], [data-h-in] { animation: none; }
+}

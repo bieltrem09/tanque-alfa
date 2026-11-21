@@ -16,7 +16,7 @@ export default function Preloader() {
     };
     let seen = false;
     try { seen = sessionStorage.getItem("alfa-seen") === "1"; sessionStorage.setItem("alfa-seen", "1"); } catch {}
-    if (seen || reducedMotion()) { el.style.display = "none"; done(); return; }
+    if (seen || reducedMotion() || window.innerWidth < 768) { el.style.display = "none"; done(); return; } // celular: sem preloader
 
     const counter = el.querySelector<HTMLElement>("[data-count]")!;
     const fill = el.querySelector<SVGGElement>("[data-fill]")!;
@@ -38,7 +38,7 @@ export default function Preloader() {
 
   return (
     <div ref={root} id="preloader" aria-hidden="true" className="fixed inset-0 z-[200]">
-      <script dangerouslySetInnerHTML={{ __html: `try{if(sessionStorage.getItem("alfa-seen")==="1"||matchMedia("(prefers-reduced-motion: reduce)").matches)document.getElementById("preloader").style.display="none"}catch(e){}` }} />
+      <script dangerouslySetInnerHTML={{ __html: `try{if(sessionStorage.getItem("alfa-seen")==="1"||matchMedia("(prefers-reduced-motion: reduce)").matches||matchMedia("(max-width: 767.98px)").matches)document.getElementById("preloader").style.display="none"}catch(e){}` }} />
       <noscript><style>{`#preloader{display:none}`}</style></noscript>
       <div data-top className="absolute inset-x-0 top-0 h-1/2 bg-deep" />
       <div data-bottom className="absolute inset-x-0 bottom-0 h-1/2 bg-deep" />

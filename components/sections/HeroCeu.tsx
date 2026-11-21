@@ -27,8 +27,10 @@ export function HeroBackdrop() {
     <div data-h-sky className="absolute inset-2 overflow-hidden rounded-[22px] md:inset-3 md:rounded-[30px]" aria-hidden="true">
       <div data-h-sky-in className="absolute inset-[-3%]" style={{ background: SKY }}>
         <div data-clouds className="absolute inset-y-0 left-0 flex w-[200%]">
-          <div className="relative h-full w-1/2"><Image src="/img/nuvens.webp" alt="" fill priority fetchPriority="high" sizes="100vw" className="object-cover object-bottom" /></div>
-          <div className="relative h-full w-1/2 [transform:scaleX(-1)]"><Image src="/img/nuvens.webp" alt="" fill sizes="100vw" className="object-cover object-bottom" /></div>
+          <div className="relative h-full w-1/2">{/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/img/nuvens.webp" srcSet="/img/nuvens-900.webp 900w, /img/nuvens.webp 2400w" sizes="100vw" alt="" width={2400} height={1000} fetchPriority="high" decoding="async" className="absolute inset-0 h-full w-full object-cover object-bottom" /></div>
+          <div className="relative h-full w-1/2 [transform:scaleX(-1)]">{/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/img/nuvens.webp" srcSet="/img/nuvens-900.webp 900w, /img/nuvens.webp 2400w" sizes="100vw" alt="" width={2400} height={1000} loading="lazy" decoding="async" className="absolute inset-0 h-full w-full object-cover object-bottom" /></div>
         </div>
       </div>
       <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-[#062a7a]/50 to-transparent" />
