@@ -205,7 +205,7 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
 
       // virada de câmera: a estrada em perspectiva avança e vira vista de cima
       if (q("[data-persp]").length) {
-        tl.to(q("[data-persp]"), { autoAlpha: 1, duration: 0.35 }, t)
+        tl.to(q("[data-persp]"), { autoAlpha: 1, duration: 0.25, ease: "power1.in" }, t + 0.1)
           .fromTo(q("[data-persp] img"), { scale: 1 }, { scale: 2.6, duration: 1.1, ease: "power2.in" }, t)
           .to(q("[data-persp]"), { autoAlpha: 0, duration: 0.35 }, t + 1.0);
         t += 0.8;

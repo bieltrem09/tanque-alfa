@@ -1,5 +1,5 @@
 "use client";
-// Faixa de palavras gigantes que reage à velocidade do scroll (padrão "Scroll Velocity Text" do 21st.dev).
+// Faixa de palavras gigantes que desliza devagar; o sentido segue o scroll (padrão "Scroll Velocity Text" do 21st.dev).
 // Duas linhas em sentidos opostos; a velocidade vem do Lenis. Só transform.
 import { useRef } from "react";
 import { gsap, useGSAP, reducedMotion } from "@/lib/gsap";
@@ -10,20 +10,20 @@ export default function VelocityWords({ words }: { words: string[] }) {
     if (reducedMotion()) return;
     const rows = gsap.utils.toArray<HTMLElement>("[data-row]", ref.current);
     const pos = rows.map(() => 0);
-    let dir = 1, visible = false, cur = 0;
+    let dir = 1, visible = false;
     const io = new IntersectionObserver(([e]) => (visible = e.isIntersecting));
     io.observe(ref.current!);
+    // velocidade constante em pixels (não depende do tamanho da faixa nem da velocidade do scroll);
+    // o scroll só define o sentido
+    const PX_S = window.innerWidth < 768 ? 22 : 34;
     const tick = (_t: number, dt: number) => {
       if (!visible) return;
       const v = window.__lenis?.velocity ?? 0;
-      if (Math.abs(v) > 0.3) dir = v > 0 ? 1 : -1;
-      // deriva lenta (~6%/s da faixa, antes ~35%/s) + empurrão suave da velocidade do scroll, com inércia
-      const target = 0.006 + Math.min(Math.abs(v) * 0.0025, 0.05);
-      cur += (target - cur) * Math.min(1, dt / 220);
-      const speed = cur * dt; // % por frame
+      if (Math.abs(v) > 0.5) dir = v > 0 ? 1 : -1;
       rows.forEach((row, k) => {
-        pos[k] = gsap.utils.wrap(-50, 0, pos[k] + (k ? 1 : -1) * dir * speed);
-        gsap.set(row, { xPercent: pos[k] });
+        const half = row.scrollWidth / 2;
+        pos[k] = gsap.utils.wrap(-half, 0, pos[k] + (k ? 1 : -1) * dir * PX_S * (Math.min(dt, 50) / 1000));
+        gsap.set(row, { x: pos[k] });
       });
     };
     gsap.ticker.add(tick);

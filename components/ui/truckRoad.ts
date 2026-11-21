@@ -5,7 +5,7 @@
 export const DUR = 13.6;
 const SLUGS = ["agua", "combustivel", "saneamento", "agricola"] as const;
 type Slug = (typeof SLUGS)[number];
-const PLAN: [number, Slug, Slug][] = [[2.6, "agua", "combustivel"], [5.4, "combustivel", "saneamento"], [8.2, "saneamento", "agricola"], [11.0, "agricola", "agua"]];
+const PLAN: [number, Slug, Slug][] = [[2.6, "agua", "combustivel"], [5.4, "combustivel", "saneamento"], [8.2, "saneamento", "agricola"]];  // termina no agrícola: sem voltar ao primeiro tanque
 const SWEEP = 1.1;
 const CX = 960, TX = 460, TW = 1000, WHEEL_Y = 470, Y0 = 358, Y1 = 592;
 const TH = (769 * TW) / 1772, TY = WHEEL_Y - TH;
