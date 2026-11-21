@@ -7,7 +7,7 @@ import { Droplets, Fuel, Cylinder, Waves, Sprout, ShieldCheck, PencilRuler, Wren
 import { fabrica } from "@/content/site";
 import { tanques } from "@/content/tanques";
 import { gsap, SplitText, useGSAP, reducedMotion } from "@/lib/gsap";
-import { TruckSide, TruckTop, SteelTopDefs } from "@/components/ui/TruckSvgs";
+import { TruckSide } from "@/components/ui/TruckSvgs";
 import type { RealAssets } from "@/lib/realAssets";
 import { HeroBackdrop, HeroUI, HeroStatic } from "./HeroCeu";
 import { READY_EVENT } from "./Preloader";
@@ -17,77 +17,11 @@ const prodIcons = [Droplets, Fuel, Cylinder, Waves, Sprout];
 const difIcons = [ShieldCheck, PencilRuler, Wrench, Factory];
 const benIcons = [Gem, ClipboardCheck, Flame, CalendarCheck];
 
-const ROAD = "M880,-120 C880,140 700,170 700,330 C700,480 880,470 880,600 L880,1200";
-const ROUTE = "M880,-120 C880,140 700,170 700,330 C700,480 880,470 880,600";
-
-// rota da vista de cima a partir do traçado da estrada real (faixa da direita, sentido de descida)
-function rotaDaCurva(c: NonNullable<RealAssets["estradaCurva"]>, H: number, ate = 0.62) {
-  const lane = -c.roadW * 1000 * 0.24;
-  const pts = c.pts.filter(([, y]) => y <= ate).map(([x, y]) => ({ x: x * 1000 + lane, y: y * H }));
-  return [{ x: pts[0].x, y: -160 }, ...pts];
-}
-// Catmull-Rom → curvas Bézier (caminho suave para o MotionPath seguir)
-function caminho(p: { x: number; y: number }[]) {
-  let d = `M${p[0].x.toFixed(1)},${p[0].y.toFixed(1)}`;
-  for (let i = 0; i < p.length - 1; i++) {
-    const a = p[i - 1] ?? p[i], b = p[i], c = p[i + 1], e = p[i + 2] ?? c;
-    const c1 = { x: b.x + (c.x - a.x) / 6, y: b.y + (c.y - a.y) / 6 };
-    const c2 = { x: c.x - (e.x - b.x) / 6, y: c.y - (e.y - b.y) / 6 };
-    d += ` C${c1.x.toFixed(1)},${c1.y.toFixed(1)} ${c2.x.toFixed(1)},${c2.y.toFixed(1)} ${c.x.toFixed(1)},${c.y.toFixed(1)}`;
-  }
-  return d;
-}
-
-// Galpão da fábrica atrás da montagem (pilares, treliça, janelas altas, piso com faixa de segurança).
-// O piso começa exatamente na linha das rodas ([data-side] fica em bottom: calc(45% - 6svh)).
-function ShopBackdrop() {
-  const FLOOR = "calc(55% + 6svh)";
-  return (
-    <div data-shop aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
-      {/* parede de chapa */}
-      <div className="absolute inset-x-0 top-0" style={{ height: FLOOR, background: "linear-gradient(180deg,#d9dee6 0%,#e7eaef 45%,#eef0f3 100%)" }}>
-        <div className="absolute inset-0 opacity-70 [background-image:repeating-linear-gradient(90deg,rgba(20,30,60,.05)_0_2px,transparent_2px_26px)] [mask-image:linear-gradient(to_bottom,black_30%,transparent)]" />
-        {/* janelas altas com luz do dia */}
-        <div className="absolute inset-x-0 top-[17%] flex h-[13%] justify-around px-[6%]">
-          {Array.from({ length: 6 }, (_, i) => (
-            <span key={i} className={`h-full w-[11%] rounded-[2px] border border-[#9aa3b2]/60 ${i > 3 ? "hidden md:block" : ""}`} style={{ background: "linear-gradient(180deg,#f8fbff 0%,#cfe2ff 60%,#b6cdf2 100%)", boxShadow: "0 0 60px 10px rgba(255,255,255,.55)" }}>
-              <span className="block h-full w-full [background-image:linear-gradient(90deg,transparent_48%,rgba(120,130,150,.5)_48%_52%,transparent_52%)]" />
-            </span>
-          ))}
-        </div>
-        {/* treliça do telhado */}
-        <svg className="absolute inset-x-0 top-0 h-[13%] w-full" viewBox="0 0 1600 100" preserveAspectRatio="none">
-          <rect y="0" width="1600" height="8" fill="#3a4150" />
-          <rect y="92" width="1600" height="8" fill="#3a4150" />
-          <path d={Array.from({ length: 33 }, (_, i) => `${i ? "L" : "M"}${i * 50},${i % 2 ? 8 : 92}`).join(" ")} fill="none" stroke="#4a5263" strokeWidth="5" />
-        </svg>
-        {/* pilares de aço (perfil I) */}
-        <div className="absolute inset-x-0 bottom-0 top-[13%] flex justify-between px-[2%]">
-          {Array.from({ length: 7 }, (_, i) => (
-            <span key={i} className={`h-full w-[clamp(14px,1.6vw,28px)] ${i % 2 && i !== 3 ? "hidden md:block" : ""}`} style={{ background: "linear-gradient(90deg,#2b3240 0 18%,#5b6577 18% 30%,#7d8799 30% 70%,#5b6577 70% 82%,#2b3240 82%)" }} />
-          ))}
-        </div>
-        <p className="display absolute bottom-[5%] left-[4%] hidden text-[clamp(22px,2.4vw,44px)] leading-none text-[#061CE0]/[.10] md:block">SETOR DE MONTAGEM · 03</p>
-        <div className="absolute inset-x-0 bottom-0 h-[30%] bg-gradient-to-t from-black/[.06] to-transparent" />
-      </div>
-      {/* piso de concreto */}
-      <div className="absolute inset-x-0 bottom-0" style={{ top: FLOOR, background: "linear-gradient(180deg,#b9bec6 0%,#cdd1d7 30%,#d8dbe0 100%)" }}>
-        <div className="h-[clamp(8px,1.1svh,14px)] w-full [background-image:repeating-linear-gradient(-45deg,#FFC400_0_16px,#15161a_16px_32px)]" />
-        <div className="absolute inset-x-0 top-[38%] h-[3px] bg-[#FFC400]/80" />
-        <div className="absolute inset-0 opacity-40 [background-image:radial-gradient(rgba(0,0,0,.12)_1px,transparent_1px)] [background-size:7px_7px]" />
-      </div>
-    </div>
-  );
-}
 
 export default function FactoryScene({ real }: { real: RealAssets }) {
   const film = real.nossosTanques; // vídeo do caminhão andando e trocando de tanque (controlado pelo scroll)
   const photoSide = !film && !!real.lateral[0];
   const pick = (i: number) => (real.lateral[i] ? i : 0);
-  const curva = real.estradaCurva;
-  const curvaH = curva ? (1000 * curva.h) / curva.w : 1000;
-  const rota = curva ? rotaDaCurva(curva, curvaH) : null;
-  const topoW = curva ? curva.roadW * 1000 * 0.42 : 0; // largura do caminhão ≈ 42% da pista
   const LIFT = -32; // quanto o tanque começa suspenso (% da altura do quadro)
   const craneBottom = 100 + (-LIFT / 100 - (real.montagem?.gancho?.y ?? 0.11)) * 100; // ponte logo acima do gancho
   const root = useRef<HTMLElement>(null);
@@ -168,8 +102,6 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
       gsap.set(q("[data-track]"), { x: () => window.innerWidth });
       gsap.set(q("[data-col]"), { autoAlpha: 0.35 });
       gsap.set(q("[data-top]"), { autoAlpha: 0 });
-      if (q("[data-road]").length) gsap.set(q("[data-road]"), { drawSVG: "0%" });
-      gsap.set(q("[data-curva]"), { autoAlpha: 0, scale: 1.08, transformOrigin: "50% 50%" });
       gsap.set(q("[data-dif]"), { autoAlpha: 0, y: 30 });
 
       const tl = gsap.timeline({ defaults: { ease: "none" } });
@@ -233,8 +165,7 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
         if (!truckRoad.current) truckRoad.current = createTruckRoad(cvEl, fabrica.nossos.toUpperCase());
         const seek = () => truckRoad.current?.set(vt.t);
         tl.to(q("[data-film]"), { autoAlpha: 1, duration: 0.45 }, 2.05)
-          .to(q("[data-assembly]"), { autoAlpha: 0, duration: 0.45 }, 2.05)
-          .to(q("[data-shop]"), { autoAlpha: 0, duration: 0.45 }, 2.0);
+          .to(q("[data-assembly]"), { autoAlpha: 0, duration: 0.45 }, 2.05);
         // pontos-chave: tanque exibido em sincronia com a coluna ativa (água, combustível, —, saneamento, agrícola)
         const keys: [number, number][] = desktop
           ? [[2.1, 0], [4.5, 1.6], [5.2, 4.4], [5.9, 5.8], [6.6, 7.3], [7.3, 10.1], [t + 0.8, 13.5]]
@@ -249,18 +180,12 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
       tl.fromTo(q("[data-asfalto]"), { xPercent: 0 }, { xPercent: -50, duration: drive }, 2.1)
       if (has("[data-wheel]")) tl.fromTo(q("[data-wheel]"), { rotation: 0 }, { rotation: 360 * (desktop ? 9 : 5), duration: drive, transformOrigin: "50% 50%" }, 2.1);
 
-      // 2d — estrada vista de cima
+      // 2d — pista real: o caminhão entra pela esquerda e para no centro, rodas girando
       tl.to(q("[data-side-layer]"), { autoAlpha: 0, duration: 0.5 }, t)
-        .to(q("[data-curva]"), { autoAlpha: 1, scale: 1, duration: 0.8, ease: "power2.out" }, t)
         .to(q("[data-top]"), { autoAlpha: 1, duration: 0.5 }, t)
-      if (q("[data-road]").length) tl.to(q("[data-road]"), { drawSVG: "100%", duration: 0.9, ease: "power2.out" }, t + 0.1);
-      tl
-        .fromTo(q("[data-sweep]"), { backgroundPosition: "100% 0" }, { backgroundPosition: "0% 0", duration: 2.2 }, t + 0.4)
-        .to(q("[data-truck-top]"), {
-          motionPath: { path: q("[data-route]")[0] as unknown as SVGPathElement, align: q("[data-route]")[0] as unknown as SVGPathElement, alignOrigin: [0.5, 0.5], autoRotate: true },
-          duration: 2.6,
-          ease: "power1.inOut",
-        }, t + 0.3);
+        .fromTo(q("[data-road-truck]"), { x: () => -window.innerWidth * 1.15 }, { x: 0, duration: 2.2, ease: "power2.out" }, t + 0.1)
+        .fromTo(q("[data-road-wheel]"), { rotation: -1440 }, { rotation: 0, duration: 2.2, ease: "power2.out", transformOrigin: "50% 50%" }, t + 0.1)
+        .fromTo(q("[data-sweep]"), { backgroundPosition: "100% 0" }, { backgroundPosition: "0% 0", duration: 2.2 }, t + 0.4);
       const difs = q("[data-dif]");
       difs.forEach((d, i) => {
         tl.to(d, { autoAlpha: 1, y: 0, duration: 0.35, ease: "power2.out" }, t + 0.5 + i * 0.6);
@@ -326,7 +251,6 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
       <div data-stage className="relative h-[100svh] overflow-hidden motion-reduce:hidden">
         {/* Camada lateral (2a–2c) */}
         <div data-side-layer className="absolute inset-0">
-          <ShopBackdrop />
           <HeroBackdrop />
           <p data-a-label className="label label-slash absolute left-4 top-24 text-ink/70 md:left-8 md:top-32">{fabrica.label}</p>
 
@@ -426,58 +350,41 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
         <HeroUI />
 
         {/* Camada de topo (2d) */}
-        <div data-top className="absolute inset-0 z-30 bg-white">
-          {curva && rota ? (
-            <svg viewBox={`0 0 1000 ${curvaH}`} preserveAspectRatio="xMidYMid slice" className="absolute inset-0 h-full w-full" aria-hidden="true">
-              <defs>
-                <filter id="sombra-topo" x="-20%" y="-40%" width="140%" height="180%"><feDropShadow dx="6" dy="8" stdDeviation="7" floodOpacity=".35" /></filter>
-              </defs>
-              <g data-zoom>
-                <image data-curva data-defer-href={curva.src} x={0} y={0} width={1000} height={curvaH} preserveAspectRatio="none" />
-                <path data-route d={caminho(rota)} fill="none" stroke="none" />
-                <g data-truck-top>
-                  {real.topo ? (
-                    <image data-defer-href={real.topo.src} x={(-topoW * real.topo.w) / real.topo.h / 2} y={-topoW / 2} width={(topoW * real.topo.w) / real.topo.h} height={topoW} filter="url(#sombra-topo)" />
-                  ) : (
-                    <g transform={`scale(${topoW / 60})`}><TruckTop /></g>
-                  )}
-                </g>
-              </g>
-            </svg>
-          ) : (
-            <svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" className="absolute inset-0 h-full w-full" aria-hidden="true">
-              <defs><SteelTopDefs /></defs>
-              <g data-zoom>
-                <path data-road d={ROAD} fill="none" stroke="#0B0B0C" strokeWidth="150" />
-                <path d={ROAD} fill="none" stroke="#fff" strokeWidth="4" strokeDasharray="34 30" opacity=".75" />
-                <path data-route d={ROUTE} fill="none" stroke="none" />
-                <g data-truck-top>
-                  {real.topo ? <image href={real.topo.src} x={-150} y={(-150 * real.topo.h) / real.topo.w} width={300} height={(300 * real.topo.h) / real.topo.w} /> : <TruckTop />}
-                </g>
-              </g>
-            </svg>
-          )}
+        <div data-top className="absolute inset-0 z-30 overflow-hidden bg-[#7fb0f0]">
+          {/* foto real composta: céu, pátio, asfalto (16:9, sempre cobrindo a tela) + caminhão real de lado */}
+          <div aria-hidden="true" className="absolute left-1/2 top-1/2 aspect-[16/9] w-[max(100vw,177.78svh)] -translate-x-1/2 -translate-y-1/2">
+            <img data-defer-src="/img/real/pista-real.webp" alt="" className="absolute inset-0 h-full w-full object-cover" />
+          </div>
+          <div aria-hidden="true" className="absolute inset-x-0 mx-auto w-[94vw] md:w-[min(54vw,100svh)]" style={{ bottom: "calc(50% - 0.145 * max(100svh, 56.25vw))" }}>
+            <div data-road-truck className="relative">
+              <span className="absolute inset-x-[3%] -bottom-[1.2%] h-[6%] rounded-[50%] bg-black/55 blur-[10px]" />
+              <img data-defer-src="/img/real/nt/caminhao-agua.webp" alt="" width={1772} height={769} className="relative block h-auto w-full" />
+              {[{ x: 0.17269, y: 0.75032, d: 0.10383 }, { x: 0.30362, y: 0.75032, d: 0.10383 }, { x: 0.80135, y: 0.74903, d: 0.1061 }].map((r, k) => (
+                <img key={k} data-road-wheel data-defer-src={`/img/real/nt/roda-agua-${k}.webp`} alt="" className="absolute h-auto" style={{ left: `${r.x * 100}%`, top: `${r.y * 100}%`, width: `${r.d * 100}%` }} />
+              ))}
+            </div>
+          </div>
 
           <div data-top-text className="absolute inset-0">
-            <h2 className="display absolute inset-x-0 top-0 z-10 bg-white px-4 pb-4 pt-24 text-[clamp(40px,11vw,84px)] md:inset-x-auto md:left-8 md:top-1/2 md:max-w-[40vw] md:-translate-y-1/2 md:bg-transparent md:p-0 md:text-[clamp(40px,5vw,84px)] leading-[1]">
-              <span className="block text-[#b5b8be]">{fabrica.estradaTitulo1}</span>
+            <h2 className="display absolute inset-x-0 top-0 z-10 px-4 pt-24 text-[clamp(40px,11vw,84px)] leading-[1] text-white [text-shadow:0_4px_30px_rgba(0,30,120,.35)] md:left-8 md:right-auto md:top-[12svh] md:max-w-[60vw] md:p-0 md:text-[clamp(48px,6vw,104px)]">
+              <span className="block text-white/80">{fabrica.estradaTitulo1}</span>
               <span
                 data-sweep
                 className="clip-pad block bg-clip-text text-transparent"
-                style={{ backgroundImage: "linear-gradient(90deg, #0B0B0C 0%, #0B0B0C 40%, var(--alfa-primary) 50%, #0B0B0C 60%, #0B0B0C 100%)", backgroundSize: "300% 100%" }}
+                style={{ backgroundImage: "linear-gradient(90deg, #fff 0%, #fff 40%, var(--alfa-accent) 50%, #fff 60%, #fff 100%)", backgroundSize: "300% 100%" }}
               >
                 {fabrica.estradaTitulo2}
               </span>
             </h2>
-            <ul className="absolute inset-x-4 bottom-8 md:inset-x-auto md:bottom-auto md:right-8 md:top-1/2 md:w-[32vw] md:max-w-[440px] md:-translate-y-1/2 md:space-y-7">
+            <ul className="absolute inset-x-4 bottom-8 md:inset-x-0 md:bottom-[5svh] md:mx-auto md:grid md:max-w-[1400px] md:grid-cols-4 md:gap-8 md:px-8">
               {fabrica.diferenciais.map((d, i) => {
                 const Icon = difIcons[i];
                 return (
-                  <li key={d.titulo} data-dif className="absolute inset-x-0 bottom-0 flex gap-4 rounded-2xl bg-white/95 p-4 shadow-[0_10px_40px_-20px_rgba(0,0,0,.4)] md:static md:bg-transparent md:p-0 md:shadow-none">
+                  <li key={d.titulo} data-dif className="absolute inset-x-0 bottom-0 flex gap-4 rounded-2xl bg-white/95 p-4 shadow-[0_10px_40px_-20px_rgba(0,0,0,.4)] md:static md:bg-transparent md:p-0 md:text-white md:shadow-none">
                     <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-primary text-white"><Icon className="h-6 w-6" aria-hidden /></span>
                     <div>
                       <h3 className="ui text-[13px]">{d.titulo}</h3>
-                      <p className="mt-1 text-[15px] leading-snug text-ink/70">{d.texto}</p>
+                      <p className="mt-1 text-[15px] leading-snug text-ink/70 md:text-white/75">{d.texto}</p>
                     </div>
                   </li>
                 );
