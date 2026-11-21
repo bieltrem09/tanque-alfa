@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { legendas, foto } from "@/content/galeria";
 import PageHero from "@/components/sections/PageHero";
 import Gallery from "@/components/ui/Gallery";
-import CtaContato from "@/components/sections/CtaContato";
 import Reveals from "@/components/ui/Reveals";
 
 export const metadata: Metadata = {
@@ -33,7 +32,6 @@ export default function GaleriaPage() {
           </div>
         </section>
       ))}
-      <CtaContato />
     </>
   );
 }

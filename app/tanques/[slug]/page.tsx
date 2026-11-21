@@ -5,7 +5,6 @@ import { tanques, getTanque } from "@/content/tanques";
 import { foto } from "@/content/galeria";
 import PageHero from "@/components/sections/PageHero";
 import ProductLine from "@/components/sections/ProductLine";
-import CtaContato from "@/components/sections/CtaContato";
 import Gallery from "@/components/ui/Gallery";
 import Reveals from "@/components/ui/Reveals";
 import SplitHeading from "@/components/ui/SplitHeading";
@@ -69,8 +68,6 @@ export default async function TanquePage({ params }: { params: Promise<{ slug: s
           <Gallery fotos={t.galeria.map(foto)} />
         </div>
       </section>
-
-      <CtaContato tipoInicial={t.slug} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(productLd) }} />
     </>
   );

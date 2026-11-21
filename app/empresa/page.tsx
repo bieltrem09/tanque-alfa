@@ -3,7 +3,6 @@ import Image from "next/image";
 import { empresa } from "@/content/empresa";
 import PageHero from "@/components/sections/PageHero";
 import Numbers from "@/components/sections/Numbers";
-import CtaContato from "@/components/sections/CtaContato";
 import Reveals from "@/components/ui/Reveals";
 import SplitHeading from "@/components/ui/SplitHeading";
 import { InmetroSeal } from "@/components/sections/Normas";
@@ -88,8 +87,6 @@ export default async function EmpresaPage() {
           <p className="mt-6 max-w-3xl text-lg"><span className="confirmar">{empresa.politicaQualidade}</span></p>
         </div>
       </section>
-
-      <CtaContato />
     </>
   );
 }

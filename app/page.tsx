@@ -4,7 +4,6 @@ import Numbers from "@/components/sections/Numbers";
 import Normas from "@/components/sections/Normas";
 import Clientes from "@/components/sections/Clientes";
 import Atendimento from "@/components/sections/Atendimento";
-import CtaContato from "@/components/sections/CtaContato";
 import Reveals from "@/components/ui/Reveals";
 import TipoStrip from "@/components/sections/TipoStrip";
 import VelocityWords from "@/components/ui/VelocityWords";
@@ -48,7 +47,6 @@ export default async function Home() {
       <Numbers />
       <Normas />
       <Atendimento />
-      <CtaContato />
     </>
   );
 }

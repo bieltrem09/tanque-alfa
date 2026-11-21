@@ -4,6 +4,7 @@ import "./globals.css";
 import SmoothScroll from "@/components/ui/SmoothScroll";
 import Header from "@/components/ui/Header";
 import Footer from "@/components/ui/Footer";
+import WhatsAppCta from "@/components/sections/WhatsAppCta";
 import WhatsAppFloat from "@/components/ui/WhatsAppFloat";
 import Preloader from "@/components/sections/Preloader";
 import PageTransition from "@/components/ui/PageTransition";
@@ -64,6 +65,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <SmoothScroll />
         <Header />
         <main id="conteudo">{children}</main>
+        <WhatsAppCta />
         <Footer />
         <WhatsAppFloat />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
