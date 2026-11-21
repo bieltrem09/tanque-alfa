@@ -3,6 +3,7 @@
 // o tanque suspenso é a própria camada de montagem — ao rolar, o céu some, o chassi entra
 // e o mesmo tanque desce e encaixa no caminhão.
 import Image from "next/image";
+import { preload } from "react-dom";
 import { ArrowUpRight, Play, ShieldCheck } from "lucide-react";
 import { heroCeu as H, clientes, whatsappLink } from "@/content/site";
 import WordFlip from "@/components/ui/WordFlip";
@@ -21,6 +22,8 @@ function Palavra() {
 
 /** Fundo: céu + nuvens + palavra gigante (fica atrás do tanque). */
 export function HeroBackdrop() {
+  // pede a imagem das nuvens (maior elemento da 1ª tela) já no <head>, antes de fontes e scripts
+  preload("/img/nuvens.webp", { as: "image", imageSrcSet: "/img/nuvens-900.webp 900w, /img/nuvens.webp 2400w", imageSizes: "100vw", fetchPriority: "high" });
   return (
     <div data-h-sky className="absolute inset-2 overflow-hidden rounded-[22px] md:inset-3 md:rounded-[30px]" aria-hidden="true">
       <div data-h-sky-in className="absolute inset-[-3%]" style={{ background: SKY }}>

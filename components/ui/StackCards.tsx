@@ -33,7 +33,9 @@ export default function StackCards() {
   }, { scope: ref });
 
   return (
-    <ul ref={ref} aria-label="Linhas de produto" className="relative bg-ink px-3 pb-[18svh] pt-6 md:hidden">
+    <div className="md:hidden">
+    <h2 className="sr-only">Linhas de produto</h2>
+    <ul ref={ref} aria-label="Linhas de produto" className="relative bg-ink px-3 pb-[18svh] pt-6">
       {tanques.map((t, i) => {
         const Icon = icons[i];
         const foto = t.slug === "estacionario";
@@ -57,5 +59,6 @@ export default function StackCards() {
         );
       })}
     </ul>
+    </div>
   );
 }
