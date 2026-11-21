@@ -10,8 +10,8 @@ import Preloader from "@/components/sections/Preloader";
 import PageTransition from "@/components/ui/PageTransition";
 import { contato } from "@/content/site";
 
-const anton = Anton({ weight: "400", subsets: ["latin"], variable: "--font-anton", display: "swap" });
-const archivo = Archivo({ subsets: ["latin"], variable: "--font-archivo", display: "swap", axes: ["wdth"] });
+const anton = Anton({ weight: "400", subsets: ["latin"], variable: "--font-anton", display: "swap", preload: false });
+const archivo = Archivo({ subsets: ["latin"], variable: "--font-archivo", display: "swap" });
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 
 export const SITE_URL = "https://tanques-alfa.vercel.app";

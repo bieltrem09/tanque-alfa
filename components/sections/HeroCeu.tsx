@@ -9,14 +9,12 @@ import WordFlip from "@/components/ui/WordFlip";
 
 const SKY = "linear-gradient(180deg, #0453e0 0%, #126ff7 34%, #4da0ff 70%, #a2cfff 100%)";
 
-// palavra que ocupa exatamente a largura disponível (SVG + textLength), em qualquer tela
+// palavra que ocupa exatamente a largura disponível (contorno SVG), em qualquer tela
 function Palavra() {
   return (
     <svg viewBox="0 0 1000 290" className="block h-auto w-full overflow-visible" aria-hidden="true">
-      <text x="500" y="262" textAnchor="middle" textLength="1000" lengthAdjust="spacingAndGlyphs" fill="#fff"
-        style={{ fontFamily: "var(--font-archivo)", fontWeight: 900, fontSize: 340, fontStretch: "125%", letterSpacing: "-0.02em" }}>
-        {H.palavra}
-      </text>
+      {/* "ALFA" em Archivo Black expandida (wght 900, wdth 125) convertido em contorno: não precisa baixar a fonte larga */}
+      <path fill="#fff" d="M2.3 262 99.7 28.1H179.2L276.5 262H199.1L187.1 231.1H88.6L76.9 262ZM110.5 172.9H165.2L151.1 133.5Q150.2 130.8 148.8 126.2Q147.3 121.6 145.6 115.8Q143.8 110 142.2 104.2Q140.6 98.5 139.1 93.7H137.1Q135.3 99.5 133 107Q130.7 114.4 128.5 121.6Q126.3 128.7 124.5 133.5Z M294.7 262V28.1H366.9V197.7H497.2V262Z M518.6 262V28.1H722V86.2H590.8V125.7H705.6V183.8H590.8V262Z M729.3 262 826.7 28.1H906.2L1003.5 262H926L914.1 231.1H815.6L803.9 262ZM837.5 172.9H892.1L878.1 133.5Q877.2 130.8 875.8 126.2Q874.3 121.6 872.6 115.8Q870.8 110 869.2 104.2Q867.6 98.5 866.1 93.7H864.1Q862.3 99.5 860 107Q857.6 114.4 855.5 121.6Q853.3 128.7 851.5 133.5Z" />
     </svg>
   );
 }
