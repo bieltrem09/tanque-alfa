@@ -73,10 +73,10 @@ export default function TankArchitecture({ slug, nome, specs, photo, lineart, vi
         ) : (
           <div className="relative w-full">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img loading="lazy" decoding="async" width={1772} height={769} src={photo} alt={`${nome}: do desenho técnico ao tanque real`} data-photo className="relative z-10 block h-auto w-full drop-shadow-[0_24px_24px_rgba(0,0,0,.35)]" />
+            <img loading="lazy" decoding="async" src={photo} alt={`${nome}: do desenho técnico ao tanque real`} data-photo className="relative z-10 block h-auto w-full drop-shadow-[0_24px_24px_rgba(0,0,0,.35)]" />
             {lineart && (
               // eslint-disable-next-line @next/next/no-img-element
-              <img loading="lazy" decoding="async" width={1772} height={769} src={lineart} alt="" aria-hidden="true" data-lines className={`absolute inset-0 z-20 h-full w-full ${dark ? "" : "invert"}`} />
+              <img loading="lazy" decoding="async" src={lineart} alt="" aria-hidden="true" data-lines className={`absolute inset-0 z-20 h-full w-full ${dark ? "" : "invert"}`} />
             )}
             <div data-scan aria-hidden="true" className="pointer-events-none absolute inset-x-[-4%] z-30 h-[3px] -translate-y-1/2 bg-accent shadow-[0_0_24px_6px_rgba(255,196,0,.55)]" />
           </div>

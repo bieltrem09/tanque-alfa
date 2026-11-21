@@ -10,6 +10,7 @@ import { gsap, SplitText, useGSAP, reducedMotion } from "@/lib/gsap";
 import { TruckSide } from "@/components/ui/TruckSvgs";
 import type { RealAssets } from "@/lib/realAssets";
 import { HeroBackdrop, HeroUI, HeroStatic } from "./HeroCeu";
+import { READY_EVENT } from "./Preloader";
 import StackCards from "@/components/ui/StackCards";
 import { createTruckRoad } from "@/components/ui/truckRoad";
 
@@ -48,7 +49,17 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
     window.addEventListener("scroll", loadDeferred, { once: true, passive: true });
 
     if (reducedMotion()) return;
-    // entrada do hero (palavra, tanque, cartões) é CSS — ver globals.css — para aparecer sem esperar o JS
+    gsap.set(q("[data-h-in]"), { autoAlpha: 0, y: 26 });
+    gsap.set(q("[data-h-word-in]"), { yPercent: 105 });
+    gsap.set(q("[data-drop]"), { y: () => -window.innerHeight * 0.75 });
+    const play = () => {
+      gsap.timeline({ defaults: { ease: "expo.out" } })
+        .from(q("[data-h-sky-in]"), { scale: 1.12, duration: 2 }, 0)
+        .to(q("[data-h-word-in]"), { yPercent: 0, duration: 1.2 }, 0.1)
+        .to(q("[data-drop]"), { y: 0, duration: 1.6, ease: "back.out(1.15)" }, 0.35)
+        .to(q("[data-h-in]"), { autoAlpha: 1, y: 0, duration: 0.9, stagger: 0.08 }, 0.9);
+    };
+    if (document.documentElement.dataset.ready) play(); else window.addEventListener(READY_EVENT, play, { once: true });
     gsap.to(q("[data-clouds]"), { xPercent: -50, duration: 140, ease: "none", repeat: -1 });
     // balanço de carga pendurada: rotação senoidal multiplicada pela "amplitude" (vai a 0 no encaixe)
     const setRot = gsap.quickSetter(q("[data-sway]"), "rotation", "deg");
@@ -260,14 +271,14 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
             <div data-assembly className="relative">
               {real.montagem ? (
                 <>
-                  <img data-chassis-in fetchPriority="low" src={real.montagem.chassi.src} srcSet={`${real.montagem.chassi.src.replace(".webp", "-900.webp")} 900w, ${real.montagem.chassi.src} 1772w`} sizes="(min-width: 768px) 70vw, 112vw" alt="" width={real.montagem.chassi.w} height={real.montagem.chassi.h} className="block h-auto w-full" />
+                  <img data-chassis-in fetchPriority="low" src={real.montagem.chassi.src} alt="" width={real.montagem.chassi.w} height={real.montagem.chassi.h} className="block h-auto w-full" />
                   <div data-real-tank className="absolute inset-0">
                     <div data-drop className="absolute inset-0">
                       <div data-sway className="absolute inset-0" style={{ transformOrigin: `${G.x * 100}% ${G.y * 100}%` }}>
                         {real.montagem.gancho && (
                           <span data-cable aria-hidden="true" className="absolute w-[3px] -translate-x-1/2 bg-gradient-to-b from-[#1b1c20]/0 via-[#1b1c20]/90 to-[#1b1c20]" style={{ left: `${real.montagem.gancho.x * 100}%`, bottom: `${(1 - real.montagem.gancho.y) * 100 - 0.5}%`, height: "260%" }} />
                         )}
-                        <img src={real.montagem.tanque.src} srcSet={`${real.montagem.tanque.src.replace(".webp", "-900.webp")} 900w, ${real.montagem.tanque.src} 1772w`} sizes="(min-width: 768px) 70vw, 112vw" alt="Tanque de água Alfa suspenso pela ponte rolante" width={real.montagem.tanque.w} height={real.montagem.tanque.h} fetchPriority="high" className="relative h-full w-full object-contain [filter:saturate(1.15)_contrast(1.04)]" />
+                        <img src={real.montagem.tanque.src} alt="Tanque de água Alfa suspenso pela ponte rolante" width={real.montagem.tanque.w} height={real.montagem.tanque.h} fetchPriority="high" className="relative h-full w-full object-contain [filter:saturate(1.15)_contrast(1.04)]" />
                       </div>
                     </div>
                   </div>

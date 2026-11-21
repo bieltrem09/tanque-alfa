@@ -55,13 +55,11 @@ const jsonLd = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="pt-BR" suppressHydrationWarning className={`${anton.variable} ${archivo.variable} ${inter.variable}`}>
+    <html lang="pt-BR" className={`${anton.variable} ${archivo.variable} ${inter.variable}`}>
       <body>
         <a href="#conteudo" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[200] focus:bg-white focus:px-4 focus:py-3 focus:text-ink">
           Pular para o conteúdo
         </a>
-        {/* decide antes do 1º quadro: preloader (1ª visita) ou entrada rápida; sem JS = sem preloader */}
-        <script dangerouslySetInnerHTML={{ __html: `try{var d=document.documentElement,r=matchMedia("(prefers-reduced-motion: reduce)").matches,s=sessionStorage.getItem("alfa-seen")==="1";d.dataset.intro=r?"none":s?"fast":"slow"}catch(e){document.documentElement.dataset.intro="fast"}` }} />
         <Preloader />
         <PageTransition />
         <SmoothScroll />
