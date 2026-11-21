@@ -9,6 +9,8 @@ import { tanques } from "@/content/tanques";
 import { gsap, SplitText, useGSAP, reducedMotion } from "@/lib/gsap";
 import { TruckSide, TruckTop, SteelTopDefs } from "@/components/ui/TruckSvgs";
 import type { RealAssets } from "@/lib/realAssets";
+import { HeroBackdrop, HeroUI, HeroStatic } from "./HeroCeu";
+import { READY_EVENT } from "./Preloader";
 
 const prodIcons = [Droplets, Fuel, Cylinder, Waves, Sprout];
 const difIcons = [ShieldCheck, PencilRuler, Wrench, Factory];
@@ -46,6 +48,40 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
   const LIFT = -32; // quanto o tanque começa suspenso (% da altura do quadro)
   const craneBottom = 100 + (-LIFT / 100 - (real.montagem?.gancho?.y ?? 0.11)) * 100; // ponte logo acima do gancho
   const root = useRef<HTMLElement>(null);
+  const sway = useRef({ amp: 1 }); // balanço do tanque suspenso (zera ao encaixar)
+  const G = real.montagem?.gancho ?? { x: 0.4, y: 0.01 };
+
+  // HERO: entrada, nuvens, balanço e carregamento adiado das imagens das fases seguintes
+  useGSAP(() => {
+    const q = gsap.utils.selector(root);
+    const loadDeferred = () => {
+      q("[data-defer-src]").forEach((el) => { (el as HTMLImageElement).src = el.getAttribute("data-defer-src")!; el.removeAttribute("data-defer-src"); });
+      q("[data-defer-href]").forEach((el) => { el.setAttribute("href", el.getAttribute("data-defer-href")!); el.removeAttribute("data-defer-href"); });
+      q("[data-defer-bg]").forEach((el) => { (el as HTMLElement).style.backgroundImage = `url(${el.getAttribute("data-defer-bg")})`; el.removeAttribute("data-defer-bg"); });
+    };
+    const idle = () => ("requestIdleCallback" in window ? (window as Window & { requestIdleCallback: (cb: () => void) => void }).requestIdleCallback(loadDeferred) : setTimeout(loadDeferred, 300));
+    if (document.readyState === "complete") setTimeout(idle, 800); else window.addEventListener("load", () => setTimeout(idle, 800), { once: true });
+    window.addEventListener("scroll", loadDeferred, { once: true, passive: true });
+
+    if (reducedMotion()) return;
+    gsap.set(q("[data-h-in]"), { autoAlpha: 0, y: 26 });
+    gsap.set(q("[data-h-word-in]"), { yPercent: 105 });
+    gsap.set(q("[data-drop]"), { y: () => -window.innerHeight * 0.75 });
+    const play = () => {
+      gsap.timeline({ defaults: { ease: "expo.out" } })
+        .from(q("[data-h-sky-in]"), { scale: 1.12, duration: 2 }, 0)
+        .to(q("[data-h-word-in]"), { yPercent: 0, duration: 1.2 }, 0.1)
+        .to(q("[data-drop]"), { y: 0, duration: 1.6, ease: "back.out(1.15)" }, 0.35)
+        .to(q("[data-h-in]"), { autoAlpha: 1, y: 0, duration: 0.9, stagger: 0.08 }, 0.9);
+    };
+    if (document.documentElement.dataset.ready) play(); else window.addEventListener(READY_EVENT, play, { once: true });
+    gsap.to(q("[data-clouds]"), { xPercent: -50, duration: 140, ease: "none", repeat: -1 });
+    // balanço de carga pendurada: rotação senoidal multiplicada pela "amplitude" (vai a 0 no encaixe)
+    const setRot = gsap.quickSetter(q("[data-sway]"), "rotation", "deg");
+    const tick = (time: number) => setRot(Math.sin(time * 1.7) * 1.2 * sway.current.amp);
+    gsap.ticker.add(tick);
+    return () => gsap.ticker.remove(tick);
+  }, { scope: root });
 
   useGSAP(() => {
     if (reducedMotion()) return;
@@ -80,22 +116,14 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
       gsap.set(q("[data-cloud]"), { yPercent: 160 });
       gsap.set(q("[data-white]"), { autoAlpha: 0 });
 
-      const tl = gsap.timeline({
-        defaults: { ease: "none" },
-        scrollTrigger: {
-          trigger: stage,
-          start: "top top",
-          end: desktop ? "+=800%" : "+=420%",
-          pin: true,
-          scrub: 1,
-          anticipatePin: 1,
-          invalidateOnRefresh: true,
-        },
-      });
+      const tl = gsap.timeline({ defaults: { ease: "none" } });
+      gsap.set(q("[data-crane]"), { autoAlpha: 0 });
+      gsap.set(q("[data-a-label]"), { autoAlpha: 0 });
+      gsap.set(q("[data-chassis-in]"), { xPercent: 170 });
 
       // 2a — Montagem
       if (has("svg [data-tank]")) tl.to(q("svg [data-tank]"), { y: 0, duration: 1.6, ease: "power2.inOut" }, 0);
-      if (has("[data-real-tank]")) tl.to(q("[data-real-tank]"), { yPercent: 0, duration: 1.6, ease: "power2.inOut" }, 0);
+      if (has("[data-real-tank]")) tl.to(q("[data-real-tank]"), { yPercent: 0, duration: 1.6, ease: "power2.inOut" }, 0).to(sway.current, { amp: 0, duration: 1.4, ease: "power2.in" }, 0);
       if (has("[data-cables]")) tl.to(q("[data-cables]"), { y: -320, autoAlpha: 0, duration: 0.6, ease: "power2.in" }, 1.7);
       // com fotos reais: o caminhão montado (sem as lingas) substitui a montagem
       if (photoSide) {
@@ -189,16 +217,41 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
       tl.to(q("[data-cloud]"), { yPercent: -40, duration: 1.2, stagger: 0.06, ease: "power2.out" }, t)
         .to(q("[data-white]"), { autoAlpha: 1, duration: 0.5 }, t + 0.7);
 
+      // HERO → MONTAGEM: o céu some, o caminhão-chassi entra e o MESMO tanque do hero passa ao tamanho da cena
+      const side = q("[data-side]")[0] as HTMLElement;
+      const heroPose = () => {
+        const vw = window.innerWidth, vh = window.innerHeight;
+        const W = side.offsetWidth, Hh = side.offsetHeight, left = side.offsetLeft, top = side.offsetTop;
+        const s = ((desktop ? 0.7 : 1.12) * vw) / W;
+        const hx = G.x * W, hy = (G.y + LIFT / 100) * Hh; // gancho (antes da escala)
+        const X = left + W / 2 + (hx - W / 2) * s, Y = top + Hh + (hy - Hh) * s;
+        return { s, x: (desktop ? 0.55 : 0.5) * vw - X, y: (desktop ? 0.26 : 0.27) * vh - Y };
+      };
+      const main = gsap.timeline({
+        defaults: { ease: "none" },
+        scrollTrigger: { trigger: stage, start: "top top", end: desktop ? "+=920%" : "+=520%", pin: true, scrub: 1, anticipatePin: 1, invalidateOnRefresh: true },
+      });
+      const HP = 1.5;
+      main.fromTo(side, { scale: () => heroPose().s, x: () => heroPose().x, y: () => heroPose().y }, { scale: 1, x: 0, y: 0, duration: 1.2, ease: "power2.inOut" }, 0.15)
+        .to(q("[data-h-ui]"), { autoAlpha: 0, y: 40, duration: 0.45, stagger: 0.04 }, 0)
+        .to(q("[data-h-word]"), { yPercent: -60, autoAlpha: 0, duration: 0.8 }, 0.05)
+        .to(q("[data-h-sky]"), { autoAlpha: 0, duration: 0.8 }, 0.35)
+        .to(q("[data-chassis-in]"), { xPercent: 0, duration: 1.0, ease: "power3.out" }, 0.45)
+        .to(q("[data-a-label]"), { autoAlpha: 1, duration: 0.3 }, HP - 0.3)
+        .add(tl, HP);
+
       return () => split.revert();
     });
   }, { scope: root });
 
   return (
     <section ref={root} id="fabrica" aria-label="A fábrica — como fabricamos seus tanques" className="relative bg-paper">
+      {real.montagem && <HeroStatic tanque={real.lateral[0]?.src ?? real.montagem.tanque.src} />}
       {/* ====== Versão animada ====== */}
       <div data-stage className="relative h-[100svh] overflow-hidden motion-reduce:hidden">
         {/* Camada lateral (2a–2c) */}
         <div data-side-layer className="absolute inset-0">
+          <HeroBackdrop />
           <p data-a-label className="label label-slash absolute left-4 top-24 text-ink/70 md:left-8 md:top-32">{fabrica.label}</p>
 
           <p
@@ -209,21 +262,25 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
             {fabrica.nossos}
           </p>
 
-          <div data-side className="absolute bottom-[calc(45%-6svh)] left-1/2 z-30 w-[min(92vw,880px,calc(55svh*1.6))] -translate-x-1/2 origin-bottom">
+          <div data-side className="absolute inset-x-0 bottom-[calc(45%-6svh)] z-30 mx-auto w-[min(92vw,880px,calc(55svh*1.6))] origin-bottom">
             <div data-assembly className="relative">
               {real.montagem ? (
                 <>
-                  <img src={real.montagem.chassi.src} alt="" width={real.montagem.chassi.w} height={real.montagem.chassi.h} className="block h-auto w-full" />
+                  <img data-chassis-in fetchPriority="low" src={real.montagem.chassi.src} alt="" width={real.montagem.chassi.w} height={real.montagem.chassi.h} className="block h-auto w-full" />
                   <div data-real-tank className="absolute inset-0">
-                    {real.montagem.gancho && (
-                      <span data-cable aria-hidden="true" className="absolute w-[3px] -translate-x-1/2 bg-[#2b2c30]" style={{ left: `${real.montagem.gancho.x * 100}%`, bottom: `${(1 - real.montagem.gancho.y) * 100 - 0.5}%`, height: `${-LIFT * 0.85}%` }} />
-                    )}
-                    <img src={real.montagem.tanque.src} alt="" width={real.montagem.tanque.w} height={real.montagem.tanque.h} className="relative h-full w-full object-contain" />
+                    <div data-drop className="absolute inset-0">
+                      <div data-sway className="absolute inset-0" style={{ transformOrigin: `${G.x * 100}% ${G.y * 100}%` }}>
+                        {real.montagem.gancho && (
+                          <span data-cable aria-hidden="true" className="absolute w-[3px] -translate-x-1/2 bg-gradient-to-b from-[#1b1c20]/0 via-[#1b1c20]/90 to-[#1b1c20]" style={{ left: `${real.montagem.gancho.x * 100}%`, bottom: `${(1 - real.montagem.gancho.y) * 100 - 0.5}%`, height: "260%" }} />
+                        )}
+                        <img src={real.montagem.tanque.src} alt="Tanque de água Alfa suspenso pela ponte rolante" width={real.montagem.tanque.w} height={real.montagem.tanque.h} fetchPriority="high" className="relative h-full w-full object-contain [filter:saturate(1.15)_contrast(1.04)]" />
+                      </div>
+                    </div>
                   </div>
                   {real.montagem.viga && real.montagem.carro ? (
                     <>
-                      <div data-crane aria-hidden="true" className="pointer-events-none absolute left-1/2 z-10 h-[calc(clamp(40px,7svh,76px)*0.444)] w-[300vw] -translate-x-1/2" style={{ bottom: `calc(${craneBottom}% + clamp(40px,7svh,76px) * 0.289)`, backgroundImage: `url(${real.montagem.viga})`, backgroundRepeat: "repeat-x", backgroundSize: "auto 100%", backgroundPosition: "center" }} />
-                      <img data-crane src={real.montagem.carro.src} alt="" width={real.montagem.carro.w} height={real.montagem.carro.h} className="pointer-events-none absolute z-[11] h-[clamp(40px,7svh,76px)] w-auto max-w-none -translate-x-1/2" style={{ left: `${(real.montagem.gancho?.x ?? 0.5) * 100}%`, bottom: `${craneBottom}%` }} />
+                      <div data-crane data-defer-bg={real.montagem.viga} aria-hidden="true" className="pointer-events-none absolute left-1/2 z-10 h-[calc(clamp(40px,7svh,76px)*0.444)] w-[300vw] -translate-x-1/2" style={{ bottom: `calc(${craneBottom}% + clamp(40px,7svh,76px) * 0.289)`, backgroundRepeat: "repeat-x", backgroundSize: "auto 100%", backgroundPosition: "center" }} />
+                      <img data-crane data-defer-src={real.montagem.carro.src} alt="" width={real.montagem.carro.w} height={real.montagem.carro.h} className="pointer-events-none absolute z-[11] h-[clamp(40px,7svh,76px)] w-auto max-w-none -translate-x-1/2" style={{ left: `${(real.montagem.gancho?.x ?? 0.5) * 100}%`, bottom: `${craneBottom}%` }} />
                     </>
                   ) : real.montagem.ponte ? (
                     <img data-crane src={real.montagem.ponte.src} alt="" width={real.montagem.ponte.w} height={real.montagem.ponte.h} className="pointer-events-none absolute bottom-[calc(100%+min(18svh,160px))] left-1/2 w-[220vw] max-w-none -translate-x-1/2" />
@@ -237,9 +294,9 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
               im ? (
                 <div key={i} data-photo-paint={i} className="invisible absolute bottom-0 left-0 w-full">
                   <div className="truck-idle relative">
-                    <img src={im.src} alt="" width={im.w} height={im.h} loading="lazy" className="block h-auto w-full" />
+                    <img data-defer-src={im.src} alt="" width={im.w} height={im.h} className="block h-auto w-full" />
                     {im.rodas.map((r) => (
-                      <img key={r.src} data-wheel src={r.src} alt="" loading="lazy" className="absolute h-auto" style={{ left: `${r.x * 100}%`, top: `${r.y * 100}%`, width: `${r.d * 100}%` }} />
+                      <img key={r.src} data-wheel data-defer-src={r.src} alt="" className="absolute h-auto" style={{ left: `${r.x * 100}%`, top: `${r.y * 100}%`, width: `${r.d * 100}%` }} />
                     ))}
                   </div>
                 </div>
@@ -251,7 +308,7 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
             {/* pista lateral: asfalto real (ou desenhado) que corre sob o caminhão */}
             <div aria-hidden="true" className="absolute inset-x-0 top-0 h-[10svh] overflow-hidden border-b border-white/10 bg-[#1a1b1e]">
               {real.estradaReta ? (
-                <div data-asfalto className="absolute inset-y-0 left-0 w-[400%]" style={{ backgroundImage: `url(${real.estradaReta.src})`, backgroundRepeat: "repeat-x", backgroundSize: "auto 100%" }} />
+                <div data-asfalto data-defer-bg={real.estradaReta.src} className="absolute inset-y-0 left-0 w-[400%]" style={{ backgroundRepeat: "repeat-x", backgroundSize: "auto 100%" }} />
               ) : (
                 <div data-asfalto className="absolute left-0 top-1/2 h-[6px] w-[400%] -translate-y-1/2" style={{ background: "repeating-linear-gradient(90deg, var(--alfa-accent) 0 70px, transparent 70px 120px)" }} />
               )}
@@ -286,10 +343,12 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
           </div>
         </div>
 
+        <HeroUI />
+
         {/* Virada de câmera: estrada em perspectiva */}
         {real.estradaPerspectiva && (
           <div data-persp aria-hidden="true" className="absolute inset-0 z-[35] overflow-hidden bg-white">
-            <img src={real.estradaPerspectiva.src} alt="" width={real.estradaPerspectiva.w} height={real.estradaPerspectiva.h} loading="lazy" className="h-full w-full object-cover" style={{ transformOrigin: `${real.estradaPerspectiva.vx * 100}% ${real.estradaPerspectiva.vy * 100}%` }} />
+            <img data-defer-src={real.estradaPerspectiva.src} alt="" width={real.estradaPerspectiva.w} height={real.estradaPerspectiva.h} className="h-full w-full object-cover" style={{ transformOrigin: `${real.estradaPerspectiva.vx * 100}% ${real.estradaPerspectiva.vy * 100}%` }} />
           </div>
         )}
 
@@ -301,11 +360,11 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
                 <filter id="sombra-topo" x="-20%" y="-40%" width="140%" height="180%"><feDropShadow dx="6" dy="8" stdDeviation="7" floodOpacity=".35" /></filter>
               </defs>
               <g data-zoom>
-                <image data-curva href={curva.src} x={0} y={0} width={1000} height={curvaH} preserveAspectRatio="none" />
+                <image data-curva data-defer-href={curva.src} x={0} y={0} width={1000} height={curvaH} preserveAspectRatio="none" />
                 <path data-route d={caminho(rota)} fill="none" stroke="none" />
                 <g data-truck-top>
                   {real.topo ? (
-                    <image href={real.topo.src} x={(-topoW * real.topo.w) / real.topo.h / 2} y={-topoW / 2} width={(topoW * real.topo.w) / real.topo.h} height={topoW} filter="url(#sombra-topo)" />
+                    <image data-defer-href={real.topo.src} x={(-topoW * real.topo.w) / real.topo.h / 2} y={-topoW / 2} width={(topoW * real.topo.w) / real.topo.h} height={topoW} filter="url(#sombra-topo)" />
                   ) : (
                     <g transform={`scale(${topoW / 60})`}><TruckTop /></g>
                   )}
@@ -360,7 +419,7 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
           </div>
           <div className="pointer-events-none absolute inset-0 grid place-items-center">
             {real.topo ? (
-              <img data-water-truck src={real.topo.src} alt="" width={real.topo.w} height={real.topo.h} className="w-[min(60vw,460px)] -rotate-90 md:rotate-0" />
+              <img data-water-truck data-defer-src={real.topo.src} alt="" width={real.topo.w} height={real.topo.h} className="w-[min(60vw,460px)] -rotate-90 md:rotate-0" />
             ) : (
               <svg data-water-truck viewBox="-140 -50 280 100" className="w-[min(60vw,420px)] -rotate-90 md:rotate-0" aria-hidden="true">
               <defs><SteelTopDefs /></defs>

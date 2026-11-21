@@ -26,13 +26,15 @@ export default function SmoothScroll() {
     };
   }, []);
 
-  // ScrollTrigger.refresh após fontes e imagens
+  // um único ScrollTrigger.refresh depois que fontes E página estiverem prontas (refresh é caro com várias cenas pinadas)
   useEffect(() => {
-    const refresh = () => ScrollTrigger.refresh();
-    document.fonts?.ready.then(refresh);
-    window.addEventListener("load", refresh);
-    const t = setTimeout(refresh, 600);
-    return () => { window.removeEventListener("load", refresh); clearTimeout(t); };
+    let done = false;
+    const ready = Promise.all([
+      document.fonts?.ready ?? Promise.resolve(),
+      document.readyState === "complete" ? Promise.resolve() : new Promise((r) => window.addEventListener("load", r, { once: true })),
+    ]);
+    ready.then(() => { if (!done) requestAnimationFrame(() => ScrollTrigger.refresh()); });
+    return () => { done = true; };
   }, [pathname]);
 
   useEffect(() => {

@@ -62,9 +62,9 @@ export default function TankArchitecture({ slug, nome, specs, photo, lineart, vi
         {frames && !video ? (
           <div className="absolute inset-0 overflow-hidden">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={frames.inicio} alt="" aria-hidden="true" data-inicio className="absolute inset-0 h-full w-full object-cover" />
+            <img loading="lazy" decoding="async" src={frames.inicio} alt="" aria-hidden="true" data-inicio className="absolute inset-0 h-full w-full object-cover" />
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={frames.fim} alt={`${nome}: do projeto em wireframe ao caminhão real`} data-fim className="absolute inset-0 h-full w-full object-cover" />
+            <img loading="lazy" decoding="async" src={frames.fim} alt={`${nome}: do projeto em wireframe ao caminhão real`} data-fim className="absolute inset-0 h-full w-full object-cover" />
             <div data-scan aria-hidden="true" className="pointer-events-none absolute inset-x-0 z-30 h-[3px] -translate-y-1/2 bg-accent shadow-[0_0_28px_8px_rgba(255,196,0,.55)]" />
             <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-r from-black/45 via-transparent to-transparent" />
           </div>
@@ -73,10 +73,10 @@ export default function TankArchitecture({ slug, nome, specs, photo, lineart, vi
         ) : (
           <div className="relative w-full">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={photo} alt={`${nome}: do desenho técnico ao tanque real`} data-photo className="relative z-10 block h-auto w-full drop-shadow-[0_24px_24px_rgba(0,0,0,.35)]" />
+            <img loading="lazy" decoding="async" src={photo} alt={`${nome}: do desenho técnico ao tanque real`} data-photo className="relative z-10 block h-auto w-full drop-shadow-[0_24px_24px_rgba(0,0,0,.35)]" />
             {lineart && (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={lineart} alt="" aria-hidden="true" data-lines className={`absolute inset-0 z-20 h-full w-full ${dark ? "" : "invert"}`} />
+              <img loading="lazy" decoding="async" src={lineart} alt="" aria-hidden="true" data-lines className={`absolute inset-0 z-20 h-full w-full ${dark ? "" : "invert"}`} />
             )}
             <div data-scan aria-hidden="true" className="pointer-events-none absolute inset-x-[-4%] z-30 h-[3px] -translate-y-1/2 bg-accent shadow-[0_0_24px_6px_rgba(255,196,0,.55)]" />
           </div>

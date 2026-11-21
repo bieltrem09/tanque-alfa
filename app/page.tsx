@@ -1,4 +1,3 @@
-import Hero from "@/components/sections/Hero";
 import FactoryScene from "@/components/sections/FactoryScene";
 import ProductLine from "@/components/sections/ProductLine";
 import Numbers from "@/components/sections/Numbers";
@@ -7,6 +6,8 @@ import Clientes from "@/components/sections/Clientes";
 import Atendimento from "@/components/sections/Atendimento";
 import CtaContato from "@/components/sections/CtaContato";
 import Reveals from "@/components/ui/Reveals";
+import TipoStrip from "@/components/sections/TipoStrip";
+import VelocityWords from "@/components/ui/VelocityWords";
 import TankBlueprint from "@/components/sections/TankBlueprint";
 import VideoScrub from "@/components/sections/VideoScrub";
 import Link from "next/link";
@@ -21,11 +22,12 @@ export default async function Home() {
   return (
     <>
       <Reveals />
-      <Hero />
       <FactoryScene real={real} />
+      <TipoStrip />
       {real.filme && <VideoScrub src={real.filme} />}
       <Clientes />
       <TankBlueprint chassi={real.montagem?.chassi.src ?? null} real={real.lateral[0]?.src ?? null} />
+      <VelocityWords words={["Água", "Combustível", "Saneamento", "Agrícola", "Estacionário"]} />
       <div id="tanques">
         {destaque.map((t, i) => <ProductLine key={t.slug} t={t} dark={i % 2 === 0} flip={i % 2 === 1} video={real.arquitetura[t.slug]} produto={real.produto[t.slug]} frames={real.arquiteturaQuadros[t.slug]} />)}
         <section aria-label="Outras linhas" className="bg-ink py-16 text-white">

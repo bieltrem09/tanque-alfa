@@ -40,6 +40,8 @@ export const nav = [
 export const heroCeu = {
   palavra: "ALFA",
   lateral: "Fabricado em Limeira-SP · Certificado INMETRO",
+  eyebrow: "Tanques sob medida para",
+  tipos: ["água", "combustível", "saneamento", "agricultura"],
   titulo: "Do primeiro litro ao último quilômetro.",
   texto: "Tanques rodoviários e estacionários em aço carbono, projetados sob medida para água, combustível, saneamento e uso agrícola.",
   cta: "Pedir orçamento",
