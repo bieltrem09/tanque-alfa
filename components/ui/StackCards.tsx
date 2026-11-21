@@ -26,8 +26,8 @@ export default function StackCards() {
       const next = cards[i + 1];
       if (!next) return;
       gsap.to(card.querySelector("[data-stack-inner]"), {
-        scale: 0.9, filter: "brightness(.55)", ease: "none",
-        scrollTrigger: { trigger: next, start: "top 70%", end: "top 100px", scrub: true },
+        scale: 0.94, filter: "brightness(.9)", ease: "none",
+        scrollTrigger: { trigger: next, start: "top 45%", end: "top 100px", scrub: true },
       });
     });
   }, { scope: ref });
