@@ -15,7 +15,7 @@ const thumbs: Record<string, string> = {
 // "Explore por tipo de tanque": cards grandes com o caminhão em destaque, logo após a cena da fábrica.
 export default function TipoStrip() {
   return (
-    <section aria-labelledby="explorar-tipos" className="bg-[#e9ebee]">
+    <section aria-labelledby="explorar-tipos" className="hidden bg-[#e9ebee] md:block">
       <div className="mx-auto max-w-[1500px] px-4 py-16 md:px-6 md:py-24">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
