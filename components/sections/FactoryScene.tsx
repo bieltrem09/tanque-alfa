@@ -11,6 +11,7 @@ import { TruckSide } from "@/components/ui/TruckSvgs";
 import type { RealAssets } from "@/lib/realAssets";
 import { HeroBackdrop, HeroUI, HeroStatic } from "./HeroCeu";
 import { READY_EVENT } from "./Preloader";
+import StackCards from "@/components/ui/StackCards";
 import { createTruckRoad } from "@/components/ui/truckRoad";
 
 const prodIcons = [Droplets, Fuel, Cylinder, Waves, Sprout];
@@ -445,21 +446,7 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
           <p className="display text-[clamp(40px,6vw,90px)]">{fabrica.fechamento}</p>
         </div>
       </div>
-      <ul className="grid gap-px bg-ink/10 md:hidden motion-reduce:md:grid motion-reduce:md:grid-cols-5" aria-label="Linhas de produto">
-        {tanques.map((t, i) => {
-          const Icon = prodIcons[i];
-          return (
-            <li key={t.slug} className="reveal-card bg-ink px-5 py-8 text-white">
-              <Icon className="h-8 w-8 text-accent" aria-hidden />
-              <h3 className="ui mt-3 text-base">{t.nome}</h3>
-              <p className="mt-2 text-white/70">{t.resumo}</p>
-              <Link href={`/tanques/${t.slug}/`} className="ui mt-4 inline-flex min-h-11 items-center gap-1 text-[12px] text-accent">
-                Ver tanque <ChevronRight className="h-4 w-4" aria-hidden />
-              </Link>
-            </li>
-          );
-        })}
-      </ul>
+      <StackCards />
     </section>
   );
 }
