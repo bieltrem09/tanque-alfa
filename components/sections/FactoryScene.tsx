@@ -6,7 +6,7 @@ import { useRef } from "react";
 import { Droplets, Fuel, Cylinder, Waves, Sprout, ShieldCheck, PencilRuler, Wrench, Factory, Gem, ClipboardCheck, Flame, CalendarCheck, ChevronRight } from "lucide-react";
 import { fabrica } from "@/content/site";
 import { tanques } from "@/content/tanques";
-import { gsap, SplitText, useGSAP, reducedMotion } from "@/lib/gsap";
+import { gsap, ScrollTrigger, SplitText, useGSAP, reducedMotion } from "@/lib/gsap";
 import { TruckSide } from "@/components/ui/TruckSvgs";
 import type { RealAssets } from "@/lib/realAssets";
 import { HeroBackdrop, HeroUI, HeroStatic } from "./HeroCeu";
@@ -75,7 +75,10 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
     if (reducedMotion()) return;
     const q = gsap.utils.selector(root);
     const mm = gsap.matchMedia();
-
+    // celular: a cena é montada logo após o 1º quadro (fora da hidratação, que já é pesada no celular);
+    // computador: montada na hora, como antes
+    let alive = true;
+    const build = () => { if (!alive) return;
     mm.add({ desktop: "(min-width: 768px)", mobile: "(max-width: 767.98px)" }, (ctx) => {
       const desktop = !!ctx.conditions?.desktop;
       const stage = q("[data-stage]")[0];
@@ -246,6 +249,12 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
 
       return () => split.revert();
     });
+    };
+    let raf = 0;
+    if (window.innerWidth < 768) {
+      raf = requestAnimationFrame(() => setTimeout(() => { build(); ScrollTrigger.sort(); ScrollTrigger.refresh(); }, 0));
+    } else build();
+    return () => { alive = false; cancelAnimationFrame(raf); mm.revert(); };
   }, { scope: root });
 
   return (
