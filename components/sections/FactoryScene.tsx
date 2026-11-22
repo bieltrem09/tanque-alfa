@@ -281,7 +281,7 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
                         {real.montagem.gancho && (
                           <span data-cable aria-hidden="true" className="absolute w-[3px] -translate-x-1/2 bg-gradient-to-b from-[#1b1c20]/0 via-[#1b1c20]/90 to-[#1b1c20]" style={{ left: `${real.montagem.gancho.x * 100}%`, bottom: `${(1 - real.montagem.gancho.y) * 100 - 0.5}%`, height: "260%" }} />
                         )}
-                        <img src={real.montagem.tanque.src} srcSet={`${real.montagem.tanque.src.replace(".webp", "-900.webp")} 900w, ${real.montagem.tanque.src} 1772w`} sizes="(min-width: 768px) 70vw, 112vw" alt="Tanque de água Alfa suspenso pela ponte rolante" width={real.montagem.tanque.w} height={real.montagem.tanque.h} fetchPriority="high" className="relative h-full w-full object-contain [filter:saturate(1.15)_contrast(1.04)]" />
+                        <img src={real.montagem.tanque.src} srcSet={`${real.montagem.tanque.src.replace(".webp", "-900.webp")} 900w, ${real.montagem.tanque.src} 1772w`} sizes="(min-width: 768px) 70vw, 112vw" alt="Tanque de água Alfa suspenso pela ponte rolante" width={real.montagem.tanque.w} height={real.montagem.tanque.h} className="relative h-full w-full object-contain [filter:saturate(1.15)_contrast(1.04)]" />
                       </div>
                     </div>
                   </div>
