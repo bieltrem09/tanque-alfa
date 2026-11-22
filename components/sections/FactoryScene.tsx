@@ -366,7 +366,7 @@ export default function FactoryScene({ real }: { real: RealAssets }) {
         <div data-top className="absolute inset-0 z-30 overflow-hidden bg-[#7fb0f0]">
           {/* foto real composta: céu, pátio, asfalto (16:9, sempre cobrindo a tela) + caminhão real de lado */}
           <div aria-hidden="true" className="absolute left-1/2 top-1/2 aspect-[16/9] w-[max(100vw,177.78svh)] -translate-x-1/2 -translate-y-1/2">
-            <img data-defer-src="/img/real/pista-real.webp" alt="" width={2400} height={1350} className="absolute inset-0 h-full w-full object-cover" />
+            <img data-defer-src="/img/real/pista-real.webp" alt="" className="absolute inset-0 h-full w-full object-cover" />
           </div>
           <div aria-hidden="true" className="absolute inset-x-0 mx-auto w-[94vw] md:w-[min(54vw,100svh)]" style={{ bottom: "calc(50% - 0.145 * max(100svh, 56.25vw))" }}>
             <div data-road-truck className="relative">
